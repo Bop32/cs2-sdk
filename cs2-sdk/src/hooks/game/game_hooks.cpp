@@ -45,8 +45,11 @@ static bool hkCreateMove(void* rcx, int a1, int a2)
 
     auto cmd = CCSGOInput::Get()->GetUserCmd();
 
-    if(!cmd) return false;
+    if (!cmd) return false;
 
+
+
+    //CLogger::Log("{} {} {}", cmd->base->view->angles.x, cmd->base->view->angles.y, cmd->base->view->angles.z);
 
     auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
 
@@ -56,8 +59,15 @@ static bool hkCreateMove(void* rcx, int a1, int a2)
 
     if (!pawn) return false;
 
-    //misc::BunnyHop(cmd);
+    if (!localPlayerController->m_bPawnIsAlive()) return false;
 
+    //cmd->base->view->angles = Vector(0, -99, 0);
+
+    //SetViewAngles now works
+    //CCSGOInput::Get()->SetViewAngles(cmd->base->view->angles);
+
+    //misc::BunnyHop(cmd);
+    //CLogger::Log("{}", CGameEntitySystem::GetHandleFromEntity(pawn));
 
     return false;
 }
