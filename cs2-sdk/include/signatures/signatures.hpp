@@ -15,5 +15,5 @@ namespace signatures {
     extern CSigScan GetBonePosition;
     extern CSigScan SetViewAngles;
     extern CSigScan GetViewAngles;
-
+    extern CSigScan MaxBoneCount;
 }  // namespace signatures

@@ -108,6 +108,7 @@ namespace signatures
         });
 
 
+
     //E8 ? ? ? ? 80 7D ? ? 75 ? F3 0F 10 45 trace shape. Needed for visible checks.
 
 }  // namespace signatures

@@ -1,7 +1,5 @@
-#pragma once;
+#pragma once
 #include <input/ccsgoinput.hpp>
-
-class Misc;
 
 namespace misc
 {

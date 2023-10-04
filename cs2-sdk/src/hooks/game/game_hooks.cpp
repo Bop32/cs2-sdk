@@ -48,7 +48,7 @@ static bool hkCreateMove(void* rcx, int a1, int a2)
     if(!cmd) return false;
 
 
-    auto localPlayerController = globals::local_player;
+    auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
 
     if (!localPlayerController) return false;
 
@@ -57,8 +57,7 @@ static bool hkCreateMove(void* rcx, int a1, int a2)
     if (!pawn) return false;
 
     //misc::BunnyHop(cmd);
-    //CLogger::Log("{}", pawn->GetBonePosition(6, {}, {}).x);
-    //CLogger::Log("{}", CGameEntitySystem::GetHandleFromEntity(pawn));
+
 
     return false;
 }

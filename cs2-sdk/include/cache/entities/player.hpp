@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cache/entities/base.hpp>
-
+#include "../../math/math.hpp"
 class CCachedPlayer : public CCachedBaseEntity {
    public:
     CCachedPlayer(CBaseHandle handle);

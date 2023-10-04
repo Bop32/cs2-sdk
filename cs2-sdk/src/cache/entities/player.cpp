@@ -99,6 +99,13 @@ void CCachedPlayer::RenderESP()
                 IM_COL32(red, greenClamped, 0, 255));
         }
     }
+
+    Vector position{};
+    Vector test2{};
+    ImVec2 out{};
+    controller->GetBonePosition(6, &position, &test2);
+    if (CMath::Get().WorldToScreen(position, out))
+        drawList->AddCircle(out, 2, IM_COL32(255,255,255,255));
 }
 
 void CCachedPlayer::UpdateESP()
