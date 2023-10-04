@@ -39,12 +39,8 @@ public:
         return m_pGameSceneNode()->m_vecAbsOrigin() + m_vecViewOffset();
     }
 
-    Vector GetBonePosition(uint32_t bone_index)
-    bool GetBonePosition(uint32_t bone_index, Vector* position, Vector* rotation)
-    {
-        //Vector test = signatures::GetBonePosition.GetPtr().Call<Vector(&)(uint32_t)>(bone_index);
-        //Vector test = signatures::GetBonePosition.GetPtr().Call<Vector(*)(uint32_t)>(bone_index);
-        return Vector(0,0,0);
+    bool GetBonePosition(uint32_t bone_index, Vector* position, Vector* rotation) {
+        return signatures::GetBonePosition.GetPtr().Call<bool (*)(void*, uint32_t, Vector*, Vector*)>(this, bone_index, position, rotation);
     }
 
 };
