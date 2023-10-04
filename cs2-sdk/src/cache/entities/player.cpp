@@ -47,7 +47,7 @@ void CCachedPlayer::RenderESP()
 {
     CCSPlayerController* controller = Get<CCSPlayerController>();
 
-    if (controller->m_iTeamNum() == globals::local_player->m_iTeamNum() || 
+    if (controller->m_iTeamNum() == CGameEntitySystem::GetLocalPlayerController()->m_iTeamNum() ||
         controller->IsWeapon()) return;
 
     if (g_Vars.m_Glow)

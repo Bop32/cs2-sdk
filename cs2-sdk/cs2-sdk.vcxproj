@@ -297,6 +297,7 @@
     <ClInclude Include="pch\pch.hpp" />
     <ClInclude Include="sdk\include\bindings\baseentity.hpp" />
     <ClInclude Include="sdk\include\bindings\collisionproperty.hpp" />
+    <ClInclude Include="sdk\include\bindings\CSkeletonInstance.hpp" />
     <ClInclude Include="sdk\include\bindings\entityidentity.hpp" />
     <ClInclude Include="sdk\include\bindings\hitbox.hpp" />
     <ClInclude Include="sdk\include\bindings\playercontroller.hpp" />

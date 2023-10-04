@@ -151,5 +151,6 @@
     <ClInclude Include="sdk\include\bindings\trace.hpp" />
     <ClInclude Include="sdk\include\offets\offsets.hpp" />
     <ClInclude Include="include\globals\globals.hpp" />
+    <ClInclude Include="sdk\include\bindings\CSkeletonInstance.hpp" />
   </ItemGroup>
 </Project>

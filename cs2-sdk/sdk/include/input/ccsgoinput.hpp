@@ -1,8 +1,10 @@
 #pragma once
 #include "cusercmd.hpp"
+#include "../../../include/signatures/signatures.hpp"
 
-class CCSGOInput {
-   public:                      
+class CCSGOInput
+{
+public:
     static CCSGOInput* Get();
 
     void* table;
@@ -18,13 +20,13 @@ class CCSGOInput {
         return &m_commands[m_sequence_number % 150];
     }
 
-    /*
-    auto SetViewAngles(CmdQAngle* angle)
+    void SetViewAngles(Vector angle)
     {
-        //auto angles = signatures::SetViewAngles.GetPtrAs<CmdQAngle*>();
-        //angles = angle;
-        return;
+        using function_t = std::int64_t(__fastcall*)(CCSGOInput*, std::int32_t, Vector&);
+        static function_t fn = reinterpret_cast< function_t >(signatures::SetViewAngles.GetPtrAs<void*>());
+
+        fn(this, 0, angle);
+        //return signatures::SetViewAngles.GetPtr().Call< Vector(*)(void*, uint32_t, Vector&)>(this, unk, angle);
     }
-    */
 
 };
