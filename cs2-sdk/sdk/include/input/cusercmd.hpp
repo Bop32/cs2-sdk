@@ -15,6 +15,33 @@ struct CBaseUserCmd
     CmdQAngle* view;
 };
 
+
+class CSubTickCmd
+{
+public:
+    char pad1[0x18];
+    CmdQAngle* view;
+};
+
+class CSubTickContainer
+{
+public:
+    int32_t tickCount;
+    char pad1[0x4];
+    uint8_t* tickPointer;
+
+    CSubTickCmd* GetTick(std::int32_t index)
+    {
+        if (index < this->tickCount)
+        {
+            CSubTickCmd** tick_list = reinterpret_cast< CSubTickCmd** >(this->tickPointer + 0x8);
+            return tick_list[index];
+        }
+
+        return nullptr;
+    }
+};
+
 class CUserCmd
 {
 public:
@@ -41,21 +68,28 @@ public:
         IN_JUMP_THROW_RELEASE = 34359738368,
     };
 
-    /*
-    PAD(0x20);
-    SubTicksContainer m_sub_tick_container; //20
-    CBaseUserCmd* m_base_cmd; //30
-    int m_start_history_index_attack1; //38
-    int m_start_history_index_attack2; //0x3C
-    int m_start_history_index_attack3; //0x40
-    PAD(0xC); //0x44
-    uint64_t m_buttons; //0x48
-    uint64_t m_buttons_changed;
-    uint64_t m_buttons_scroll;
-    PAD(0x8);
-    */
     char pad1[0x30];
     CBaseUserCmd* base;
     char pad2[0x18];
     unsigned int buttons;
+
+
+    CSubTickContainer GetSubTickContainer()
+    {
+        return *reinterpret_cast< CSubTickContainer* >(reinterpret_cast< std::uintptr_t >(this) + 0x20);
+    }
+
+    void SetSubTickAngles(CUserCmd* cmd, Vector& angles)
+    {
+        CSubTickContainer container = cmd->GetSubTickContainer();
+        for (int i = 0; i < container.tickCount; i++)
+        {
+            CSubTickCmd* tick = container.GetTick(i);
+
+            if (tick && tick->view)
+            {
+                tick->view->angles = angles;
+            }
+        }
+    }
 };

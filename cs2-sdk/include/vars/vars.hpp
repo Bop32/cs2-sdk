@@ -4,6 +4,12 @@ struct Vars_t
 {
     bool m_EnableESP;
 
+    bool m_Aimbot;
+
+    int m_AimbotFov = 1;
+    bool m_SilentAim;
+
+
     bool m_PlayerBoxes;
     bool m_PlayerNames;
     bool m_PlayerHealthBar;

@@ -1,61 +1,101 @@
 #pragma once
 
-#include <cstdint>
+
 #include <math/types/vector.hpp>
-#include "baseentity.hpp"
-#include "playercontroller.hpp"
 
-class c_ray
+#include <bindings/playerpawn.hpp>
+
+#include <memory/memory.hpp>
+
+#include <cstdint>
+
+
+namespace trace
 {
-public:
-	Vector start;
-	Vector end;
-	Vector mins;
-	Vector maxs;
-	std::uint32_t N000002C7;
-	std::uint8_t N000002BE;
-};
-static_assert(sizeof(c_ray) == 0x38);
 
-class c_trace_filter
-{
-public:
-	std::uint64_t trace_mask;
-	std::uint64_t null_it1;
-	std::uint64_t null_it2;
-	std::uint32_t skip_handle1;
-	std::uint32_t skip_handle2;
-	std::uint32_t skip_handle3;
-	std::uint32_t skip_handle4;
-	std::uint16_t collision1;
-	std::uint16_t collision2;
-	std::uint16_t N0000011C;
-	std::uint8_t layer;
-	std::uint8_t N00000104;
-	std::uint8_t null_it3;
+    struct C_Ray
+    {
+        Vector Start;
+        Vector End;
+        Vector Mins;
+        Vector Maxs;
+        char pad1[0x4];
+        std::uint8_t UnkType;
+    };
 
-	virtual ~c_trace_filter()
-	{
+    struct C_SurfaceData
+    {
+        char pad1[0x8];
+        float PenetrationModifier;
+        float DamageModifier;
+        char pad2[0x4];
+        int Material;
+    };
 
-	}
+    struct C_TraceHitboxData
+    {
+        char pad1[0x58];
+        int Hitgroup;
+        char pad2[0x4];
+        int HitboxId;
+    };
 
-	virtual bool function()
-	{
-		return true;
-	}
+    class C_GameTrace
+    {
+    public:
+        C_SurfaceData* GetSurfaceData();
 
-	c_trace_filter(std::uint64_t trace_mask, CCSPlayerController* local_player, std::uint8_t layer);
-};
-static_assert(sizeof(c_trace_filter) == 0x40);
+        int GetHitboxId()
+        {
+            if (HitboxData) return HitboxData->HitboxId;
+            return 0;
+        }
 
-class c_game_trace
-{
-public:
-	void* surface;
-	C_BaseEntity* entity;
-	void* hitbox;
-	char pad_0028[148];
-	float fraction;
-	char pad_0176[9];
-};
-static_assert(sizeof(c_game_trace) == 0xC0);
+        int GetHitgroup()
+        {
+            if (HitboxData) return HitboxData->Hitgroup;
+            return 0;
+        }
+
+        void* Surface;
+        C_CSPlayerPawnBase* HitEntity;
+        C_TraceHitboxData* HitboxData;
+        char pad1[0x10];
+        int32_t Contents;
+        char pad2[0x58];
+        Vector EndPos;
+        char pad3[0x1C];
+        float Fraction;
+        char pad4[0x10];
+    };
+
+    class C_TraceFilter
+    {
+    public:
+        uint64_t TraceMask;
+        uint64_t V1[2];
+        uint32_t SkipHandles[4];
+        uint16_t Collisions[2];
+        uint16_t V2;
+        uint8_t V3;
+        uint8_t V4;
+        uint8_t V5;
+
+        virtual ~C_TraceFilter() {}
+        virtual bool function() { return true; }
+
+        C_TraceFilter(std::uint32_t Mask, C_CSPlayerPawnBase* Skip1,
+            C_CSPlayerPawnBase* Skip2, int Layer);
+    };
+
+    class TraceManager
+    {
+    public:
+        static TraceManager* Get()
+        {
+            auto value = *reinterpret_cast< TraceManager** >(signatures::TraceManager.GetPtrAs<TraceManager*>());
+            return value;
+        }
+    };
+
+};  // namespace os2::sdk

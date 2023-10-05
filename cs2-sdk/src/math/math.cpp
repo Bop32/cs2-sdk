@@ -4,12 +4,21 @@
 
 #include <imgui/imgui_internal.h>
 
-void CMath::UpdateViewMatrix(VMatrix* viewMatrix) {
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <cmath>
+
+#define DegToRad(x)  ((float)(x) * (float)(M_PI / 180.f))
+#define RadToDegree(x)  ((float)(x) * (float)(180.f / M_PI))
+
+void CMath::UpdateViewMatrix(VMatrix* viewMatrix)
+{
     if (!viewMatrix) return;
     m_ViewMatrix = *viewMatrix;
 }
 
-bool CMath::WorldToScreen(const Vector& in, ImVec2& out) {
+bool CMath::WorldToScreen(const Vector& in, ImVec2& out)
+{
     if (!ImGui::GetCurrentContext()) return false;
 
     const float z = m_ViewMatrix[3][0] * in.x + m_ViewMatrix[3][1] * in.y + m_ViewMatrix[3][2] * in.z + m_ViewMatrix[3][3];
@@ -25,17 +34,18 @@ bool CMath::WorldToScreen(const Vector& in, ImVec2& out) {
     return true;
 }
 
-void CMath::TransformAABB(const matrix3x4_t& transform, const Vector& minsIn, const Vector& maxsIn, Vector& minsOut, Vector& maxsOut) {
+void CMath::TransformAABB(const matrix3x4_t& transform, const Vector& minsIn, const Vector& maxsIn, Vector& minsOut, Vector& maxsOut)
+{
     const Vector localCenter = (minsIn + maxsIn) * 0.5f;
     const Vector localExtent = maxsIn - localCenter;
 
     const auto& mat = transform.m_flMatVal;
-    const Vector worldAxisX{mat[0][0], mat[0][1], mat[0][2]};
-    const Vector worldAxisY{mat[1][0], mat[1][1], mat[1][2]};
-    const Vector worldAxisZ{mat[2][0], mat[2][1], mat[2][2]};
+    const Vector worldAxisX { mat[0][0], mat[0][1], mat[0][2] };
+    const Vector worldAxisY { mat[1][0], mat[1][1], mat[1][2] };
+    const Vector worldAxisZ { mat[2][0], mat[2][1], mat[2][2] };
 
     const Vector worldCenter = localCenter.Transform(transform);
-    const Vector worldExtent{
+    const Vector worldExtent {
         localExtent.DotProductAbsolute(worldAxisX),
         localExtent.DotProductAbsolute(worldAxisY),
         localExtent.DotProductAbsolute(worldAxisZ),
@@ -43,4 +53,22 @@ void CMath::TransformAABB(const matrix3x4_t& transform, const Vector& minsIn, co
 
     minsOut = worldCenter - worldExtent;
     maxsOut = worldCenter + worldExtent;
+}
+
+
+Vector CMath::CalculateAngle(Vector& lookFrom, Vector& lookTo, Vector& viewAngles)
+{
+    Vector delta = lookFrom - lookTo;
+    Vector angles;
+
+    angles.x = RadToDegree(std::atanf(delta.z / std::hypotf(delta.x, delta.y))) - viewAngles.x;
+    angles.y = RadToDegree(std::atanf(delta.y / delta.x)) - viewAngles.y;
+    angles.z = 0.0f;
+
+    if (delta.x >= 0.0)
+    {
+        angles.y += 180.0f;
+    }
+
+    return angles;
 }

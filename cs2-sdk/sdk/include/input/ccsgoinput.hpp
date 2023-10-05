@@ -26,7 +26,6 @@ public:
         static function_t fn = reinterpret_cast< function_t >(signatures::SetViewAngles.GetPtrAs<void*>());
 
         fn(this, 0, angle);
-        //return signatures::SetViewAngles.GetPtr().Call< Vector(*)(void*, uint32_t, Vector&)>(this, unk, angle);
     }
 
 };

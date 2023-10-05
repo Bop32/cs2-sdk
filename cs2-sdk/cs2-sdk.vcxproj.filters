@@ -64,6 +64,9 @@
     <ClCompile Include="sdk\src\interfaces\cvar.cpp" />
     <ClCompile Include="src\hooks\render\vulkan\vulkan_hooks.cpp" />
     <ClCompile Include="src\hacks\misc\misc.cpp" />
+    <ClCompile Include="sdk\src\bindings\trace.cpp" />
+    <ClCompile Include="sdk\src\offsets\offsets.cpp" />
+    <ClCompile Include="src\hacks\aimbot\aimbot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch\pch.hpp" />
@@ -152,5 +155,6 @@
     <ClInclude Include="sdk\include\offets\offsets.hpp" />
     <ClInclude Include="include\globals\globals.hpp" />
     <ClInclude Include="sdk\include\bindings\CSkeletonInstance.hpp" />
+    <ClInclude Include="include\hacks\aimbot\aimbot.hpp" />
   </ItemGroup>
 </Project>

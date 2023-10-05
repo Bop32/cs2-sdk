@@ -1,24 +1,31 @@
+#include <pch.hpp>
+#include <stdint.h>
+
 #include <bindings/trace.hpp>
-#include <interfaces/gameentitysystem.hpp>
+#include <offets/offsets.hpp>
 
-c_trace_filter::c_trace_filter(std::uint64_t trace_mask, CCSPlayerController* local_player, std::uint8_t layer)
+trace::C_TraceFilter::C_TraceFilter(std::uint32_t Mask,
+    C_CSPlayerPawnBase* Skip1,
+    C_CSPlayerPawnBase* Skip2, int Layer)
 {
-    this->trace_mask = trace_mask;
+    TraceMask = Mask;
+    V1[0] = V1[1] = 0;
+    V2 = 7;
+    V3 = Layer;
+    V4 = 0x49;
+    V5 = 0;
 
-    this->null_it1 = 0;
-    this->null_it2 = 0;
-    //this->skip_handle1 = CGameEntitySystem::GetHandleFromEntity(local_player);
-    this->skip_handle2 = 0;
-    this->skip_handle3 = 0;
-    this->skip_handle4 = 0;
+    SkipHandles[0] = offsets::GetEntityHandle(Skip1);
+    SkipHandles[1] = Skip1->GetOwnerHandle();
+    SkipHandles[2] = 0;
+    SkipHandles[3] = 0;
 
-    //this->collision1 = local_player->m_pCollision()->get_collision_mask();
-    this->collision2 = 0;
+    Collisions[0] = Skip1->GetCollisionMask();
+    Collisions[1] = 0;
+}
 
-    this->N0000011C = 7;
-
-    this->layer = layer;
-
-    this->N00000104 = 0x49;
-    this->null_it3 = 0;
+trace::C_SurfaceData* trace::C_GameTrace::GetSurfaceData()
+{
+    if (!offsets::GetSurfaceData) return nullptr;
+    return reinterpret_cast< C_SurfaceData* >(offsets::GetSurfaceData(Surface));
 }

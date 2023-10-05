@@ -107,7 +107,30 @@ namespace signatures
             {SDK_SIG("48 89 6C 24 ? 48 89 74 24 ? 48 89 7C 24 ? 41 56 48 83 EC ? 4D 8B F1")},
         });
 
+    CSigScan GetEntityHandle("GetEntityHandle", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("48 85 C9 74 ? 48 8B 41 ? 48 85 C0 74 ? 44 8B 40 ? BA ? ? ? ? 8B 48 ? 41 8B C0 83 E1")},
+        });
 
+    CSigScan GetSurfaceData("GetSurfaceData", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("E8 ? ? ? ? 48 85 C0 74 ? 44 38 60")},
+        });
+
+    CSigScan TraceShape("TraceShape (Vis Checker)", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("E8 ? ? ? ? 80 7D ? ? 75 ? F3 0F 10 45"), [](CPointer& ptr) { ptr.Offset(0x1); }},
+        });
+
+    CSigScan TraceManager("Trace Manager", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("4C 8B 3D ? ? ? ? 24 C9 0C 49 66 0F 7F 45 ?"), [](CPointer& ptr) { ptr.Absolute(3, 0).Dereference(1); }},
+        });
+
+    CSigScan GetControllerBasedOnIndex("GetControllerBasedOnIndex", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("E8 ? ? ? ? 41 83 BF ? ? ? ? ?"), [](CPointer& ptr) { ptr.Absolute(1, 0); }},
+        });
 
     //E8 ? ? ? ? 80 7D ? ? 75 ? F3 0F 10 45 trace shape. Needed for visible checks.
 

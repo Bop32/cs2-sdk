@@ -19,6 +19,11 @@
 #include <bindings/playerpawn.hpp>
 #include <hacks/misc/misc.hpp>
 #include <globals/globals.hpp>
+#include <bindings/trace.hpp>
+#include <offets/offsets.hpp>
+
+#include <hacks/aimbot/aimbot.hpp>
+#include <vars/vars.hpp>
 
 
 static CHook g_MouseInputEnabled;
@@ -47,27 +52,30 @@ static bool hkCreateMove(void* rcx, int a1, int a2)
 
     if (!cmd) return false;
 
-
-
-    //CLogger::Log("{} {} {}", cmd->base->view->angles.x, cmd->base->view->angles.y, cmd->base->view->angles.z);
-
     auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
 
-    if (!localPlayerController) return false;
+    if (!localPlayerController || !localPlayerController->m_bPawnIsAlive()) return false;
 
     C_CSPlayerPawnBase* pawn = localPlayerController->m_hPawn().Get();
 
     if (!pawn) return false;
 
-    if (!localPlayerController->m_bPawnIsAlive()) return false;
+    if (g_Vars.m_Aimbot)
+    {
+        aimbot::RunAimbot(cmd, pawn);
+    }
 
-    //cmd->base->view->angles = Vector(0, -99, 0);
+    /*
+    using namespace trace;
 
-    //SetViewAngles now works
-    //CCSGOInput::Get()->SetViewAngles(cmd->base->view->angles);
+    C_TraceFilter filter(0x1C3003, pawn, nullptr, 4);
+    C_Ray ray = {};
+    C_GameTrace trace = {};
 
-    //misc::BunnyHop(cmd);
-    //CLogger::Log("{}", CGameEntitySystem::GetHandleFromEntity(pawn));
+    Vector eyePosition = pawn->GetEyePosition();
+
+    offsets::TraceShape(&ray, eyePosition, eyePosition, &filter, &trace);
+    */
 
     return false;
 }
