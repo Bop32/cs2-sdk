@@ -5,3 +5,4 @@ bin/*
 binlinux/*
 
 obj/*
+/cs2-sdk/sdk/include/bindings/baseentity.hpp
