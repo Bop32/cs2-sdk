@@ -25,7 +25,7 @@ namespace offsets
         return fn(TraceManager::Get(), Ray, &Start, &End, Filter, TraceResult);
     }
 
-    void ForceAttack(uint32_t value)
+    void SetForceJump(uint32_t value)
     {
         auto forceAttack = signatures::GetForceJump.GetPtrAs<uint32_t*>();
         *forceAttack = value;

@@ -3,6 +3,6 @@
 
 namespace misc
 {
-    //void BunnyHop(CCSGOInput* input);
-    void BunnyHop(CUserCmd* cmd);
+    void BunnyHop(CCSGOInput* input);
+    //void BunnyHop(CUserCmd* cmd);
 };

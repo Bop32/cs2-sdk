@@ -64,6 +64,7 @@ static bool hkCreateMove(void* rcx, int a1, int a2)
     {
         aimbot::RunAimbot(cmd, pawn);
     }
+    misc::BunnyHop(CCSGOInput::Get());
 
     /*
     using namespace trace;

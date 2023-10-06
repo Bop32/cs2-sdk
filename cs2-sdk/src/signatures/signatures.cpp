@@ -89,7 +89,7 @@ namespace signatures
     //semi works, need to add offset to it.
     CSigScan GetForceJump("GetForceJump", CConstants::CLIENT_LIB,
         {
-            {SDK_SIG("48 8B 05 ? ? ? ? 48 8D 1D ? ? ? ? 48 89 45"), [](CPointer& ptr) { ptr.Absolute(3, 0); }},
+            {SDK_SIG("48 8B 05 ? ? ? ? 48 8D 1D ? ? ? ? 48 89 45"), [](CPointer& ptr) { ptr.Absolute(3, 0).Offset(48); }},
         });
 
     CSigScan SetViewAngles("SetViewAngles", CConstants::CLIENT_LIB,
