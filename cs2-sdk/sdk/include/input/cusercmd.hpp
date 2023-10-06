@@ -12,7 +12,7 @@ public:
 struct CBaseUserCmd
 {
     char pad1[0x40];
-    CmdQAngle* m_viewangles;
+    CmdQAngle* view;
     int m_command_number;
     int m_tick_count;
     float m_forwardmove;
@@ -76,16 +76,15 @@ public:
 
     char pad1[0x20];
     CSubTickContainer m_sub_tick_container;
-    CBaseUserCmd* m_base_cmd;
+    CBaseUserCmd* base;
     int m_start_history_index_attack1;
     int m_start_history_index_attack2;
     int m_start_history_index_attack3;
-    char pad1[0x8];
+    char pad2[0x8];
     uint64_t m_buttons;
     uint64_t m_buttons_changed;
     uint64_t m_buttons_scroll;
-
-    char pad1[0x8];
+    char pad3[0x8];
 
     CSubTickContainer GetSubTickContainer()
     {

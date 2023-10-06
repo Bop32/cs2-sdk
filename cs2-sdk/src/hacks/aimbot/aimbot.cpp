@@ -22,7 +22,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
     auto entitySystem = CGameEntitySystem::Get();
 
-    Vector localPlayerViewAngles = cmd->baseCmd->view->angles;
+    Vector localPlayerViewAngles = cmd->base->view->angles;
 
     Vector target;
 
@@ -39,6 +39,9 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
         C_CSPlayerPawnBase* enemyPawn = enemyController->m_hPawn().Get();
 
         if (!enemyPawn) continue;
+
+        Vector bone_position{};
+        Vector bone_rotation{};
 
         enemyPawn->GetBonePosition(6, bone_position, bone_rotation);
 
@@ -84,7 +87,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
     //cmd->m_buttons |= cmd->IN_ATTACK;
     if (!g_Vars.m_SilentAim)
     {
-        cmd->baseCmd->view->angles = localPlayerViewAngles;
+        cmd->base->view->angles = localPlayerViewAngles;
         CCSGOInput::Get()->SetViewAngles(localPlayerViewAngles);
     }
 }
