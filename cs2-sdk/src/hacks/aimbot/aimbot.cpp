@@ -11,9 +11,10 @@
 #include <logger/logger.hpp>
 #include <offets/offsets.hpp>
 #include <vars/vars.hpp>
+#include <bindings/trace.hpp>
 
-//static std::vector<uint32_t> bones;
 
+using namespace trace;
 
 void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 {
@@ -25,12 +26,9 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
     Vector target;
 
-    Vector bone_position { };
-    Vector bone_rotation { };
-
     Vector localPlayerEyePosition = localPlayer->GetEyePosition();
     Vector angle;
-    int aimbotFov = g_Vars.m_AimbotFov * 2;
+    float aimbotFov = g_Vars.m_AimbotFov * 2.f;
 
     for (int i = 0; i < CGameEntitySystem::GetHighestEntityIndex(); i++)
     {
@@ -50,6 +48,14 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
         angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
 
         angle.Clamp();
+
+        C_TraceFilter filter(0x1C3003, localPlayer, nullptr, 4);
+        C_Ray ray = {};
+        C_GameTrace trace = {};
+
+        Vector eyePosition = localPlayer->GetEyePosition();
+
+        offsets::TraceShape(&ray, eyePosition, eyePosition, &filter, &trace);
 
         auto fov = hypotf(angle.x, angle.y);
 

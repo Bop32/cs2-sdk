@@ -13,10 +13,7 @@ void misc::BunnyHop(CUserCmd* cmd)
 
     if (pawn->m_iFlags() & flags_t::FL_ONGROUND)
     {
-        //offsets::SetForceJump(65537);
+        cmd->buttons &= ~2;
     }
-    else
-    {
-        //offsets::SetForceJump(256);
-    }
+   
 }

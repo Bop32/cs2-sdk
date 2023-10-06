@@ -48,7 +48,7 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 {
     g_CreateMove.CallOriginal<bool>(this_ptr, a1, a2);
 
-    auto cmd = this_ptr->GetUserCmd();
+    CUserCmd* cmd = this_ptr->GetUserCmd();
 
     if (!cmd) return false;
 
@@ -60,11 +60,12 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 
     if (!pawn) return false;
 
+
     if (g_Vars.m_Aimbot)
     {
         aimbot::RunAimbot(cmd, pawn);
     }
-
+    misc::BunnyHop(cmd);
     /*
     using namespace trace;
 
@@ -76,7 +77,6 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 
     offsets::TraceShape(&ray, eyePosition, eyePosition, &filter, &trace);
     */
-
     return false;
 }
 
