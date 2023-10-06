@@ -1,26 +1,14 @@
 #include <signatures/signatures.hpp>
 #include <cstdint>
 #include <module/module.hpp>
+#include <math/types/vector.hpp>
+#include <bindings/trace.hpp>
 
+using namespace trace;
 namespace offsets
 {
-    //CModule client(CConstants::CLIENT_LIB);
-
-    /*
-    void SetForceJump(uint32_t value)
-    {
-        auto dwForceJump = signatures::GetForceJump.GetPtrAs<uint32_t*>();
-        *dwForceJump = value;
-    }
-    */
-
-    /*
-    void SetForceJump(uint32_t value)
-    {
-        uint32_t* dwForceJump = ( uint32_t* )(client.m_Begin + 0x1693100);
-
-        //auto dwForceJump = signatures::GetForceJump.GetPtrAs<uint32_t*>();
-        *dwForceJump = value;
-    }
-    */
+    uint32_t GetEntityHandle(void*);
+    uint64_t GetSurfaceData(void* surface);
+    bool TraceShape(C_Ray* Ray, Vector& Start, Vector& End, void* Filter, C_GameTrace* TraceResult);
+    void ForceAttack(uint32_t value);
 }

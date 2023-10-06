@@ -100,12 +100,12 @@ void CCachedPlayer::RenderESP()
         }
     }
 
-    Vector position{};
-    Vector test2{};
-    ImVec2 out{};
-    controller->GetBonePosition(6, &position, &test2);
+    Vector position {};
+    Vector test2 {};
+    ImVec2 out {};
+    controller->m_hPawn().Get()->GetBonePosition(6, position, test2);
     if (CMath::Get().WorldToScreen(position, out))
-        drawList->AddCircle(out, 2, IM_COL32(255,255,255,255));
+        drawList->AddCircle(out, 2, IM_COL32(255, 255, 255, 255));
 }
 
 void CCachedPlayer::UpdateESP()

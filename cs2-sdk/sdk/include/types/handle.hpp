@@ -24,7 +24,6 @@ class CBaseHandle {
 
     C_BaseEntity* Get() const;
 
-   protected:
     uint32_t m_Index;
 };
 

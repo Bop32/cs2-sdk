@@ -25,7 +25,7 @@ bool CCachedWeapon::CanDrawESP()
 
     if (!g_Vars.m_WeaponESP)
     {
-        RenderGlow(weapon, false);
+        weapon->m_Glow().m_bGlowing() = false;
         return false;
     }
 

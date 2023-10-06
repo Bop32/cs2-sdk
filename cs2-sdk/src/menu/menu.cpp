@@ -88,10 +88,17 @@ void CMenu::RenderUI()
 
     ImGui::SetNextWindowPos(IO.DisplaySize / 2.f, ImGuiCond_Once, { 0.5f, 0.5f });
     ImGui::Begin("cs2-sdk v2", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SeparatorText("Aimbot");
+    ImGui::Checkbox("Enable Aimbot", &g_Vars.m_Aimbot);
+    if (g_Vars.m_Aimbot)
+    {
+        ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);
+        ImGui::Text("FOV");
+        ImGui::SliderInt(" ", & g_Vars.m_AimbotFov, 1, 180);
+    }
+
     ImGui::SeparatorText("Visuals");
-
     ImGui::Checkbox("Master switch", &g_Vars.m_EnableESP);
-
     ImGui::Checkbox("Players box", &g_Vars.m_PlayerBoxes);
     ImGui::Checkbox("Players name", &g_Vars.m_PlayerNames);
     ImGui::Checkbox("Players healthbar", &g_Vars.m_PlayerHealthBar);

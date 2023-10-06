@@ -5,7 +5,7 @@
 namespace signatures {
     extern CSigScan GetBaseEntity, GetHighestEntityIndex;
     extern CSigScan GetLocalPlayer;
-    extern CSigScan GetHandleFromEntity;
+    extern CSigScan GetEntityHandle;
     extern CSigScan GetCSGOInput;
     extern CSigScan GetIsDemoOrHLTV;
     extern CSigScan GetMatricesForView;
@@ -14,6 +14,10 @@ namespace signatures {
     extern CSigScan GetForceJump;
     extern CSigScan GetBonePosition;
     extern CSigScan SetViewAngles;
-    extern CSigScan GetViewAngles;
-    extern CSigScan MaxBoneCount;
+    extern CSigScan GetViewAngles;  
+    extern CSigScan GetEntityHandle;
+    extern CSigScan GetSurfaceData;
+    extern CSigScan TraceShape;
+    extern CSigScan TraceManager;
+    extern CSigScan GetControllerBasedOnIndex;
 }  // namespace signatures

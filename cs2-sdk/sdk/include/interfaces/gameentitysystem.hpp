@@ -15,7 +15,13 @@ class CGameEntitySystem {
     static auto GetHighestEntityIndex() { return Get()->GetHighestEntityIndexInternal(); }
     static CCSPlayerController* GetLocalPlayerController();
 
+    static CCSPlayerController* GetPlayerController(int index)
+    {
+        return static_cast< CCSPlayerController* >(Get()->GetPLayerControllerByIndexInternal(index));
+    }
+
    private:
+    CCSPlayerController* GetPLayerControllerByIndexInternal(int index);
     C_BaseEntity* GetBaseEntityInternal(int index);
     int GetHighestEntityIndexInternal();
 };
