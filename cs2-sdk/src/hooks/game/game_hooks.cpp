@@ -39,11 +39,11 @@ static void* hkOnRemoveEntity(void* rcx, CEntityInstance* inst, CBaseHandle hand
 }
 
 static CHook g_CreateMove;
-static bool hkCreateMove(void* rcx, int a1, int a2)
+static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 {
-    g_CreateMove.CallOriginal<bool>(rcx, a1, a2);
+    g_CreateMove.CallOriginal<bool>(this_ptr, a1, a2);
 
-    auto cmd = CCSGOInput::Get()->GetUserCmd();
+    auto cmd = this_ptr->GetUserCmd();
 
     if (!cmd) return false;
 
@@ -61,12 +61,9 @@ static bool hkCreateMove(void* rcx, int a1, int a2)
 
     if (!localPlayerController->m_bPawnIsAlive()) return false;
 
-    //cmd->base->view->angles = Vector(0, -99, 0);
-
-    //SetViewAngles now works
-    //CCSGOInput::Get()->SetViewAngles(cmd->base->view->angles);
-
-    //misc::BunnyHop(cmd);
+    cmd->base->view->angles = Vector(-89, 0, 0);
+    
+    misc::BunnyHop(cmd);
     //CLogger::Log("{}", CGameEntitySystem::GetHandleFromEntity(pawn));
 
     return false;
