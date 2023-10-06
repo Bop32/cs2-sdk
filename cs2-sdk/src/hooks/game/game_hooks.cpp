@@ -60,14 +60,19 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2) {
 
     if (!pawn) return false;
 
+    //cmd->base->view->angles.x = 89;
+    //cmd->base->view->angles.y *= -1;
+
     if (g_Vars.m_Aimbot)
     {
         aimbot::RunAimbot(cmd, pawn);
-        
     }
 
     misc::NoRecoil(cmd, pawn);
+
     misc::BunnyHop(cmd, pawn);
+
+
 
     return false;
 }

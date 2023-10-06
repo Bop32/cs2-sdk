@@ -20,7 +20,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
     if (!CEngineClient::Get()->IsInGame()) return;
 
     auto entitySystem = CGameEntitySystem::Get();
-
+                                
     Vector localPlayerViewAngles = cmd->base->view->angles;
 
     Vector target;
