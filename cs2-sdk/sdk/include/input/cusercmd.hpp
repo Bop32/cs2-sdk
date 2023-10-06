@@ -13,6 +13,11 @@ struct CBaseUserCmd
 {
     char pad1[0x40];
     CmdQAngle* view;
+    int m_command_number;
+    int m_tick_count;
+    float m_forwardmove;
+    float m_rightmove;
+    float m_upmove;
 };
 
 
@@ -68,18 +73,18 @@ public:
         IN_JUMP_THROW_RELEASE = 34359738368,
     };
 
-    char pad1[0x20];
-    CSubTickContainer subTickContainer;
-    CBaseUserCmd* baseCmd;
-    int startHistoryIndexAttack1;
-    int startHistoryIndexAttack2;
-    int startHistoryIndexAttack3;
-    char pad2[0x8];
-    uint64_t buttons;
-    uint64_t buttonsChanged;
-    uint64_t buttonsScroll;
-    char pad3[0x8];
 
+    char pad1[0x20];
+    CSubTickContainer m_sub_tick_container;
+    CBaseUserCmd* base;
+    int m_start_history_index_attack1;
+    int m_start_history_index_attack2;
+    int m_start_history_index_attack3;
+    char pad2[0x8];
+    uint64_t m_buttons;
+    uint64_t m_buttons_changed;
+    uint64_t m_buttons_scroll;
+    char pad3[0x8];
 
     CSubTickContainer GetSubTickContainer()
     {

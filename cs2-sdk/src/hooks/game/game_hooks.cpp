@@ -44,11 +44,11 @@ static void* hkOnRemoveEntity(void* rcx, CEntityInstance* inst, CBaseHandle hand
 }
 
 static CHook g_CreateMove;
-static bool hkCreateMove(void* rax, int a1, int a2)
-{
-    g_CreateMove.CallOriginal<bool>(rax, a1, a2);
+static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2) {
 
-    auto cmd = CCSGOInput::Get()->GetUserCmd();
+    g_CreateMove.CallOriginal<bool>(this_ptr, a1, a2);
+
+    CUserCmd* cmd = this_ptr->GetUserCmd();
 
     if (!cmd) return false;
 
@@ -59,6 +59,7 @@ static bool hkCreateMove(void* rax, int a1, int a2)
     C_CSPlayerPawnBase* pawn = localPlayerController->m_hPawn().Get();
 
     if (!pawn) return false;
+
 
     if (g_Vars.m_Aimbot)
     {
