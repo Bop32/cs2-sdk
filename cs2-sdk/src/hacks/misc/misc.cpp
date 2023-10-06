@@ -5,15 +5,12 @@
 #include <offets/offsets.hpp>
 #include <interfaces/gameentitysystem.hpp>
 
-void misc::BunnyHop(CUserCmd* cmd)
+static auto bWasLastTimeOnGround = false;
+
+void misc::BunnyHop(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
 {
-    auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
-
-    C_CSPlayerPawnBase* pawn = localPlayerController->m_hPawn().Get();
-
-    if (pawn->m_iFlags() & flags_t::FL_ONGROUND)
+    if (!(pawn->m_iFlags() & 1) != 0)
     {
-        cmd->buttons &= ~2;
+        cmd->buttons &= ~CUserCmd::IN_JUMP;
     }
-   
 }

@@ -19,13 +19,13 @@ namespace offsets
 
     bool TraceShape(C_Ray* Ray, Vector& Start, Vector& End, void* Filter, C_GameTrace* TraceResult)
     {
-        using function_t = bool(__fastcall*)(void*, C_Ray*, Vector*, Vector*, void*, C_GameTrace*);
+        using function_t = bool(__fastcall*)(void*, C_Ray*, Vector&, Vector&, void*, C_GameTrace*);
         static function_t fn = reinterpret_cast< function_t >(signatures::TraceShape.GetPtrAs<void*>());
-
-        return fn(TraceManager::Get(), Ray, &Start, &End, Filter, TraceResult);
+                                                                                            
+        return fn(TraceManager::Get(), Ray, Start, End, Filter, TraceResult);
     }
 
-    void ForceAttack(uint32_t value)
+    void SetForceJump(uint32_t value)
     {
         auto forceAttack = signatures::GetForceJump.GetPtrAs<uint32_t*>();
         *forceAttack = value;

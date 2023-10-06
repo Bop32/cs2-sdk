@@ -14,6 +14,10 @@ public:
     bool m_in_third_person;
     char pad3[0x22];
     int32_t m_sequence_number;
+    uint64_t button_state1;
+    uint64_t button_state2;
+    uint64_t button_state3;
+    uint64_t button_state4;
 
     auto GetUserCmd()
     {

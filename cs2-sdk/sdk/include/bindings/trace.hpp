@@ -93,7 +93,7 @@ namespace trace
     public:
         static TraceManager* Get()
         {
-            auto value = *reinterpret_cast< TraceManager** >(signatures::TraceManager.GetPtrAs<TraceManager*>());
+            auto value = reinterpret_cast< TraceManager* >(signatures::TraceManager.GetPtrAs<TraceManager*>());
             return value;
         }
     };

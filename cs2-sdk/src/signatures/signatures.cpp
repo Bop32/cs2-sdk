@@ -89,7 +89,7 @@ namespace signatures
     //semi works, need to add offset to it.
     CSigScan GetForceJump("GetForceJump", CConstants::CLIENT_LIB,
         {
-            {SDK_SIG("48 8B 05 ? ? ? ? 48 8D 1D ? ? ? ? 48 89 45"), [](CPointer& ptr) { ptr.Absolute(3, 0); }},
+            {SDK_SIG("48 8B 05 ? ? ? ? 48 8D 1D ? ? ? ? 48 89 45"), [](CPointer& ptr) { ptr.Absolute(3, 0).Offset(48); }},
         });
 
     CSigScan SetViewAngles("SetViewAngles", CConstants::CLIENT_LIB,
@@ -119,7 +119,7 @@ namespace signatures
 
     CSigScan TraceShape("TraceShape (Vis Checker)", CConstants::CLIENT_LIB,
         {
-            {SDK_SIG("E8 ? ? ? ? 80 7D ? ? 75 ? F3 0F 10 45"), [](CPointer& ptr) { ptr.Offset(0x1); }},
+            {SDK_SIG("E8 ? ? ? ? 80 7D ? ? 75 ? F3 0F 10 45"), [](CPointer& ptr) { ptr.Absolute(1, 0); }},
         });
 
     CSigScan TraceManager("Trace Manager", CConstants::CLIENT_LIB,
