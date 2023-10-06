@@ -5,26 +5,12 @@
 #include <offets/offsets.hpp>
 #include <interfaces/gameentitysystem.hpp>
 
-void misc::BunnyHop(CCSGOInput* input)
+static auto bWasLastTimeOnGround = false;
+
+void misc::BunnyHop(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
 {
-    auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
-
-    C_CSPlayerPawnBase* pawn = localPlayerController->m_hPawn().Get();
-
-    bool jumped = false;
-    if (GetAsyncKeyState(VK_SPACE) < 0)
+    if (!(pawn->m_iFlags() & 1) != 0)
     {
-        if (pawn->m_iFlags() & flags_t::FL_ONGROUND)
-        {
-                {
-                offsets::SetForceJump(65537);
-                jumped = true;
-            }
-        }
-        else if(jumped)
-        {
-            offsets::SetForceJump(256);
-            jumped = false;
-        }
+        cmd->buttons &= ~CUserCmd::IN_JUMP;
     }
 }

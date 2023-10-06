@@ -26,6 +26,18 @@ CPointer& CPointer::Offset(int offset)
     return *this;
 }
 
+CPointer& CPointer::Jmp()
+{
+    const ptrdiff_t offset = 0x1;
+    auto base = m_Value + offset;
+
+    const auto displacement = *reinterpret_cast<int32_t*>(base);
+    base += displacement;
+    base += sizeof(uint32_t);
+
+    return *this;
+}
+
 CPointer& CPointer::Absolute(int preAbs, int postAbs)
 {
     if (IsValid())

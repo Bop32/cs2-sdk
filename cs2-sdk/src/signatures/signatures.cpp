@@ -119,7 +119,7 @@ namespace signatures
 
     CSigScan TraceShape("TraceShape (Vis Checker)", CConstants::CLIENT_LIB,
         {
-            {SDK_SIG("E8 ? ? ? ? 80 7D ? ? 75 ? F3 0F 10 45"), [](CPointer& ptr) { ptr.Offset(0x1); }},
+            {SDK_SIG("E8 ? ? ? ? 80 7D ? ? 75 ? F3 0F 10 45"), [](CPointer& ptr) { ptr.Absolute(1, 0); }},
         });
 
     CSigScan TraceManager("Trace Manager", CConstants::CLIENT_LIB,

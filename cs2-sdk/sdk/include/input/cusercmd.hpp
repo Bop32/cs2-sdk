@@ -68,10 +68,17 @@ public:
         IN_JUMP_THROW_RELEASE = 34359738368,
     };
 
-    char pad1[0x30];
-    CBaseUserCmd* base;
-    char pad2[0x18];
-    unsigned int buttons;
+    char pad1[0x20];
+    CSubTickContainer subTickContainer;
+    CBaseUserCmd* baseCmd;
+    int startHistoryIndexAttack1;
+    int startHistoryIndexAttack2;
+    int startHistoryIndexAttack3;
+    char pad2[0x8];
+    uint64_t buttons;
+    uint64_t buttonsChanged;
+    uint64_t buttonsScroll;
+    char pad3[0x8];
 
 
     CSubTickContainer GetSubTickContainer()
