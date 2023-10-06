@@ -32,6 +32,7 @@ public:
     SCHEMA(Vector, m_vecViewOffset, "C_BaseModelEntity", "m_vecViewOffset");
     SCHEMA(uint32_t, m_iFlags, "C_BaseEntity", "m_fFlags");
     SCHEMA(CGlowProperty, m_Glow, "C_BaseModelEntity", "m_Glow");
+    SCHEMA(CUtlVector<Vector>, m_aimPunchCache, "C_CSPlayerPawn", "m_aimPunchCache");
 
 
     Vector GetEyePosition()

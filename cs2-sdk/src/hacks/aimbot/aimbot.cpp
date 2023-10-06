@@ -13,10 +13,8 @@
 #include <vars/vars.hpp>
 #include <bindings/trace.hpp>
 
-
 using namespace trace;
 
-using namespace trace;
 void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 {
     if (!CEngineClient::Get()->IsInGame()) return;
@@ -60,14 +58,6 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
         angle.Clamp();
 
-        C_TraceFilter filter(0x1C3003, localPlayer, nullptr, 4);
-        C_Ray ray = {};
-        C_GameTrace trace = {};
-
-        Vector eyePosition = localPlayer->GetEyePosition();
-
-        offsets::TraceShape(&ray, eyePosition, eyePosition, &filter, &trace);
-
         auto fov = hypotf(angle.x, angle.y);
 
         if (fov < aimbotFov)
@@ -85,7 +75,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
 
     localPlayerViewAngles += angle;
-    cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
+    cmd->SetSubTickAngles (cmd, localPlayerViewAngles);
 
     //cmd->m_buttons |= cmd->IN_ATTACK;
     if (!g_Vars.m_SilentAim)
