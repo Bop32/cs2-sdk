@@ -15,6 +15,7 @@
 //static std::vector<uint32_t> bones;
 
 
+using namespace trace;
 void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 {
     if (!CEngineClient::Get()->IsInGame()) return;
@@ -44,6 +45,16 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
         enemyPawn->GetBonePosition(6, bone_position, bone_rotation);
 
+        C_TraceFilter filter(0x1C3003, localPlayer, nullptr, 4);
+        C_Ray ray = {};
+        C_GameTrace trace = {};
+
+        offsets::TraceShape(&ray, localPlayerEyePosition, bone_position, &filter, &trace);
+
+        if(trace.HitEntity != enemyPawn && trace.Fraction < 0.97f) continue;
+
+        CLogger::Log("Player: {} is visible", enemyController->m_sSanitizedPlayerName());
+
         angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
 
         angle.Clamp();
@@ -62,15 +73,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
     {
         return;
     }
-    using namespace trace;
 
-    C_TraceFilter filter(0x1C3003, localPlayer, nullptr, 4);
-    C_Ray ray = {};
-    C_GameTrace trace = {};
-
-    Vector eyePosition = localPlayer->GetEyePosition();
-
-    offsets::TraceShape(&ray, eyePosition, target, &filter, &trace);
 
     localPlayerViewAngles += angle;
     cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
