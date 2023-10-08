@@ -132,6 +132,17 @@ namespace signatures
             {SDK_SIG("E8 ? ? ? ? 41 83 BF ? ? ? ? ?"), [](CPointer& ptr) { ptr.Absolute(1, 0); }},
         });
 
-    //E8 ? ? ? ? 80 7D ? ? 75 ? F3 0F 10 45 trace shape. Needed for visible checks.
+    CSigScan GlobalVars("Global Vars", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 8B 05 ? ? ? ? 48 8B D8 80 78 3D 00 75 1D 80 78 3C 00 75"), [](CPointer& ptr) { ptr.Absolute(3, 0); }},
+        });
+
+    CSigScan LevelInit("Level Init", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 89 5C 24 ? 56 48 83 EC ? 48 8B 0D ? ? ? ? 48 8B F2"), [](CPointer& ptr) { ptr.Absolute(3, 0); }},
+        });
+
 
 }  // namespace signatures

@@ -11,7 +11,6 @@ namespace signatures {
     extern CSigScan GetMatricesForView;
     extern CSigScan GetHitboxSet;
     extern CSigScan HitboxToWorldTransforms;
-    extern CSigScan GetForceJump;
     extern CSigScan GetBonePosition;
     extern CSigScan SetViewAngles;
     extern CSigScan GetViewAngles;  
@@ -20,4 +19,7 @@ namespace signatures {
     extern CSigScan TraceShape;
     extern CSigScan TraceManager;
     extern CSigScan GetControllerBasedOnIndex;
+    extern CSigScan GlobalVars;
+    extern CSigScan LevelInit;
+
 }  // namespace signatures

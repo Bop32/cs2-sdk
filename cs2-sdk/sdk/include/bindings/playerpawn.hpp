@@ -1,6 +1,13 @@
 #pragma once
 
 #include <bindings/baseentity.hpp>
+#include <weapon/c_baseweapon.hpp>
+
+class CPlayer_WeaponServices
+{
+public:
+    SCHEMA(CHandle<C_BasePlayerWeapon>, m_hActiveWeapon, "CPlayer_WeaponServices", "m_hActiveWeapon");
+};
 
 class C_CSPlayerPawnBase : public C_BaseEntity
 {
@@ -8,6 +15,7 @@ public:
     bool IsPlayerPawn();
     bool IsObserverPawn();
 
+    SCHEMA(CPlayer_WeaponServices*, m_pWeaponServices, "C_BasePlayerPawn", "m_pWeaponServices");
 
     uint32_t GetOwnerHandle()
     {
@@ -26,3 +34,5 @@ public:
         return 0;
     }
 };
+
+

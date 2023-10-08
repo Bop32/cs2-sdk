@@ -12,7 +12,7 @@
 #include <offets/offsets.hpp>
 #include <vars/vars.hpp>
 #include <bindings/trace.hpp>
-#include <hacks/misc/misc.hpp>
+#include <globals/globals.hpp>
 
 using namespace trace;
 
@@ -21,7 +21,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
     if (!CEngineClient::Get()->IsInGame()) return;
 
     auto entitySystem = CGameEntitySystem::Get();
-                                
+
     Vector localPlayerViewAngles = cmd->base->view->angles;
 
     Vector target;
@@ -34,8 +34,8 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
     {
         CCSPlayerController* enemyController = reinterpret_cast< CCSPlayerController* >(CGameEntitySystem::GetBaseEntity(i));
 
-        if (!enemyController || !enemyController->IsPlayerController() || 
-            enemyController->m_iTeamNum() == localPlayer->m_iTeamNum() || 
+        if (!enemyController || !enemyController->IsPlayerController() ||
+            enemyController->m_iTeamNum() == localPlayer->m_iTeamNum() ||
             !enemyController->m_bPawnIsAlive()) continue;
 
         C_CSPlayerPawnBase* enemyPawn = enemyController->m_hPawn().Get();
@@ -81,6 +81,19 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
         CCSGOInput::Get()->SetViewAngles(localPlayerViewAngles);
     }
 
-    if(g_Vars.m_AutoFire) cmd->m_buttons |= CUserCmd::IN_ATTACK;
+    if (g_Vars.m_AutoFire)
+    {
+        auto weaponService = localPlayer->m_pWeaponServices();
+
+        if(!weaponService) return;
+
+        auto activeWeapon = weaponService->m_hActiveWeapon().Get();
+        
+        if(!activeWeapon) return;
+
+        if(activeWeapon->m_nNextPrimaryAttackTick() < globals::GlobalVars->tick_count) return;
+
+        cmd->m_buttons |= CUserCmd::IN_ATTACK;
+    }
 }
 

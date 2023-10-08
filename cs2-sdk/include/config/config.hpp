@@ -1,6 +1,5 @@
 #pragma once
 #include <vars/vars.hpp>
-
 using namespace std;
 
 class Config
@@ -13,6 +12,7 @@ public:
     }
     void SaveConfig();
     void CheckDirectory();
+    void LoadConfig();
 
 private:
     char* userpath = getenv("USERPROFILE");

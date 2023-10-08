@@ -116,6 +116,7 @@ void CMenu::RenderUI()
     ImGui::Checkbox("Three-dimensional boxes", &g_Vars.m_Use3DBoxes);
 
     if (ImGui::Button("Save Config", { m_WindowWidth, 0 })) Config::Get().SaveConfig();
+    if (ImGui::Button("Load Config", { m_WindowWidth, 0 })) Config::Get().LoadConfig();
 
 
     if (ImGui::Button("Unload", { m_WindowWidth, 0 })) CInstance::Get().FreeLibrary();
