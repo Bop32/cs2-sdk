@@ -8,6 +8,7 @@ struct Vars_t
 
     int m_AimbotFov = 1;
     bool m_SilentAim;
+    bool m_AutoFire;
 
 
     bool m_PlayerBoxes;

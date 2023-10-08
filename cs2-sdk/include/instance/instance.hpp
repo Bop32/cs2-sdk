@@ -1,8 +1,10 @@
 #pragma once
 
-class CInstance {
-   public:
-    static CInstance& Get() {
+class CInstance
+{
+public:
+    static CInstance& Get()
+    {
         static CInstance inst;
         return inst;
     }

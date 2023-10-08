@@ -128,6 +128,7 @@
     <ClCompile Include="src\cache\entities\hen.cpp" />
     <ClCompile Include="src\cache\entities\player.cpp" />
     <ClCompile Include="src\cache\entities\weapon.cpp" />
+    <ClCompile Include="src\config\config.cpp" />
     <ClCompile Include="src\hacks\aimbot\aimbot.cpp" />
     <ClCompile Include="src\hacks\esp\esp.cpp" />
     <ClCompile Include="src\hacks\misc\misc.cpp" />
@@ -244,6 +245,7 @@
     <ClInclude Include="include\cache\entities\hen.hpp" />
     <ClInclude Include="include\cache\entities\player.hpp" />
     <ClInclude Include="include\cache\entities\weapon.hpp" />
+    <ClInclude Include="include\config\config.hpp" />
     <ClInclude Include="include\constants\constants.hpp" />
     <ClInclude Include="include\fnv\fnv1a.hpp" />
     <ClInclude Include="include\globals\globals.hpp" />

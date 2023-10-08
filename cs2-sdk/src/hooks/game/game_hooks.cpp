@@ -60,13 +60,14 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2) {
 
     if (!pawn) return false;
 
+    //misc::NoRecoil(cmd, pawn);
+
     if (g_Vars.m_Aimbot)
     {
         aimbot::RunAimbot(cmd, pawn);
         
     }
 
-    misc::NoRecoil(cmd, pawn);
     misc::BunnyHop(cmd, pawn);
 
     return false;

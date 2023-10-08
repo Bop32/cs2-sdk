@@ -12,6 +12,7 @@
 #include <offets/offsets.hpp>
 #include <vars/vars.hpp>
 #include <bindings/trace.hpp>
+#include <hacks/misc/misc.hpp>
 
 using namespace trace;
 
@@ -33,14 +34,16 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
     {
         CCSPlayerController* enemyController = reinterpret_cast< CCSPlayerController* >(CGameEntitySystem::GetBaseEntity(i));
 
-        if (!enemyController || !enemyController->IsPlayerController() || enemyController->m_iTeamNum() == localPlayer->m_iTeamNum() || !enemyController->m_bPawnIsAlive()) continue;
+        if (!enemyController || !enemyController->IsPlayerController() || 
+            enemyController->m_iTeamNum() == localPlayer->m_iTeamNum() || 
+            !enemyController->m_bPawnIsAlive()) continue;
 
         C_CSPlayerPawnBase* enemyPawn = enemyController->m_hPawn().Get();
 
         if (!enemyPawn) continue;
 
-        Vector bone_position{};
-        Vector bone_rotation{};
+        Vector bone_position {};
+        Vector bone_rotation {};
 
         enemyPawn->GetBonePosition(6, bone_position, bone_rotation);
 
@@ -50,9 +53,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
         offsets::TraceShape(&ray, localPlayerEyePosition, bone_position, &filter, &trace);
 
-        if(trace.HitEntity != enemyPawn && trace.Fraction < 0.97f) continue;
-
-        CLogger::Log("Player: {} is visible", enemyController->m_sSanitizedPlayerName());
+        if (trace.HitEntity != enemyPawn && trace.Fraction < 0.97f) continue;
 
         angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
 
@@ -68,19 +69,18 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
         }
     }
 
-    if (target.IsZero())
-    {
-        return;
-    }
+    if (target.IsZero()) return;
 
+    //If we want "NoRecoil" as a menu item just subtract angle before below statement.
+    localPlayerViewAngles += angle - localPlayer->m_aimPunchAngle() * 2;
+    cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
 
-    localPlayerViewAngles += angle;
-    cmd->SetSubTickAngles (cmd, localPlayerViewAngles);
-
-    //cmd->m_buttons |= cmd->IN_ATTACK;
     if (!g_Vars.m_SilentAim)
     {
         cmd->base->view->angles = localPlayerViewAngles;
         CCSGOInput::Get()->SetViewAngles(localPlayerViewAngles);
     }
+
+    if(g_Vars.m_AutoFire) cmd->m_buttons |= CUserCmd::IN_ATTACK;
 }
+

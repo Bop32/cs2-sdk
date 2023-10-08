@@ -14,11 +14,17 @@ public:
     Vector operator+(const Vector& rhs) const { return Vector { x + rhs.x, y + rhs.y, z + rhs.z }; }
     Vector operator-(const Vector& rhs) const { return Vector { x - rhs.x, y - rhs.y, z - rhs.z }; }
     Vector operator*(float scalar) const { return Vector { x * scalar, y * scalar, z * scalar }; }
-    Vector operator+=(const Vector& rhs) { return Vector { x += rhs.x, y += rhs.y, z += rhs.z}; }
+    Vector operator+=(const Vector& rhs) { return Vector { x += rhs.x, y += rhs.y, z += rhs.z }; }
+    Vector operator-=(const Vector& rhs) { return Vector { x -= rhs.x, y -= rhs.y, z -= rhs.z}; }
 
     bool IsZero()
     {
         return x == 0 && y == 0 && z == 0;
+    }
+
+    float Length(const Vector& vector)
+    {
+        return std::sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
     }
 
     Vector Clamp()

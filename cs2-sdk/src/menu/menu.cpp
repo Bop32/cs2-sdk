@@ -12,6 +12,7 @@
 #include <sdl/sdl.hpp>
 
 #include <imgui/imgui.h>
+#include <config/config.hpp>
 
 void CMenu::Render()
 {
@@ -92,6 +93,7 @@ void CMenu::RenderUI()
     ImGui::Checkbox("Enable Aimbot", &g_Vars.m_Aimbot);
     if (g_Vars.m_Aimbot)
     {
+        ImGui::Checkbox("Auto Shoot", &g_Vars.m_AutoFire);
         ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);
         ImGui::Text("FOV");
         ImGui::SliderInt(" ", & g_Vars.m_AimbotFov, 1, 180);
@@ -113,6 +115,10 @@ void CMenu::RenderUI()
     ImGui::Checkbox("Others ESP", &g_Vars.m_OtherESP);
     ImGui::Checkbox("Three-dimensional boxes", &g_Vars.m_Use3DBoxes);
 
+    if (ImGui::Button("Save Config", { m_WindowWidth, 0 })) Config::Get().SaveConfig();
+
+
     if (ImGui::Button("Unload", { m_WindowWidth, 0 })) CInstance::Get().FreeLibrary();
+
     ImGui::End();
 }

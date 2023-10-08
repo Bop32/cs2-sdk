@@ -67,6 +67,7 @@
     <ClCompile Include="sdk\src\bindings\trace.cpp" />
     <ClCompile Include="sdk\src\offsets\offsets.cpp" />
     <ClCompile Include="src\hacks\aimbot\aimbot.cpp" />
+    <ClCompile Include="src\config\config.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch\pch.hpp" />
@@ -156,5 +157,6 @@
     <ClInclude Include="include\globals\globals.hpp" />
     <ClInclude Include="sdk\include\bindings\CSkeletonInstance.hpp" />
     <ClInclude Include="include\hacks\aimbot\aimbot.hpp" />
+    <ClInclude Include="include\config\config.hpp" />
   </ItemGroup>
 </Project>

@@ -5,8 +5,6 @@
 #include <offets/offsets.hpp>
 #include <interfaces/gameentitysystem.hpp>
 
-static auto bWasLastTimeOnGround = false;
-
 void misc::BunnyHop(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
 {
     if (!(pawn->m_iFlags() & 1) != 0)
@@ -15,10 +13,12 @@ void misc::BunnyHop(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
     }
 }
 
-void misc::NoRecoil(CUserCmd* cmd, C_CSPlayerPawnBase* pawn) {
+void misc::NoRecoil(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
+{
     auto aimPunch = pawn->m_aimPunchCache();
 
-    if (aimPunch.m_Size > 0 && aimPunch.m_Size < 0xFFFF) {
+    if (aimPunch.m_Size > 0 && aimPunch.m_Size < 0xFFFF)
+    {
         auto recoil = aimPunch.m_Data[aimPunch.m_Size - 1];
 
         static Vector prev = Vector(0.f, 0.f, 0.f);
@@ -29,14 +29,16 @@ void misc::NoRecoil(CUserCmd* cmd, C_CSPlayerPawnBase* pawn) {
 
         cmd->base->view->angles += delta * 2;
 
-        cmd->base->view->angles.Clamp(); // Remove?
+        cmd->base->view->angles.Clamp();
 
-       CCSGOInput::Get()->SetViewAngles(cmd->base->view->angles);
+        CCSGOInput::Get()->SetViewAngles(cmd->base->view->angles);
 
         bulletsPost.push_back(cmd->base->view->angles);
 
         prev = recoil;
-    } else {
+    }
+    else
+    {
         bulletsPre.clear();
         bulletsPost.clear();
     }
