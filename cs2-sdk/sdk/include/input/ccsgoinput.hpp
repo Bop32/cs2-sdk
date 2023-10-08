@@ -32,4 +32,11 @@ public:
         fn(this, 0, angle);
     }
 
+    Vector GetViewAngles() {
+        using function_t = uint64_t(__fastcall*)(CCSGOInput*, std::int32_t);
+        static function_t fn = reinterpret_cast<function_t>(signatures::GetViewAngles.GetPtrAs<void*>());
+
+        return *reinterpret_cast<Vector*>(fn(this, 0));
+    }
+
 };

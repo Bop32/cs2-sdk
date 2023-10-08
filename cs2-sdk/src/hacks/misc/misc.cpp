@@ -29,16 +29,14 @@ void misc::NoRecoil(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
 
         cmd->base->view->angles += delta * 2;
 
-        cmd->base->view->angles.Clamp();
+        cmd->base->view->angles.Clamp(); // Remove?
 
         CCSGOInput::Get()->SetViewAngles(cmd->base->view->angles);
-
+ 
         bulletsPost.push_back(cmd->base->view->angles);
 
         prev = recoil;
-    }
-    else
-    {
+    } else {
         bulletsPre.clear();
         bulletsPost.clear();
     }
