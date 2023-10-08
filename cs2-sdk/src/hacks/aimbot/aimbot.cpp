@@ -16,6 +16,16 @@
 
 using namespace trace;
 
+bool aimbot::HitChance(C_CSPlayerPawnBase* localPlayer)
+{
+    constexpr float HITCHANCE_MAX = 100.f;
+    constexpr int   SEED_MAX = 255;
+    Vector     start { localPlayer->GetEyePosition()}, end, fwd, right, up, dir, wep_spread;
+    float      inaccuracy, spread;
+    trace::C_GameTrace tr;
+
+}
+
 void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 {
     if (!CEngineClient::Get()->IsInGame()) return;
@@ -71,8 +81,8 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
     if (target.IsZero()) return;
 
-    //If we want "NoRecoil" as a menu item just subtract angle before below statement.
     localPlayerViewAngles += angle - localPlayer->m_aimPunchAngle() * 2;
+
     cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
 
     if (!g_Vars.m_SilentAim)
@@ -85,13 +95,19 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
     {
         auto weaponService = localPlayer->m_pWeaponServices();
 
-        if(!weaponService) return;
+        if (!weaponService) return;
 
         auto activeWeapon = weaponService->m_hActiveWeapon().Get();
-        
-        if(!activeWeapon) return;
 
-        if(activeWeapon->m_nNextPrimaryAttackTick() < globals::GlobalVars->tick_count) return;
+        if (!activeWeapon) return;
+
+
+        if (!globals::GlobalVars)
+        {
+            globals::GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
+        }
+
+        if (activeWeapon->m_nNextPrimaryAttackTick() > globals::GlobalVars->tick_count) return;
 
         cmd->m_buttons |= CUserCmd::IN_ATTACK;
     }

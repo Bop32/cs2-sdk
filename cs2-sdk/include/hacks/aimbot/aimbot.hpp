@@ -5,4 +5,5 @@
 namespace aimbot
 {
     void RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer);
+    bool HitChance(C_CSPlayerPawnBase* localPlayer);
 }

@@ -141,7 +141,7 @@ namespace signatures
     CSigScan LevelInit("Level Init", CConstants::CLIENT_LIB,
 
         {
-            {SDK_SIG("48 89 5C 24 ? 56 48 83 EC ? 48 8B 0D ? ? ? ? 48 8B F2"), [](CPointer& ptr) { ptr.Absolute(3, 0); }},
+            {SDK_SIG("48 89 5C 24 ? 56 48 83 EC ? 48 8B 0D ? ? ? ? 48 8B F2")},
         });
 
 

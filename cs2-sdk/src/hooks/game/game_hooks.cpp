@@ -44,11 +44,11 @@ static void* hkOnRemoveEntity(void* rcx, CEntityInstance* inst, CBaseHandle hand
 }
 
 static CHook g_LevelInit;
-static void* hkLevelInit(void* rcx)
+static __int64 hkLevelInit(void* rcx)
 {
-    globals::GlobalVars = signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase*>();
+    globals::GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
 
-    return g_LevelInit.CallOriginal<void*>(rcx);
+    return g_LevelInit.CallOriginal<__int64>(rcx);
 }
 
 
@@ -70,17 +70,12 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 
     if (!pawn) return false;
 
-    //misc::NoRecoil(cmd, pawn);
-
     if (g_Vars.m_Aimbot)
     {
         aimbot::RunAimbot(cmd, pawn);
     }
 
-    //misc::NoRecoil(cmd, pawn);
     misc::BunnyHop(cmd, pawn);
-
-
 
     return false;
 }
@@ -113,5 +108,5 @@ void CGameHooks::Initialize()
     g_GetMatricesForView.Hook(signatures::GetMatricesForView.GetPtrAs<void*>(), SDK_HOOK(hkGetMatricesForView));
     g_CreateMove.VHook(CCSGOInput::Get(), 5, SDK_HOOK(hkCreateMove));
     g_IsDemoOrHLTV.Hook(signatures::GetIsDemoOrHLTV.GetPtrAs<void*>(), SDK_HOOK(hkIsDemoOrHLTV));
-    //g_LevelInit.Hook(signatures::LevelInit.GetPtrAs<void*>(), SDK_HOOK(hkLevelInit));
+    g_LevelInit.Hook(signatures::LevelInit.GetPtrAs<void*>(), SDK_HOOK(hkLevelInit));
 }
