@@ -23,7 +23,7 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* localPlayer)
     Vector     start { localPlayer->GetEyePosition()}, end, fwd, right, up, dir, wep_spread;
     float      inaccuracy, spread;
     trace::C_GameTrace tr;
-
+    return true;
 }
 
 void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
@@ -81,7 +81,8 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
     if (target.IsZero()) return;
 
-    localPlayerViewAngles += angle - localPlayer->m_aimPunchAngle() * 2;
+    auto& aimPunch = localPlayer->m_aimPunchCache();
+    localPlayerViewAngles += angle - aimPunch.m_Data[aimPunch.m_Size - 1] * 2;
 
     cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
 

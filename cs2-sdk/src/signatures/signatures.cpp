@@ -144,5 +144,16 @@ namespace signatures
             {SDK_SIG("48 89 5C 24 ? 56 48 83 EC ? 48 8B 0D ? ? ? ? 48 8B F2")},
         });
 
+    CSigScan BoneParent("BoneParent", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("85 D2 78 17 3B 91 70")},
+        });
+
+    CSigScan DrawObjectHook("DrawObjectHook", CConstants::SCENESYSTEM,
+        {
+            {SDK_SIG("48 8B C4 48 89 50 10 55 41 56")}
+        });
+
 
 }  // namespace signatures

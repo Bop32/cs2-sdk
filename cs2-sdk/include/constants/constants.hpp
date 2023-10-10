@@ -8,6 +8,17 @@
 
 class CConstants {
    public:
+
+       static constexpr auto SCENESYSTEM = []
+           {
+#ifdef _WIN32
+               return "scenesystem.dll";
+#elif __linux__
+               return "libscenefilecache.so";
+#endif
+           }();
+
+
     static constexpr auto NAVSYSTEM_LIB = [] {
 #ifdef _WIN32
         return "navsystem.dll";

@@ -100,12 +100,57 @@ void CCachedPlayer::RenderESP()
         }
     }
 
-    Vector position {};
-    Vector test2 {};
-    ImVec2 out {};
-    controller->m_hPawn().Get()->GetBonePosition(6, position, test2);
-    if (CMath::Get().WorldToScreen(position, out))
-        drawList->AddCircle(out, 2, IM_COL32(255, 255, 255, 255));
+    const int bones[][2] =
+    {
+        { 27, 26 },{ 26, 25 },{ 25, 0 }, //right leg
+        { 24, 23 },{ 23, 22 },{ 22, 0 }, //left leg
+        { 5, 8 },{ 8, 9 },{ 9, 10 }, //left arm
+        { 5, 13 },{ 13, 14 },{ 14, 15 }, //right arm
+        { 0, 2 },{ 2, 5 },{ 5, 6 } //spine
+    };
+
+    for (int i = 0; i < 15; ++i)
+    {
+        Vector rot1, rot2;
+        ImVec2 Out1, Out2;
+        Vector From;
+        Vector To;
+
+        controller->m_hPawn().Get()->GetBonePosition(bones[i][0], From, rot1);
+        controller->m_hPawn().Get()->GetBonePosition(bones[i][1], To, rot1);
+
+        if (CMath::Get().WorldToScreen(From, Out1) && CMath::Get().WorldToScreen(To, Out2))
+        {
+            drawList->AddLine(Out1, Out2, IM_COL32(255, 255, 255, 255));
+        }
+    }
+    /*
+    CGameSceneNode* gameSceneNode = controller->m_pGameSceneNode();
+
+    if (!gameSceneNode) return;
+
+    skeleton::CSkeletonInstance* skeleton_instance = gameSceneNode->GetSkeletonInstance();
+
+    if (skeleton_instance == nullptr) return;
+
+    CModelState model_state = skeleton_instance->m_modelState();
+
+    CModel model = model_state.modelHandle;
+
+    for (std::int32_t i = 0; i < model.BoneCount; ++i)
+    {
+        auto test = model.GetBoneParent(i);
+
+        if (test == -1) continue;
+
+        ImVec2 bone_screen_position;
+        ImVec2 bone_screen_parent_position;
+
+        CMath::Get().WorldToScreen(Vector(model_state.bones[i].position.x, model_state.bones[i].position.y, model_state.bones[i].position.z), bone_screen_position);
+        CMath::Get().WorldToScreen(Vector(model_state.bones[test].position.x, model_state.bones[test].position.y, model_state.bones[test].position.z), bone_screen_position);
+        drawList->AddLine(bone_screen_position, bone_screen_parent_position, ImColor(255,255,255,255));
+    }
+    */
 }
 
 void CCachedPlayer::UpdateESP()

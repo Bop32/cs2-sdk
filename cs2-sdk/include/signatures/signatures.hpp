@@ -21,5 +21,6 @@ namespace signatures {
     extern CSigScan GetControllerBasedOnIndex;
     extern CSigScan GlobalVars;
     extern CSigScan LevelInit;
+    extern CSigScan BoneParent;
 
 }  // namespace signatures

@@ -111,6 +111,7 @@
     <ClCompile Include="api\src\hook\hook.cpp" />
     <ClCompile Include="api\src\module\module.cpp" />
     <ClCompile Include="api\src\pointer\pointer.cpp" />
+    <ClCompile Include="sdk\include\bindings\modeldata.cpp" />
     <ClCompile Include="sdk\src\bindings\baseentity.cpp" />
     <ClCompile Include="sdk\src\bindings\entityinstance.cpp" />
     <ClCompile Include="sdk\src\bindings\playerpawn.cpp" />
@@ -260,6 +261,8 @@
     <ClInclude Include="include\hooks\render\render_hooks.hpp" />
     <ClInclude Include="include\hooks\render\vulkan\vulkan_hooks.hpp" />
     <ClInclude Include="include\instance\instance.hpp" />
+    <ClInclude Include="include\material\keystring.hpp" />
+    <ClInclude Include="include\material\material.hpp" />
     <ClInclude Include="include\nlohmann\adl_serializer.hpp" />
     <ClInclude Include="include\nlohmann\byte_container_with_subtype.hpp" />
     <ClInclude Include="include\nlohmann\detail\abi_macros.hpp" />
