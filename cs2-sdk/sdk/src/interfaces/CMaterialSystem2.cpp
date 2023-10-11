@@ -6,7 +6,7 @@
 
 CMaterialSystem2* CMaterialSystem2::Get()
 {
-    static const auto inst = CMemory::GetInterface(CConstants::SCENESYSTEM_LIB, "VMaterialSystem2_001");
+    static const auto inst = CMemory::GetInterface(CConstants::MATERIALSYSTEM2, "VMaterialSystem2_001");
     return inst.Get<CMaterialSystem2*>();
 }
 

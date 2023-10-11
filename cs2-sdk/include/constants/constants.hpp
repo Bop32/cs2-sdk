@@ -19,6 +19,15 @@ public:
 #endif
         }();
 
+        static constexpr auto MATERIALSYSTEM2 = []
+            {
+#ifdef _WIN32
+                return "materialsystem2.dll";
+#elif __linux__
+                return "scenesystem.dll";
+#endif
+            }();
+
 
         static constexpr auto NAVSYSTEM_LIB = []
             {

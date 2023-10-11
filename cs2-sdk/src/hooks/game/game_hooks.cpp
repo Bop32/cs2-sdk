@@ -69,8 +69,8 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
     if (strstr(name, "characters/models") != nullptr)
     {
         CMaterial2** custom_material;
-        CMaterialSystem2::Get()->FindMaterial(&custom_material, "materials/dev/primary_white.vmat");
-        //*( CMaterial2** )(( uintptr_t )data + 0x18) = custom_material;
+        CMaterialSystem2::Get()->FindMaterial(&custom_material, "materials/dev/glowproperty.vmat");
+        *( CMaterial2** )(( uintptr_t )data + 0x18) = *custom_material;
         g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
     }
 
