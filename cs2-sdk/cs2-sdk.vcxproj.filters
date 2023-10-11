@@ -69,6 +69,7 @@
     <ClCompile Include="src\hacks\aimbot\aimbot.cpp" />
     <ClCompile Include="src\config\config.cpp" />
     <ClCompile Include="sdk\include\bindings\modeldata.cpp" />
+    <ClCompile Include="sdk\src\interfaces\CMaterialSystem2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch\pch.hpp" />
@@ -206,5 +207,6 @@
     <ClInclude Include="include\weapon\c_baseweapon.hpp" />
     <ClInclude Include="include\material\material.hpp" />
     <ClInclude Include="include\material\keystring.hpp" />
+    <ClInclude Include="sdk\include\interfaces\CMaterialSystem2.hpp" />
   </ItemGroup>
 </Project>

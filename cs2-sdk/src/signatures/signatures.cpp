@@ -150,7 +150,7 @@ namespace signatures
             {SDK_SIG("85 D2 78 17 3B 91 70")},
         });
 
-    CSigScan DrawObjectHook("DrawObjectHook", CConstants::SCENESYSTEM,
+    CSigScan DrawObjectHook("DrawObjectHook", CConstants::SCENESYSTEM_LIB,
         {
             {SDK_SIG("48 8B C4 48 89 50 10 55 41 56")}
         });

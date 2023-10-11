@@ -2,7 +2,8 @@
 
 #include <sigscan/sigscan.hpp>
 
-namespace signatures {
+namespace signatures
+{
     extern CSigScan GetBaseEntity, GetHighestEntityIndex;
     extern CSigScan GetLocalPlayer;
     extern CSigScan GetEntityHandle;
@@ -13,7 +14,7 @@ namespace signatures {
     extern CSigScan HitboxToWorldTransforms;
     extern CSigScan GetBonePosition;
     extern CSigScan SetViewAngles;
-    extern CSigScan GetViewAngles;  
+    extern CSigScan GetViewAngles;
     extern CSigScan GetEntityHandle;
     extern CSigScan GetSurfaceData;
     extern CSigScan TraceShape;
@@ -22,5 +23,6 @@ namespace signatures {
     extern CSigScan GlobalVars;
     extern CSigScan LevelInit;
     extern CSigScan BoneParent;
+    extern CSigScan DrawObjectHook;
 
 }  // namespace signatures

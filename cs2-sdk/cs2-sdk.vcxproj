@@ -116,6 +116,7 @@
     <ClCompile Include="sdk\src\bindings\entityinstance.cpp" />
     <ClCompile Include="sdk\src\bindings\playerpawn.cpp" />
     <ClCompile Include="sdk\src\bindings\trace.cpp" />
+    <ClCompile Include="sdk\src\interfaces\CMaterialSystem2.cpp" />
     <ClCompile Include="sdk\src\interfaces\cvar.cpp" />
     <ClCompile Include="sdk\src\interfaces\engineclient.cpp" />
     <ClCompile Include="sdk\src\interfaces\gameentitysystem.cpp" />
@@ -361,6 +362,7 @@
     <ClInclude Include="sdk\include\bindings\trace.hpp" />
     <ClInclude Include="sdk\include\input\ccsgoinput.hpp" />
     <ClInclude Include="sdk\include\input\cusercmd.hpp" />
+    <ClInclude Include="sdk\include\interfaces\CMaterialSystem2.hpp" />
     <ClInclude Include="sdk\include\interfaces\cvar.hpp" />
     <ClInclude Include="sdk\include\interfaces\engineclient.hpp" />
     <ClInclude Include="sdk\include\interfaces\gameentitysystem.hpp" />

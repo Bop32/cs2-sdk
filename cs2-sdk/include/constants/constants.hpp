@@ -6,88 +6,98 @@
 #define LINUX_OFFSET(x) 0
 #endif
 
-class CConstants {
-   public:
+class CConstants
+{
+public:
 
-       static constexpr auto SCENESYSTEM = []
-           {
+    static constexpr auto SCENESYSTEM_LIB = []
+        {
 #ifdef _WIN32
-               return "scenesystem.dll";
+            return "scenesystem.dll";
 #elif __linux__
-               return "libscenefilecache.so";
+            return "scenesystem.dll";
 #endif
-           }();
+        }();
 
 
-    static constexpr auto NAVSYSTEM_LIB = [] {
+        static constexpr auto NAVSYSTEM_LIB = []
+            {
 #ifdef _WIN32
-        return "navsystem.dll";
+                return "navsystem.dll";
 #elif __linux__
-        return "libscenefilecache.so";
+                return "libscenefilecache.so";
 #endif
-    }();
+            }();
 
-    static constexpr auto CLIENT_LIB = [] {
+            static constexpr auto CLIENT_LIB = []
+                {
 #ifdef _WIN32
-        return "client.dll";
+                    return "client.dll";
 #elif __linux__
-        return "libclient.so";
+                    return "libclient.so";
 #endif
-    }();
+                }();
 
-    static constexpr auto ENGINE_LIB = [] {
+                static constexpr auto ENGINE_LIB = []
+                    {
 #ifdef _WIN32
-        return "engine2.dll";
+                        return "engine2.dll";
 #elif __linux__
-        return "libengine2.so";
+                        return "libengine2.so";
 #endif
-    }();
+                    }();
 
-    static constexpr auto SDL_LIB = [] {
+                    static constexpr auto SDL_LIB = []
+                        {
 #ifdef _WIN32
-        return "SDL3.dll";
+                            return "SDL3.dll";
 #elif __linux__
-        return "libSDL3.so.0";
+                            return "libSDL3.so.0";
 #endif
-    }();
+                        }();
 
-    static constexpr auto INPUTSYSTEM_LIB = [] {
+                        static constexpr auto INPUTSYSTEM_LIB = []
+                            {
 #ifdef _WIN32
-        return "inputsystem.dll";
+                                return "inputsystem.dll";
 #elif __linux__
-        return "libinputsystem.so";
+                                return "libinputsystem.so";
 #endif
-    }();
+                            }();
 
-    static constexpr auto SCHEMASYSTEM_LIB = [] {
+                            static constexpr auto SCHEMASYSTEM_LIB = []
+                                {
 #ifdef _WIN32
-        return "schemasystem.dll";
+                                    return "schemasystem.dll";
 #elif __linux__
-        return "libschemasystem.so";
+                                    return "libschemasystem.so";
 #endif
-    }();
+                                }();
 
-    static constexpr auto ANIMATIONSYSTEM_LIB = [] {
+                                static constexpr auto ANIMATIONSYSTEM_LIB = []
+                                    {
 #ifdef _WIN32
-        return "animationsystem.dll";
+                                        return "animationsystem.dll";
 #elif __linux__
-        return "libanimationsystem.so";
+                                        return "libanimationsystem.so";
 #endif
-    }();
+                                    }();
 
-    static constexpr auto TIER_LIB = [] {
+                                    static constexpr auto TIER_LIB = []
+                                        {
 #ifdef _WIN32
-        return "tier0.dll";
+                                            return "tier0.dll";
 #elif __linux__
-        return "libtier0.so";
+                                            return "libtier0.so";
 #endif
-    }();
+                                        }();
 
-    static constexpr auto RENDERSYSTEMVULKAN_LIB = [] {
+                                        static constexpr auto RENDERSYSTEMVULKAN_LIB = []
+                                            {
 #ifdef _WIN32
-        return "rendersystemvulkan.dll";
+                                                return "rendersystemvulkan.dll";
 #elif __linux__
-        return "librendersystemvulkan.so";
+                                                return "librendersystemvulkan.so";
 #endif
-    }();
+                                            }();
 };

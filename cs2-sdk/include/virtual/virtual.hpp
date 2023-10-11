@@ -16,14 +16,8 @@ namespace vt
     }
 
     template <typename T, typename... Args>
-    inline T CallVirtual(uint32_t uIndex, void* pClass, Args... args)
+    inline T CallVirtual(uint32_t uIndex, CPointer base, Args... args)
     {
-        auto pFunc = GetVMethod<T(__thiscall*)(void*, Args...)>(uIndex, pClass);
-        if (!pFunc)
-        {
-            return T {};
-        }
-
-        return pFunc(pClass, args...);
+        return GetMethod(base, uIndex).Call<T(*)(void*, Args...)>(base.Get<void*>(), std::forward<Args>(args)...);
     }
 }  // namespace vt

@@ -24,6 +24,8 @@
 
 #include <hacks/aimbot/aimbot.hpp>
 #include <vars/vars.hpp>
+#include <material/material.hpp>
+#include <interfaces/CMaterialSystem2.hpp>
 
 
 static CHook g_MouseInputEnabled;
@@ -51,6 +53,29 @@ static __int64 hkLevelInit(void* rcx)
     return g_LevelInit.CallOriginal<__int64>(rcx);
 }
 
+
+static CHook g_DrawObject;
+
+static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
+    int unknown_bool, void* scene_view, void* scene_layer, void* unknown_pointer, void* unknown)
+{
+    using namespace material;
+    auto original = g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
+
+    CMaterial2* material = *( CMaterial2** )(( uintptr_t )data + 0x18);
+
+    auto name = material->GetName();
+
+    if (strstr(name, "characters/models") != nullptr)
+    {
+        CMaterial2** custom_material;
+        CMaterialSystem2::Get()->FindMaterial(&custom_material, "materials/dev/primary_white.vmat");
+        //*( CMaterial2** )(( uintptr_t )data + 0x18) = custom_material;
+        g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
+    }
+
+    return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
+}
 
 static CHook g_CreateMove;
 static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
@@ -109,4 +134,5 @@ void CGameHooks::Initialize()
     g_CreateMove.VHook(CCSGOInput::Get(), 5, SDK_HOOK(hkCreateMove));
     g_IsDemoOrHLTV.Hook(signatures::GetIsDemoOrHLTV.GetPtrAs<void*>(), SDK_HOOK(hkIsDemoOrHLTV));
     g_LevelInit.Hook(signatures::LevelInit.GetPtrAs<void*>(), SDK_HOOK(hkLevelInit));
+    g_DrawObject.Hook(signatures::DrawObjectHook.GetPtrAs<void*>(), SDK_HOOK(hkDrawObject));
 }
