@@ -34,6 +34,9 @@ public:
     SCHEMA(CGlowProperty, m_Glow, "C_BaseModelEntity", "m_Glow");
     SCHEMA(CUtlVector<Vector>, m_aimPunchCache, "C_CSPlayerPawn", "m_aimPunchCache");
     SCHEMA(Vector, m_aimPunchAngle, "C_CSPlayerPawn", "m_aimPunchAngle");
+    SCHEMA(uint32_t, m_iHealth, "C_BaseEntity", "m_iHealth");
+    SCHEMA(uint32_t, m_ArmorValue, "C_CSPlayerPawnBase", "m_ArmorValue");
+
 
 
     Vector GetEyePosition()

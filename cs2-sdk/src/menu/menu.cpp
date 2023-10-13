@@ -89,31 +89,48 @@ void CMenu::RenderUI()
 
     ImGui::SetNextWindowPos(IO.DisplaySize / 2.f, ImGuiCond_Once, { 0.5f, 0.5f });
     ImGui::Begin("cs2-sdk v2", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::SeparatorText("Aimbot");
-    ImGui::Checkbox("Enable Aimbot", &g_Vars.m_Aimbot);
-    if (g_Vars.m_Aimbot)
-    {
-        ImGui::Checkbox("Auto Shoot", &g_Vars.m_AutoFire);
-        ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);
-        ImGui::Text("FOV");
-        ImGui::SliderInt(" ", & g_Vars.m_AimbotFov, 1, 180);
-    }
 
-    ImGui::SeparatorText("Visuals");
-    ImGui::Checkbox("Master switch", &g_Vars.m_EnableESP);
+    ImGui::Text("Aimbot");
+    ImGui::BeginChild("Aimbot", ImVec2(m_WindowWidth / 2, 150), true, ImGuiWindowFlags_NoScrollbar);
+    ImGui::Checkbox("Enable Aimbot", &g_Vars.m_Aimbot);
+    ImGui::Checkbox("Auto Shoot", &g_Vars.m_AutoFire);
+    ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);
+    ImGui::Text("FOV");
+    ImGui::SliderInt("##FOV", &g_Vars.m_AimbotFov, 1, 180);
+    ImGui::EndChild();
+
+    ImGui::Text("Visuals");
+    ImGui::BeginChild("Visuals", ImVec2(m_WindowWidth / 2, 325), true, ImGuiWindowFlags_NoScrollbar);
+    ImGui::Checkbox("Enable", &g_Vars.m_EnableESP);
     ImGui::Checkbox("Players box", &g_Vars.m_PlayerBoxes);
     ImGui::Checkbox("Players name", &g_Vars.m_PlayerNames);
-    ImGui::Checkbox("Players healthbar", &g_Vars.m_PlayerHealthBar);
+    ImGui::Checkbox("Player healthbar", &g_Vars.m_PlayerHealthBar);
+    ImGui::Checkbox("Player armorbar ", &g_Vars.m_PlayerArmorBar);
+    ImGui::SameLine(m_WindowWidth / 2 - 30, ImGui::GetStyle().ItemSpacing.x);
+    ImGui::ColorEdit4("##ArmorColor", g_Vars.m_PlayerArmorColor, ImGuiColorEditFlags_NoInputs);
+
+    ImGui::Checkbox("Player", &g_Vars.m_VisibleChams);
+    ImGui::SameLine(m_WindowWidth / 2 - 30, ImGui::GetStyle().ItemSpacing.x);
+    ImGui::ColorEdit4("##VisibleChams", g_Vars.m_PlayerVisibleChamsColor, ImGuiColorEditFlags_NoInputs);
+    ImGui::Checkbox("Player Behind Wall", &g_Vars.m_InvisibleChams);
+    ImGui::SameLine(m_WindowWidth / 2 - 30, ImGui::GetStyle().ItemSpacing.x);
+    ImGui::ColorEdit4("##InvisibleChams", g_Vars.m_PlayerInvisChamsColor, ImGuiColorEditFlags_NoInputs);
+
     ImGui::Checkbox("Player Glow", &g_Vars.m_Glow);
-    if (g_Vars.m_Glow)
-    {
-        ImGui::ColorEdit4("Glow Color", g_Vars.m_GlowColor, ImGuiColorEditFlags_AlphaBar);
-    }
+    ImGui::SameLine(m_WindowWidth / 2 - 30, ImGui::GetStyle().ItemSpacing.x);
+    ImGui::ColorEdit4("##Glow Color", g_Vars.m_GlowColor, ImGuiColorEditFlags_NoInputs);
+
     //ImGui::Hotkey(, ImVec2(2,2));
     ImGui::Checkbox("Weapons ESP", &g_Vars.m_WeaponESP);
     ImGui::Checkbox("Chickens ESP", &g_Vars.m_ChickenESP);
     ImGui::Checkbox("Others ESP", &g_Vars.m_OtherESP);
     ImGui::Checkbox("Three-dimensional boxes", &g_Vars.m_Use3DBoxes);
+    ImGui::EndChild();
+
+    ImGui::Text("Misc");
+    ImGui::BeginChild("Misc", ImVec2(m_WindowWidth / 2, 100), true, ImGuiWindowFlags_NoScrollbar);
+    ImGui::EndChild();
+
 
     if (ImGui::Button("Save Config", { m_WindowWidth, 0 })) Config::Get().SaveConfig();
     if (ImGui::Button("Load Config", { m_WindowWidth, 0 })) Config::Get().LoadConfig();

@@ -48,6 +48,25 @@ void Config::LoadConfig()
     g_Vars.m_ChickenESP = configData[PRINTER(g_Vars.m_ChickenESP)].get<bool>();
     g_Vars.m_OtherESP = configData[PRINTER(g_Vars.m_OtherESP)].get<bool>();
     g_Vars.m_Use3DBoxes = configData[PRINTER(g_Vars.m_Use3DBoxes)].get<bool>();
+    g_Vars.m_PlayerInvisChamsColor[0] = configData[PRINTER(g_Vars.m_PlayerInvisChamsColor)][0].get<float>();
+    g_Vars.m_PlayerInvisChamsColor[1] = configData[PRINTER(g_Vars.m_PlayerInvisChamsColor)][1].get<float>();
+    g_Vars.m_PlayerInvisChamsColor[2] = configData[PRINTER(g_Vars.m_PlayerInvisChamsColor)][2].get<float>();
+    g_Vars.m_PlayerInvisChamsColor[3] = configData[PRINTER(g_Vars.m_PlayerInvisChamsColor)][3].get<float>();
+
+    g_Vars.m_PlayerVisibleChamsColor[0] = configData[PRINTER(g_Vars.m_PlayerVisibleChamsColor)][0].get<float>();
+    g_Vars.m_PlayerVisibleChamsColor[1] = configData[PRINTER(g_Vars.m_PlayerVisibleChamsColor)][1].get<float>();
+    g_Vars.m_PlayerVisibleChamsColor[2] = configData[PRINTER(g_Vars.m_PlayerVisibleChamsColor)][2].get<float>();
+    g_Vars.m_PlayerVisibleChamsColor[3] = configData[PRINTER(g_Vars.m_PlayerVisibleChamsColor)][3].get<float>();
+
+    g_Vars.m_PlayerArmorColor[0] = configData[PRINTER(g_Vars.m_PlayerArmorColor)][0].get<float>();
+    g_Vars.m_PlayerArmorColor[1] = configData[PRINTER(g_Vars.m_PlayerArmorColor)][1].get<float>();
+    g_Vars.m_PlayerArmorColor[2] = configData[PRINTER(g_Vars.m_PlayerArmorColor)][2].get<float>();
+    g_Vars.m_PlayerArmorColor[3] = configData[PRINTER(g_Vars.m_PlayerArmorColor)][3].get<float>();
+
+    g_Vars.m_VisibleChams = configData[PRINTER(g_Vars.m_VisibleChams)].get<bool>();
+    g_Vars.m_InvisibleChams = configData[PRINTER(g_Vars.m_InvisibleChams)].get<bool>();
+    g_Vars.m_PlayerArmorBar = configData[PRINTER(g_Vars.m_PlayerArmorBar)].get<bool>();
+    g_Vars.m_InvisibleChams = configData[PRINTER(g_Vars.m_InvisibleChams)].get<bool>();
 
     fileContents.close();
 }
@@ -69,10 +88,17 @@ void Config::SaveConfig()
     j[PRINTER(g_Vars.m_PlayerHealthBar)] = g_Vars.m_PlayerHealthBar;
     j[PRINTER(g_Vars.m_Glow)] = g_Vars.m_Glow;
     j[PRINTER(g_Vars.m_GlowColor)] = g_Vars.m_GlowColor;
+    j[PRINTER(g_Vars.m_PlayerInvisChamsColor)] = g_Vars.m_PlayerInvisChamsColor;
+    j[PRINTER(g_Vars.m_PlayerVisibleChamsColor)] = g_Vars.m_PlayerVisibleChamsColor;
     j[PRINTER(g_Vars.m_WeaponESP)] = g_Vars.m_WeaponESP;
     j[PRINTER(g_Vars.m_ChickenESP)] = g_Vars.m_ChickenESP;
     j[PRINTER(g_Vars.m_OtherESP)] = g_Vars.m_OtherESP;
     j[PRINTER(g_Vars.m_Use3DBoxes)] = g_Vars.m_Use3DBoxes;
+    j[PRINTER(g_Vars.m_VisibleChams)] = g_Vars.m_VisibleChams;
+    j[PRINTER(g_Vars.m_InvisibleChams)] = g_Vars.m_InvisibleChams;
+    j[PRINTER(g_Vars.m_PlayerArmorBar)] = g_Vars.m_PlayerArmorBar;
+    j[PRINTER(g_Vars.m_PlayerArmorColor)] = g_Vars.m_PlayerArmorColor;
+    
 
     fstream configFile(config.path, fstream::in | fstream::out | fstream::trunc);
 

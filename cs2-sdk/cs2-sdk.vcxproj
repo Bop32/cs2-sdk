@@ -250,6 +250,7 @@
     <ClInclude Include="include\config\config.hpp" />
     <ClInclude Include="include\constants\constants.hpp" />
     <ClInclude Include="include\fnv\fnv1a.hpp" />
+    <ClInclude Include="include\fonts\fonts.hpp" />
     <ClInclude Include="include\globals\globals.hpp" />
     <ClInclude Include="include\hacks\aimbot\aimbot.hpp" />
     <ClInclude Include="include\hacks\esp\esp.hpp" />
@@ -325,7 +326,11 @@
     <ClInclude Include="include\stb\stb.hh" />
     <ClInclude Include="include\vars\vars.hpp" />
     <ClInclude Include="include\virtual\virtual.hpp" />
+    <ClInclude Include="include\weapon\ceconitemdefinition.hpp" />
+    <ClInclude Include="include\weapon\c_attributecontainer.hpp" />
     <ClInclude Include="include\weapon\c_baseweapon.hpp" />
+    <ClInclude Include="include\weapon\c_econitem.hpp" />
+    <ClInclude Include="include\weapon\c_econitemview.hpp" />
     <ClInclude Include="libs\distorm\include\distorm.h" />
     <ClInclude Include="libs\distorm\include\mnemonics.h" />
     <ClInclude Include="libs\distorm\src\config.h" />

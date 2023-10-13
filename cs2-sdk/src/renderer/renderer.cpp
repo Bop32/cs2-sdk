@@ -8,8 +8,15 @@
 #include <menu/menu.hpp>
 
 #include <imgui/imgui.h>
+#include <fonts/fonts.hpp>
 
-void CRenderer::Initialize() { SDK_LOG_PROLOGUE(); }
+
+void CRenderer::Initialize()
+{
+    SDK_LOG_PROLOGUE();
+    ImGuiIO& io = ImGui::GetIO();
+    fonts::nameFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\tahomabd.ttf", 13.f);
+}
 
 void CRenderer::NewFrame()
 {

@@ -26,6 +26,9 @@
 #include <vars/vars.hpp>
 #include <material/material.hpp>
 #include <interfaces/CMaterialSystem2.hpp>
+#include <material/keystring.hpp>
+#include <weapon/c_attributecontainer.hpp>
+#include <weapon/c_econitemview.hpp>
 
 
 static CHook g_MouseInputEnabled;
@@ -60,20 +63,60 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
     int unknown_bool, void* scene_view, void* scene_layer, void* unknown_pointer, void* unknown)
 {
     using namespace material;
-    auto original = g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
-
+    const int CT_MODEL = 113;
+    const int T_MODEL = 104;
+    const int ARM = 38;
     CMaterial2* material = *( CMaterial2** )(( uintptr_t )data + 0x18);
+
+    static CMaterial2* invisible_material = CreateMaterialInvisible();
+    static CMaterial2* visible_material = CreateMaterialVisible();
+
+    void* objectInfo = *( void** )(( uintptr_t )data + 0x48);
+    int id = *( int* )(( uintptr_t )objectInfo + 0xb0);
 
     auto name = material->GetName();
 
-    if (strstr(name, "characters/models") != nullptr)
-    {
-        CMaterial2** custom_material;
-        CMaterialSystem2::Get()->FindMaterial(&custom_material, "materials/dev/glowproperty.vmat");
-        *( CMaterial2** )(( uintptr_t )data + 0x18) = *custom_material;
-        g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
-    }
+    if (!strstr(name, "characters/model") || !(id == CT_MODEL || id == T_MODEL || id == ARM)) return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
 
+    switch (id)
+    {
+        case CT_MODEL:
+        {
+            if (g_Vars.m_InvisibleChams)
+            {
+                *( CMaterial2** )(( uintptr_t )data + 0x18) = invisible_material;
+                SetColor(data, g_Vars.m_PlayerInvisChamsColor);
+                g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
+            }
+
+            if (g_Vars.m_VisibleChams)
+            {
+                *( CMaterial2** )(( uintptr_t )data + 0x18) = visible_material;
+                SetColor(data, g_Vars.m_PlayerVisibleChamsColor);
+                g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
+            }
+            break;
+        }
+        case T_MODEL:
+        {
+            if (g_Vars.m_InvisibleChams)
+            {
+                *( CMaterial2** )(( uintptr_t )data + 0x18) = invisible_material;
+                SetColor(data, g_Vars.m_PlayerInvisChamsColor);
+                g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
+            }
+
+            if (g_Vars.m_VisibleChams)
+            {
+                *( CMaterial2** )(( uintptr_t )data + 0x18) = visible_material;
+                SetColor(data, g_Vars.m_PlayerVisibleChamsColor);
+                g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
+            }
+            break;
+        }
+        default:
+            break;
+    }
     return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
 }
 

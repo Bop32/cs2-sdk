@@ -155,5 +155,21 @@ namespace signatures
             {SDK_SIG("48 8B C4 48 89 50 10 55 41 56")}
         });
 
+    CSigScan FindKeyHook("FindKeyHook", CConstants::PARTICLE_LIB,
+        {
+           {SDK_SIG("E8 ? ? ? ? 80 7F 1A 00"), [](CPointer& ptr) { ptr.Absolute(1,0); }},
+        });
+
+    CSigScan SetMaterialFunctionHook("SetMateiralFunctionHook", CConstants::PARTICLE_LIB,
+        {
+           {SDK_SIG("E8 ? ? ? ? 49 C1 E5 21"), [](CPointer& ptr) { ptr.Absolute(1,0); }},
+        });
+
+    CSigScan SetMaterialShaderHook("SetMaterialShaderHook", CConstants::PARTICLE_LIB,
+        {
+           {SDK_SIG("E8 ? ? ? ? 48 8D B7 ? ? ? ?"), [](CPointer& ptr) { ptr.Absolute(1,0); }},
+        });
+
+
 
 }  // namespace signatures

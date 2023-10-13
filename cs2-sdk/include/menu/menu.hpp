@@ -20,5 +20,5 @@ class CMenu {
 
     bool m_Open;
 
-    static constexpr float m_WindowWidth = 210.f;
+    static constexpr float m_WindowWidth = 400.f;
 };

@@ -24,5 +24,7 @@ namespace signatures
     extern CSigScan LevelInit;
     extern CSigScan BoneParent;
     extern CSigScan DrawObjectHook;
-
+    extern CSigScan FindKeyHook;
+    extern CSigScan SetMaterialFunctionHook;
+    extern CSigScan SetMaterialShaderHook;
 }  // namespace signatures

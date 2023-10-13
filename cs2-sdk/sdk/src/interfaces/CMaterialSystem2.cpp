@@ -25,3 +25,4 @@ void CMaterialSystem2::SetCreateDataByMaterial(void* data, CMaterial2*** materia
 {
     return CALL_VIRTUAL(void, 37, this, material, data);
 }
+

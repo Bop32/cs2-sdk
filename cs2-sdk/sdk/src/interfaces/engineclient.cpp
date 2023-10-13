@@ -15,6 +15,12 @@ CEngineClient* CEngineClient::Get()
 
 bool CEngineClient::IsInGame() { return vt::CallMethod<bool>(this, 32); }
 
+void CEngineClient::GetScreenSize(int& w, int& h)
+{
+    using function_t = void(__thiscall*)(CEngineClient*, int&, int&);
+    return (*reinterpret_cast< function_t** >(this))[50](this, w, h);
+}
+
 int CEngineClient::GetLocalPlayer()
 {
     int index = -1;

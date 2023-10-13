@@ -15,8 +15,12 @@
 #include <imgui/imgui_internal.h>
 #include <interfaces/gameentitysystem.hpp>
 #include <globals/globals.hpp>
+#include <logger/logger.hpp>
+#include <fonts/fonts.hpp>
 
 CCachedPlayer::CCachedPlayer(CBaseHandle handle) : CCachedBaseEntity(handle) {}
+
+using namespace fonts;
 
 bool CCachedPlayer::CanDrawESP()
 {
@@ -66,6 +70,30 @@ void CCachedPlayer::RenderESP()
     const ImVec2& min = m_BBox.m_Mins;
     const ImVec2& max = m_BBox.m_Maxs;
 
+    if (g_Vars.m_PlayerArmorBar)
+    {
+        // p_min = upper-left, p_max = lower-right
+
+        int maxArmor = std::min(controller->m_hPawn().Get()->m_ArmorValue(), 100u);
+        auto s = std::to_string(maxArmor);
+        const char* armorValue = s.c_str();
+        const ImVec2 startPoint = { min.x, max.y + 2 };
+        const ImVec2 endPoint { max.x, max.y + 2 };
+        float width = ((endPoint.x - startPoint.x) * maxArmor) / 100.f;
+
+        drawList->AddLine(startPoint, endPoint, IM_COL32(0, 0, 0, 255), 3);
+        if (maxArmor > 0)
+        {
+            drawList->AddLine({ startPoint.x + ( std::max )(1.f, width) , startPoint.y }, startPoint, IM_COL32(102, 190, 208, 255), 2);
+
+            if (maxArmor <= 60)
+            {
+                ImVec2 fontSize = nameFont->CalcTextSizeA(nameFont->FontSize, FLT_MAX, 0, armorValue);
+                drawList->AddText(nameFont, nameFont->FontSize, ImVec2 {startPoint.x + ( std::max )(1.f, width) - fontSize.x / 2, startPoint.y}, IM_COL32(255, 255, 255, 255), armorValue);
+            }
+
+        }
+    }
 
     if (g_Vars.m_PlayerNames)
     {
@@ -73,15 +101,16 @@ void CCachedPlayer::RenderESP()
         if (playerName)
         {
             const ImVec2 textSize = ImGui::CalcTextSize(playerName);
-            const ImVec2 textPos = ImFloor({ (min.x + max.x - textSize.x) / 2.f, min.y - textSize.y - 2.f });
-
+            const ImVec2 textPos = { (min.x + max.x) / 2.f - textSize.x / 2, min.y - textSize.y - 2.f };
             drawList->AddText(textPos + ImVec2 { 1, 1 }, IM_COL32(0, 0, 0, 255), playerName);
             drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), playerName);
         }
     }
+
+
     if (g_Vars.m_PlayerHealthBar)
     {
-        const int clampedHp = std::min(controller->m_iPawnHealth(), 100u);
+        const int clampedHp = std::min(controller->m_hPawn().Get()->m_iHealth(), 100u);
 
         const ImVec2 barMin = min - ImVec2 { 5, 0 };
         const ImVec2 barMax { min.x - 2, max.y };
@@ -124,6 +153,22 @@ void CCachedPlayer::RenderESP()
             drawList->AddLine(Out1, Out2, IM_COL32(255, 255, 255, 255));
         }
     }
+
+    /*
+    C_AttributeContainer* pAttributeContainer = controller->m_hPawn().Get()->m_pWeaponServices()->m_hActiveWeapon().Get()->m_AttributeManager();
+
+    if (!pAttributeContainer) return;
+
+    weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
+
+    if (!pItemView) return;
+
+    weapon::CEconItemDefinition* pItemStaticData = pItemView->GetStaticData();
+
+    if (!pItemStaticData) return;
+
+    CLogger::Log("{}", pItemStaticData->GetSimpleWeaponName());
+    */
     /*
     CGameSceneNode* gameSceneNode = controller->m_pGameSceneNode();
 

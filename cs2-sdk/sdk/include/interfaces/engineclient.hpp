@@ -1,4 +1,5 @@
 #pragma once
+#include <math/types/vector.hpp>
 
 class CEngineClient {
    public:
@@ -6,4 +7,5 @@ class CEngineClient {
 
     bool IsInGame();
     int GetLocalPlayer();
+    void GetScreenSize(int& w, int& h);
 };

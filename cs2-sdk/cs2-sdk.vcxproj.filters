@@ -208,5 +208,10 @@
     <ClInclude Include="include\material\material.hpp" />
     <ClInclude Include="include\material\keystring.hpp" />
     <ClInclude Include="sdk\include\interfaces\CMaterialSystem2.hpp" />
+    <ClInclude Include="include\weapon\c_attributecontainer.hpp" />
+    <ClInclude Include="include\weapon\c_econitemview.hpp" />
+    <ClInclude Include="include\weapon\ceconitemdefinition.hpp" />
+    <ClInclude Include="include\weapon\c_econitem.hpp" />
+    <ClInclude Include="include\fonts\fonts.hpp" />
   </ItemGroup>
 </Project>
