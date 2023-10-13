@@ -104,6 +104,7 @@ void CMenu::RenderUI()
     ImGui::Checkbox("Enable", &g_Vars.m_EnableESP);
     ImGui::Checkbox("Players box", &g_Vars.m_PlayerBoxes);
     ImGui::Checkbox("Players name", &g_Vars.m_PlayerNames);
+    ImGui::Checkbox("Weapon name", &g_Vars.m_WeaponName);
     ImGui::Checkbox("Player healthbar", &g_Vars.m_PlayerHealthBar);
     ImGui::Checkbox("Player armorbar ", &g_Vars.m_PlayerArmorBar);
     ImGui::SameLine(m_WindowWidth / 2 - 30, ImGui::GetStyle().ItemSpacing.x);
@@ -129,6 +130,10 @@ void CMenu::RenderUI()
 
     ImGui::Text("Misc");
     ImGui::BeginChild("Misc", ImVec2(m_WindowWidth / 2, 100), true, ImGuiWindowFlags_NoScrollbar);
+    ImGui::Checkbox("Automatic Jump", &g_Vars.m_Bhop);
+    ImGui::Checkbox("Enable View Model Fov", &g_Vars.m_ViewModelFov);
+    ImGui::SliderInt("##View Model Fov", &g_Vars.m_ViewModelFovSlider, 80, 110);
+
     ImGui::EndChild();
 
 

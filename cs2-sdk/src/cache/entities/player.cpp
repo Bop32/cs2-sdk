@@ -17,6 +17,7 @@
 #include <globals/globals.hpp>
 #include <logger/logger.hpp>
 #include <fonts/fonts.hpp>
+#include <interfaces/CLocalize.hpp>
 
 CCachedPlayer::CCachedPlayer(CBaseHandle handle) : CCachedBaseEntity(handle) {}
 
@@ -89,7 +90,7 @@ void CCachedPlayer::RenderESP()
             if (maxArmor <= 60)
             {
                 ImVec2 fontSize = nameFont->CalcTextSizeA(nameFont->FontSize, FLT_MAX, 0, armorValue);
-                drawList->AddText(nameFont, nameFont->FontSize, ImVec2 {startPoint.x + ( std::max )(1.f, width) - fontSize.x / 2, startPoint.y}, IM_COL32(255, 255, 255, 255), armorValue);
+                drawList->AddText(nameFont, nameFont->FontSize, ImVec2 { startPoint.x + ( std::max )(1.f, width) - fontSize.x / 2, startPoint.y }, IM_COL32(255, 255, 255, 255), armorValue);
             }
 
         }
@@ -106,7 +107,27 @@ void CCachedPlayer::RenderESP()
             drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), playerName);
         }
     }
+    if (g_Vars.m_WeaponName)
+    {
+        C_AttributeContainer* pAttributeContainer = controller->m_hPawn().Get()->m_pWeaponServices()->m_hActiveWeapon().Get()->m_AttributeManager();
 
+        if (!pAttributeContainer) return;
+
+        weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
+
+        if (!pItemView) return;
+
+        weapon::CEconItemDefinition* pItemStaticData = pItemView->GetStaticData();
+
+        if (!pItemStaticData) return;
+
+        auto weaponName = CLocalize::Get()->FindSafe(pItemStaticData->m_pszItemBaseName);
+
+        const ImVec2 textSize = ImGui::CalcTextSize(weaponName);
+        const ImVec2 textPos = { (min.x + max.x) / 2.f - textSize.x / 2, max.y + textSize.y / 2 - 3.5f };
+        drawList->AddText(textPos + ImVec2 { 1, 1 }, IM_COL32(0, 0, 0, 255), weaponName);
+        drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), weaponName);
+    }
 
     if (g_Vars.m_PlayerHealthBar)
     {
@@ -154,21 +175,6 @@ void CCachedPlayer::RenderESP()
         }
     }
 
-    /*
-    C_AttributeContainer* pAttributeContainer = controller->m_hPawn().Get()->m_pWeaponServices()->m_hActiveWeapon().Get()->m_AttributeManager();
-
-    if (!pAttributeContainer) return;
-
-    weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
-
-    if (!pItemView) return;
-
-    weapon::CEconItemDefinition* pItemStaticData = pItemView->GetStaticData();
-
-    if (!pItemStaticData) return;
-
-    CLogger::Log("{}", pItemStaticData->GetSimpleWeaponName());
-    */
     /*
     CGameSceneNode* gameSceneNode = controller->m_pGameSceneNode();
 

@@ -13,6 +13,7 @@ struct Vars_t
 
     bool m_PlayerBoxes;
     bool m_PlayerNames;
+    bool m_WeaponName;
     bool m_PlayerHealthBar;
     bool m_PlayerArmorBar;
     bool m_PlayerHasDefuser;
@@ -30,6 +31,10 @@ struct Vars_t
     bool m_ChickenESP;
     bool m_OtherESP;
     bool m_Use3DBoxes;
+
+    bool m_Bhop;
+    bool m_ViewModelFov;
+    int  m_ViewModelFovSlider = 80;
 
 };
 

@@ -7,6 +7,7 @@
 #include <bindings/hitbox.hpp>
 #include <signatures/signatures.hpp>
 #include <hacks/Glow/CGlowProperty.hpp>
+#include <bindings/c_player_cameraservices.hpp>
 
 struct BBox_t;
 
@@ -36,6 +37,7 @@ public:
     SCHEMA(Vector, m_aimPunchAngle, "C_CSPlayerPawn", "m_aimPunchAngle");
     SCHEMA(uint32_t, m_iHealth, "C_BaseEntity", "m_iHealth");
     SCHEMA(uint32_t, m_ArmorValue, "C_CSPlayerPawnBase", "m_ArmorValue");
+    SCHEMA(CPlayer_CameraServices*, m_pCameraServices, "C_BasePlayerPawn", "m_pCameraServices");
 
 
 

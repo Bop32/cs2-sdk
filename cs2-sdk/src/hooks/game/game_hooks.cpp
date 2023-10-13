@@ -27,10 +27,10 @@
 #include <material/material.hpp>
 #include <interfaces/CMaterialSystem2.hpp>
 #include <material/keystring.hpp>
-#include <weapon/c_attributecontainer.hpp>
-#include <weapon/c_econitemview.hpp>
+#include <bindings/c_overrideview.hpp>
+#include <interfaces/CLocalize.hpp>
 
-
+using namespace globals;
 static CHook g_MouseInputEnabled;
 static bool hkMouseInputEnabled(void* rcx) { return CMenu::Get().IsOpen() ? false : g_MouseInputEnabled.CallOriginal<bool>(rcx); }
 
@@ -51,7 +51,8 @@ static void* hkOnRemoveEntity(void* rcx, CEntityInstance* inst, CBaseHandle hand
 static CHook g_LevelInit;
 static __int64 hkLevelInit(void* rcx)
 {
-    globals::GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
+    GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
+    local_player = CGameEntitySystem::GetLocalPlayerController();
 
     return g_LevelInit.CallOriginal<__int64>(rcx);
 }
@@ -123,7 +124,6 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
 static CHook g_CreateMove;
 static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 {
-
     g_CreateMove.CallOriginal<bool>(this_ptr, a1, a2);
 
     CUserCmd* cmd = this_ptr->GetUserCmd();
@@ -143,9 +143,34 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
         aimbot::RunAimbot(cmd, pawn);
     }
 
-    misc::BunnyHop(cmd, pawn);
+    if (g_Vars.m_Bhop)
+    {
+        misc::BunnyHop(cmd, pawn);
+    }
 
     return false;
+}
+
+
+static float originalFOV = 0;
+static CHook g_OverrideView;
+static void hkOverrideView(void* input, CViewSetup* view)
+{
+    if (originalFOV == 0)
+    {
+        originalFOV = view->flFov;
+    }
+    auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
+    if (g_Vars.m_ViewModelFov)
+    {
+        localPlayerController->m_iDesiredFOV() = g_Vars.m_ViewModelFovSlider;
+    }
+    else
+    {
+        localPlayerController->m_iDesiredFOV() = originalFOV;
+    }
+
+    return g_OverrideView.CallOriginal<void>(input, view);
 }
 
 static CHook g_IsDemoOrHLTV;
@@ -178,4 +203,12 @@ void CGameHooks::Initialize()
     g_IsDemoOrHLTV.Hook(signatures::GetIsDemoOrHLTV.GetPtrAs<void*>(), SDK_HOOK(hkIsDemoOrHLTV));
     g_LevelInit.Hook(signatures::LevelInit.GetPtrAs<void*>(), SDK_HOOK(hkLevelInit));
     g_DrawObject.Hook(signatures::DrawObjectHook.GetPtrAs<void*>(), SDK_HOOK(hkDrawObject));
+    g_OverrideView.Hook(signatures::OverrideView.GetPtrAs<void*>(), SDK_HOOK(hkOverrideView));
+
+    //Sets Cl_Bob_Lower_Amt to 0.
+    float* value = signatures::CL_Bob_Lower_Amt.GetPtrAs<float*>();
+
+    DWORD oldProtect;
+    VirtualProtect(value, sizeof(*value), PAGE_READWRITE, &oldProtect);
+    *value = 0;
 }

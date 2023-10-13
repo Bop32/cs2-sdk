@@ -27,4 +27,6 @@ namespace signatures
     extern CSigScan FindKeyHook;
     extern CSigScan SetMaterialFunctionHook;
     extern CSigScan SetMaterialShaderHook;
+    extern CSigScan OverrideView;
+    extern CSigScan CL_Bob_Lower_Amt;
 }  // namespace signatures

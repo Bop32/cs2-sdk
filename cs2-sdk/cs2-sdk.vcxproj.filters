@@ -70,6 +70,7 @@
     <ClCompile Include="src\config\config.cpp" />
     <ClCompile Include="sdk\include\bindings\modeldata.cpp" />
     <ClCompile Include="sdk\src\interfaces\CMaterialSystem2.cpp" />
+    <ClCompile Include="sdk\src\interfaces\CLocalize.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch\pch.hpp" />
@@ -213,5 +214,8 @@
     <ClInclude Include="include\weapon\ceconitemdefinition.hpp" />
     <ClInclude Include="include\weapon\c_econitem.hpp" />
     <ClInclude Include="include\fonts\fonts.hpp" />
+    <ClInclude Include="sdk\include\bindings\c_player_cameraservices.hpp" />
+    <ClInclude Include="sdk\include\bindings\c_overrideview.hpp" />
+    <ClInclude Include="sdk\include\interfaces\CLocalize.hpp" />
   </ItemGroup>
 </Project>

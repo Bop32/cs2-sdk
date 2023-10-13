@@ -68,6 +68,11 @@ void Config::LoadConfig()
     g_Vars.m_PlayerArmorBar = configData[PRINTER(g_Vars.m_PlayerArmorBar)].get<bool>();
     g_Vars.m_InvisibleChams = configData[PRINTER(g_Vars.m_InvisibleChams)].get<bool>();
 
+    g_Vars.m_Bhop = configData[PRINTER(g_Vars.m_Bhop)].get<bool>();
+    g_Vars.m_ViewModelFov = configData[PRINTER(g_Vars.m_ViewModelFov)].get<bool>();
+    g_Vars.m_ViewModelFovSlider = configData[PRINTER(g_Vars.m_ViewModelFovSlider)].get<int>();
+
+    g_Vars.m_WeaponName = configData[PRINTER(g_Vars.m_WeaponName)].get<bool>();
     fileContents.close();
 }
 
@@ -98,6 +103,10 @@ void Config::SaveConfig()
     j[PRINTER(g_Vars.m_InvisibleChams)] = g_Vars.m_InvisibleChams;
     j[PRINTER(g_Vars.m_PlayerArmorBar)] = g_Vars.m_PlayerArmorBar;
     j[PRINTER(g_Vars.m_PlayerArmorColor)] = g_Vars.m_PlayerArmorColor;
+    j[PRINTER(g_Vars.m_Bhop)] = g_Vars.m_Bhop;
+    j[PRINTER(g_Vars.m_ViewModelFov)] = g_Vars.m_ViewModelFov;
+    j[PRINTER(g_Vars.m_ViewModelFovSlider)] = g_Vars.m_ViewModelFovSlider;
+    j[PRINTER(g_Vars.m_WeaponName)] = g_Vars.m_WeaponName;
     
 
     fstream configFile(config.path, fstream::in | fstream::out | fstream::trunc);

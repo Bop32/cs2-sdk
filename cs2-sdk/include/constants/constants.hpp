@@ -10,6 +10,15 @@ class CConstants
 {
 public:
 
+    static constexpr auto LOCALIZE_DLL = []
+        {
+#ifdef _WIN32
+            return "localize.dll";
+#elif __linux__
+            return "scenesystem.dll";
+#endif
+        }();
+
     static constexpr auto SCENESYSTEM_LIB = []
         {
 #ifdef _WIN32

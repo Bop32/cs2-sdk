@@ -144,10 +144,22 @@ namespace signatures
             {SDK_SIG("48 89 5C 24 ? 56 48 83 EC ? 48 8B 0D ? ? ? ? 48 8B F2")},
         });
 
+    CSigScan OverrideView("Override View", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 89 5C 24 ? 55 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48 8B 01")},
+        });
+
     CSigScan BoneParent("BoneParent", CConstants::CLIENT_LIB,
 
         {
             {SDK_SIG("85 D2 78 17 3B 91 70")},
+        });
+
+    CSigScan CL_Bob_Lower_Amt("CLBobAmtLower", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("F3 0F 10 05 ? ? ? ? 45 32 F6 48 8B 47"), [](CPointer& ptr) { ptr.Absolute(4,0); }}
         });
 
     CSigScan DrawObjectHook("DrawObjectHook", CConstants::SCENESYSTEM_LIB,
@@ -172,4 +184,5 @@ namespace signatures
 
 
 
-}  // namespace signatures
+
+    }  // namespace signatures
