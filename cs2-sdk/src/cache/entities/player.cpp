@@ -52,7 +52,9 @@ void CCachedPlayer::RenderESP()
 {
     CCSPlayerController* controller = Get<CCSPlayerController>();
 
-    if (controller->m_iTeamNum() == CGameEntitySystem::GetLocalPlayerController()->m_iTeamNum() ||
+    auto localPlayer = CGameEntitySystem::GetLocalPlayerController();
+
+    if (controller->m_iTeamNum() == localPlayer->m_iTeamNum() ||
         controller->IsWeapon()) return;
 
     if (g_Vars.m_Glow)
@@ -85,7 +87,11 @@ void CCachedPlayer::RenderESP()
         drawList->AddLine(startPoint, endPoint, IM_COL32(0, 0, 0, 255), 3);
         if (maxArmor > 0)
         {
-            drawList->AddLine({ startPoint.x + ( std::max )(1.f, width) , startPoint.y }, startPoint, IM_COL32(102, 190, 208, 255), 2);
+            drawList->AddLine({ startPoint.x + ( std::max )(1.f, width) , startPoint.y }, startPoint,
+                IM_COL32(g_Vars.m_PlayerArmorColor[0] * 255,
+                g_Vars.m_PlayerArmorColor[1] * 255,
+                g_Vars.m_PlayerArmorColor[2] * 255,
+                g_Vars.m_PlayerArmorColor[3] * 255), 2);
 
             if (maxArmor <= 60)
             {
@@ -109,24 +115,30 @@ void CCachedPlayer::RenderESP()
     }
     if (g_Vars.m_WeaponName)
     {
-        C_AttributeContainer* pAttributeContainer = controller->m_hPawn().Get()->m_pWeaponServices()->m_hActiveWeapon().Get()->m_AttributeManager();
+        auto playerPawn = controller->m_hPawn().Get();
+        
+        //This is needed here otherwise it will crash if the enemy dies
+        if (playerPawn->m_iHealth() > 0)
+        {
+            C_AttributeContainer* pAttributeContainer = playerPawn->m_pWeaponServices()->m_hActiveWeapon().Get()->m_AttributeManager();
 
-        if (!pAttributeContainer) return;
+            if (!pAttributeContainer) return;
 
-        weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
+            weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
 
-        if (!pItemView) return;
+            if (!pItemView) return;
 
-        weapon::CEconItemDefinition* pItemStaticData = pItemView->GetStaticData();
+            weapon::CEconItemDefinition* pItemStaticData = pItemView->GetStaticData();
 
-        if (!pItemStaticData) return;
+            if (!pItemStaticData) return;
 
-        auto weaponName = CLocalize::Get()->FindSafe(pItemStaticData->m_pszItemBaseName);
+            auto weaponName = CLocalize::Get()->FindSafe(pItemStaticData->m_pszItemBaseName);
 
-        const ImVec2 textSize = ImGui::CalcTextSize(weaponName);
-        const ImVec2 textPos = { (min.x + max.x) / 2.f - textSize.x / 2, max.y + textSize.y / 2 - 3.5f };
-        drawList->AddText(textPos + ImVec2 { 1, 1 }, IM_COL32(0, 0, 0, 255), weaponName);
-        drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), weaponName);
+            const ImVec2 textSize = ImGui::CalcTextSize(weaponName);
+            const ImVec2 textPos = { (min.x + max.x) / 2.f - textSize.x / 2, max.y + textSize.y / 2 - 3.5f };
+            drawList->AddText(textPos + ImVec2 { 1, 1 }, IM_COL32(0, 0, 0, 255), weaponName);
+            drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), weaponName);
+        }
     }
 
     if (g_Vars.m_PlayerHealthBar)
