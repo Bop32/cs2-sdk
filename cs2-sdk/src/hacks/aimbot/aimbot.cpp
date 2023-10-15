@@ -38,7 +38,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
     Vector localPlayerEyePosition = localPlayer->GetEyePosition();
     Vector angle;
-    float aimbotFov = g_Vars.m_AimbotFov;
+    float aimbotFov = g_Vars.m_AimbotFov * 2.f;
 
     for (int i = 0; i < CGameEntitySystem::GetHighestEntityIndex(); i++)
     {
