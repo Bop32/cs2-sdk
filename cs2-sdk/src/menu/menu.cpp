@@ -68,6 +68,15 @@ void CMenu::RenderWatermark()
     drawList->AddText({ 16, 8 }, IM_COL32(27, 227, 200, 255), framerate);
 }
 
+void SelectedHitBoxes()
+{
+    for (int i = 0; i < IM_ARRAYSIZE(g_Vars.m_SelectedHitBoxes); i++)
+    {
+        //if(g_Vars.m_SelectedHitBoxes[i])
+    }
+    
+}
+
 void CMenu::RenderUI()
 {
     ImGuiIO& IO = ImGui::GetIO();
@@ -93,6 +102,22 @@ void CMenu::RenderUI()
     ImGui::Text("Aimbot");
     ImGui::BeginChild("Aimbot", ImVec2(m_WindowWidth / 2, 150), true, ImGuiWindowFlags_NoScrollbar);
     ImGui::Checkbox("Enable Aimbot", &g_Vars.m_Aimbot);
+
+    //Bad way of doing it but works for now.
+    //TODO: make it render the current hitbox name you have selected in dropdown.
+    if (ImGui::BeginCombo("##combo", g_Vars.m_HitBoxesName[0]))
+    {
+        for (int n = 0; n < IM_ARRAYSIZE(g_Vars.m_HitBoxesName); n++)
+        {
+            bool is_selected = g_Vars.m_SelectedHitBoxes[n];
+            if (ImGui::Selectable(g_Vars.m_HitBoxesName[n], is_selected, ImGuiSelectableFlags_DontClosePopups))
+            {
+                g_Vars.m_SelectedHitBoxes[n] = !g_Vars.m_SelectedHitBoxes[n];
+            }
+        }
+        ImGui::EndCombo();
+    }
+
     ImGui::Checkbox("Auto Shoot", &g_Vars.m_AutoFire);
     ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);
     ImGui::Text("FOV");

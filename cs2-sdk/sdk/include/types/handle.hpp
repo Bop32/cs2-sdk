@@ -6,8 +6,9 @@ constexpr auto NUM_SERIAL_NUM_SHIFT_BITS = 15;
 
 class C_BaseEntity;
 
-class CBaseHandle {
-   public:
+class CBaseHandle
+{
+public:
     CBaseHandle() : m_Index(INVALID_EHANDLE_INDEX) {}
     CBaseHandle(uint32_t value) : m_Index(value) {}
     CBaseHandle(int entry, int serialNumber) { Init(entry, serialNumber); }
@@ -28,7 +29,8 @@ class CBaseHandle {
 };
 
 template <typename T>
-class CHandle : public CBaseHandle {
-   public:
-    T* Get() const { return static_cast<T*>(CBaseHandle::Get()); }
+class CHandle : public CBaseHandle
+{
+public:
+    T* Get() const { return static_cast< T* >(CBaseHandle::Get()); }
 };

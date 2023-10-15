@@ -13,6 +13,7 @@
 #include <vars/vars.hpp>
 #include <bindings/trace.hpp>
 #include <globals/globals.hpp>
+#include <hacks/aimbot/autowall.hpp>
 
 using namespace trace;
 
@@ -20,11 +21,13 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* localPlayer)
 {
     constexpr float HITCHANCE_MAX = 100.f;
     constexpr int   SEED_MAX = 255;
-    Vector     start { localPlayer->GetEyePosition()}, end, fwd, right, up, dir, wep_spread;
+    Vector     start { localPlayer->GetEyePosition() }, end, fwd, right, up, dir, wep_spread;
     float      inaccuracy, spread;
     trace::C_GameTrace tr;
     return true;
 }
+
+static std::vector<uint32_t> bones;
 
 void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 {
@@ -39,6 +42,22 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
     Vector localPlayerEyePosition = localPlayer->GetEyePosition();
     Vector angle;
     float aimbotFov = g_Vars.m_AimbotFov * 2.f;
+
+    float bestDamage = 0;
+    float currentDamage = 0;
+
+    bones.emplace_back(4);
+    bones.emplace_back(6);
+
+    C_AttributeContainer* pAttributeContainer = localPlayer->m_pWeaponServices()->m_hActiveWeapon().Get()->m_AttributeManager();
+
+    if (!pAttributeContainer) return;
+
+    weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
+
+    if (!pItemView) return;
+
+    weapon::CCSWeaponBaseVData* weaponInfo = pItemView->GetWeaponInfo();
 
     for (int i = 0; i < CGameEntitySystem::GetHighestEntityIndex(); i++)
     {
@@ -55,30 +74,36 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
         Vector bone_position {};
         Vector bone_rotation {};
 
-        enemyPawn->GetBonePosition(6, bone_position, bone_rotation);
-
-        C_TraceFilter filter(0x1C3003, localPlayer, nullptr, 4);
-        C_Ray ray = {};
-        C_GameTrace trace = {};
-
-        offsets::TraceShape(&ray, localPlayerEyePosition, bone_position, &filter, &trace);
-
-        if (trace.HitEntity != enemyPawn && trace.Fraction < 0.97f) continue;
-
-        angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
-
-        angle.Clamp();
-
-        auto fov = hypotf(angle.x, angle.y);
-
-        if (fov < aimbotFov)
+        for (uint32_t bone : bones)
         {
-            target = bone_position;
-            aimbotFov = fov;
-            break;
+            enemyPawn->GetBonePosition(bone, bone_position, bone_rotation);
+
+            C_TraceFilter filter(0x1C1003, localPlayer, nullptr, 4);
+            C_Ray ray = {};
+            C_GameTrace trace = {};
+
+            offsets::TraceShape(&ray, localPlayerEyePosition, bone_position, &filter, &trace);
+
+            if (trace.HitEntity != enemyPawn && trace.Fraction < 0.97f) continue;
+
+            if (!AutoWall::CanHit(enemyPawn, weaponInfo, trace.GetHitGroup(), trace.Fraction, currentDamage)) continue;
+
+            angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
+
+            angle.Clamp();
+
+            auto fov = hypotf(angle.x, angle.y);
+
+            if (fov < aimbotFov && currentDamage > bestDamage)
+            {
+                target = bone_position;
+                aimbotFov = fov;
+                bestDamage = currentDamage;
+            }
         }
     }
 
+    bones.clear();
     if (target.IsZero()) return;
 
     auto& aimPunch = localPlayer->m_aimPunchCache();
@@ -110,7 +135,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
         if (activeWeapon->m_nNextPrimaryAttackTick() > globals::GlobalVars->tick_count) return;
 
-        cmd->m_buttons |= CUserCmd::IN_ATTACK;
+        cmd->buttons |= CUserCmd::IN_ATTACK;
     }
 }
 

@@ -14,11 +14,12 @@ int CBaseHandle::GetEntryIndex() const { return IsValid() ? m_Index & ENT_ENTRY_
 
 int CBaseHandle::GetSerialNumber() const { return m_Index >> NUM_SERIAL_NUM_SHIFT_BITS; }
 
-int CBaseHandle::ToInt() const { return static_cast<int>(m_Index); }
+int CBaseHandle::ToInt() const { return static_cast< int >(m_Index); }
 
 bool CBaseHandle::operator==(CBaseHandle rhs) const { return m_Index == rhs.m_Index; }
 
-C_BaseEntity* CBaseHandle::Get() const {
+C_BaseEntity* CBaseHandle::Get() const
+{
     if (!IsValid()) return nullptr;
 
     C_BaseEntity* ent = CGameEntitySystem::GetBaseEntity(GetEntryIndex());

@@ -9,7 +9,7 @@ void misc::BunnyHop(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
 {
     if (!(pawn->m_iFlags() & 1) != 0)
     {
-        cmd->m_buttons &= ~CUserCmd::IN_JUMP;
+        cmd->buttons &= ~CUserCmd::IN_JUMP;
     }
 }
 

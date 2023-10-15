@@ -19,6 +19,9 @@ struct Vars_t
     bool m_PlayerHasDefuser;
     bool m_Glow;
 
+    const char* m_HitBoxesName[5] = { "Head", "Chest", "Stomach", "Arms", "Legs" };
+    bool m_SelectedHitBoxes[5] = {false, false, false, false, false};
+
     float m_GlowColor[4] = { 180.0f / 255.0f, 60.0f / 255.0f, 120.0f / 255.0f,  153.0f / 255.0f };
     float m_PlayerInvisChamsColor[4] = { 150.0f / 255.0f, 200.0f / 255.0f, 60.0f / 255.0f,  255.0f / 255.0f };
     float m_PlayerVisibleChamsColor[4] = { 150.0f / 255.0f, 200.0f / 255.0f, 60.0f / 255.0f,  255.0f / 255.0f };

@@ -8,6 +8,7 @@
 #include <signatures/signatures.hpp>
 #include <hacks/Glow/CGlowProperty.hpp>
 #include <bindings/c_player_cameraservices.hpp>
+#include <weapon/itemservices.hpp>
 
 struct BBox_t;
 
@@ -38,6 +39,8 @@ public:
     SCHEMA(uint32_t, m_iHealth, "C_BaseEntity", "m_iHealth");
     SCHEMA(uint32_t, m_ArmorValue, "C_CSPlayerPawnBase", "m_ArmorValue");
     SCHEMA(CPlayer_CameraServices*, m_pCameraServices, "C_BasePlayerPawn", "m_pCameraServices");
+    SCHEMA(CPlayer_ItemServices*, m_pItemServices, "C_BasePlayerPawn", "m_pItemServices");
+
 
 
 

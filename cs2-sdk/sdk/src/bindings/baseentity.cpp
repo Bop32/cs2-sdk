@@ -108,7 +108,7 @@ bool C_BaseEntity::CalculateBBoxByHitbox(BBox_t& out, bool transformAABB)
         auto hitBox = hitBoxes.AtPtr(i);
 
         Vector worldMins, worldMaxs;
-        CMath::Get().TransformAABB(hitBoxMatrix, hitBox->m_vMinBounds(), hitBox->m_vMaxBounds(), worldMins, worldMaxs);
+        CMath::Get().TransformAABB(hitBoxMatrix, hitBox->m_vMinBounds, hitBox->m_vMaxBounds, worldMins, worldMaxs);
 
         mins = mins.Min(worldMins);
         maxs = maxs.Max(worldMaxs);

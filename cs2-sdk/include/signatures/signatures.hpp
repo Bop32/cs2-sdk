@@ -29,4 +29,5 @@ namespace signatures
     extern CSigScan SetMaterialShaderHook;
     extern CSigScan OverrideView;
     extern CSigScan CL_Bob_Lower_Amt;
+    extern CSigScan WeaponInfo;
 }  // namespace signatures

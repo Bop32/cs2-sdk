@@ -75,15 +75,15 @@ public:
 
 
     char pad1[0x20];
-    CSubTickContainer m_sub_tick_container;
+    CSubTickContainer subTickContainer;
     CBaseUserCmd* base;
-    int m_start_history_index_attack1;
-    int m_start_history_index_attack2;
-    int m_start_history_index_attack3;
+    int startHistoryIndexAttack1;
+    int startHistoryIndexAttack2;
+    int startHistoryIndexAttack3;
     char pad2[0x8];
-    uint64_t m_buttons;
-    uint64_t m_buttons_changed;
-    uint64_t m_buttons_scroll;
+    uint64_t buttons;
+    uint64_t buttonsChanged;
+    uint64_t buttonsScroll;
     char pad3[0x8];
 
     CSubTickContainer GetSubTickContainer()

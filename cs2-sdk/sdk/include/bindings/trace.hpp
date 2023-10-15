@@ -47,19 +47,19 @@ namespace trace
 
         int GetHitboxId()
         {
-            if (HitboxData) return HitboxData->HitboxId;
+            if (HitboxData) return HitboxData->m_nGroupId;
             return 0;
         }
 
-        int GetHitgroup()
+        int GetHitGroup()
         {
-            if (HitboxData) return HitboxData->Hitgroup;
+            if (HitboxData) return HitboxData->m_nGroupId;
             return 0;
         }
 
         void* Surface;
         C_CSPlayerPawnBase* HitEntity;
-        C_TraceHitboxData* HitboxData;
+        CHitBox* HitboxData;
         char pad1[0x10];
         int32_t Contents;
         char pad2[0x58];

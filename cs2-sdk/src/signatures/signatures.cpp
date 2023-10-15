@@ -182,7 +182,8 @@ namespace signatures
            {SDK_SIG("E8 ? ? ? ? 48 8D B7 ? ? ? ?"), [](CPointer& ptr) { ptr.Absolute(1,0); }},
         });
 
-
-
-
-    }  // namespace signatures
+    CSigScan WeaponInfo("Weapon Info", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("48 81 EC ? ? ? ? 48 85 C9 75 ? 33 C0 48 81 C4 ? ? ? ? C3 48 89 9C 24")},
+        });  // namespace signatures
+};

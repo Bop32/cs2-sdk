@@ -54,7 +54,7 @@ void CCachedPlayer::RenderESP()
 
     auto localPlayer = CGameEntitySystem::GetLocalPlayerController();
 
-    if (controller->m_iTeamNum() == localPlayer->m_iTeamNum() ||
+    if (!controller->m_bPawnIsAlive() || controller->m_iTeamNum() == localPlayer->m_iTeamNum() ||
         controller->IsWeapon()) return;
 
     if (g_Vars.m_Glow)
@@ -78,27 +78,18 @@ void CCachedPlayer::RenderESP()
         // p_min = upper-left, p_max = lower-right
 
         int maxArmor = std::min(controller->m_hPawn().Get()->m_ArmorValue(), 100u);
-        auto s = std::to_string(maxArmor);
-        const char* armorValue = s.c_str();
         const ImVec2 startPoint = { min.x, max.y + 2 };
         const ImVec2 endPoint { max.x, max.y + 2 };
         float width = ((endPoint.x - startPoint.x) * maxArmor) / 100.f;
 
-        drawList->AddLine(startPoint, endPoint, IM_COL32(0, 0, 0, 255), 3);
         if (maxArmor > 0)
         {
+            drawList->AddLine(startPoint, endPoint, IM_COL32(0, 0, 0, 255), 3);
             drawList->AddLine({ startPoint.x + ( std::max )(1.f, width) , startPoint.y }, startPoint,
                 IM_COL32(g_Vars.m_PlayerArmorColor[0] * 255,
                 g_Vars.m_PlayerArmorColor[1] * 255,
                 g_Vars.m_PlayerArmorColor[2] * 255,
                 g_Vars.m_PlayerArmorColor[3] * 255), 2);
-
-            if (maxArmor <= 60)
-            {
-                ImVec2 fontSize = nameFont->CalcTextSizeA(nameFont->FontSize, FLT_MAX, 0, armorValue);
-                drawList->AddText(nameFont, nameFont->FontSize, ImVec2 { startPoint.x + ( std::max )(1.f, width) - fontSize.x / 2, startPoint.y }, IM_COL32(255, 255, 255, 255), armorValue);
-            }
-
         }
     }
 
@@ -115,19 +106,18 @@ void CCachedPlayer::RenderESP()
     }
     if (g_Vars.m_WeaponName)
     {
-        auto playerPawn = controller->m_hPawn().Get();
-        
+        auto pawn = controller->m_hPawn().Get();
         //This is needed here otherwise it will crash if the enemy dies
-        if (playerPawn->m_iHealth() > 0)
+        if (pawn->m_iHealth() > 0)
         {
-            C_AttributeContainer* pAttributeContainer = playerPawn->m_pWeaponServices()->m_hActiveWeapon().Get()->m_AttributeManager();
+            C_AttributeContainer* pAttributeContainer = pawn->m_pWeaponServices()->m_hActiveWeapon().Get()->m_AttributeManager();
 
             if (!pAttributeContainer) return;
 
             weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
 
             if (!pItemView) return;
-
+                                                                                    
             weapon::CEconItemDefinition* pItemStaticData = pItemView->GetStaticData();
 
             if (!pItemStaticData) return;
@@ -154,11 +144,25 @@ void CCachedPlayer::RenderESP()
 
         const float height = ((barMax.y - barMin.y) * clampedHp) / 100.f;
 
-        drawList->AddRectFilled(barMin - ImVec2 { 0, 1 }, barMax + ImVec2 { 0, 1 }, IM_COL32(0, 0, 0, 255));
         if (clampedHp > 0)
         {
+            drawList->AddRectFilled(barMin - ImVec2 { 0, 1 }, barMax + ImVec2 { 0, 1 }, IM_COL32(0, 0, 0, 255));
             drawList->AddRectFilled({ barMin.x + 1, barMax.y - ( std::max )(1.f, height) }, { barMax.x - 1, barMax.y },
                 IM_COL32(red, greenClamped, 0, 255));
+        }
+        if (clampedHp <= 45)
+        {
+            auto s = std::to_string(clampedHp);
+            const char* health = s.c_str();
+            int const fontSize = 12;
+            ImVec2 textSize = nameFont->CalcTextSizeA(fontSize, FLT_MAX, 0, health);
+            ImVec2 textPosition = { barMin.x - textSize.x, barMax.y - ( std::max )(1.f, height) - textSize.y / 2 };
+            drawList->AddText(nameFont, fontSize,
+                ImVec2(textPosition + ImVec2 { 1,1 }),
+                IM_COL32(0, 0, 0, 255), health);
+            drawList->AddText(nameFont, fontSize,
+                textPosition,
+                IM_COL32(255, 255, 255, 255), health);
         }
     }
 
