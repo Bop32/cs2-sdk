@@ -38,7 +38,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
     Vector localPlayerEyePosition = localPlayer->GetEyePosition();
     Vector angle;
-    float aimbotFov = g_Vars.m_AimbotFov * 2.f;
+    float aimbotFov = g_Vars.m_AimbotFov;
 
     for (int i = 0; i < CGameEntitySystem::GetHighestEntityIndex(); i++)
     {
@@ -67,15 +67,12 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
         angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
 
-        angle.Clamp();
-
-        auto fov = hypotf(angle.x, angle.y);
+        float fov = hypotf(angle.x, angle.y);
 
         if (fov < aimbotFov)
         {
             target = bone_position;
             aimbotFov = fov;
-            break;
         }
     }
 
@@ -83,6 +80,8 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
     auto& aimPunch = localPlayer->m_aimPunchCache();
     localPlayerViewAngles += angle - aimPunch.m_Data[aimPunch.m_Size - 1] * 2;
+
+    localPlayerViewAngles.Clamp();
 
     cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
 
