@@ -94,12 +94,11 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
             auto fov = hypotf(angle.x, angle.y);
 
-            if (fov < aimbotFov && currentDamage > bestDamage)
-            {
-                target = bone_position;
-                aimbotFov = fov;
-                bestDamage = currentDamage;
-            }
+        if (fov < aimbotFov)
+        {
+            target = bone_position;
+            aimbotFov = fov;
+            break;
         }
     }
 
@@ -108,6 +107,8 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayer)
 
     auto& aimPunch = localPlayer->m_aimPunchCache();
     localPlayerViewAngles += angle - aimPunch.m_Data[aimPunch.m_Size - 1] * 2;
+
+    localPlayerViewAngles.Clamp();
 
     cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
 

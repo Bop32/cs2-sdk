@@ -79,6 +79,17 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
 
     if (!strstr(name, "characters/model") || !(id == CT_MODEL || id == T_MODEL || id == ARM)) return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
 
+    if (CGameEntitySystem::GetLocalPlayerController()) {
+        if (CGameEntitySystem::GetLocalPlayerController()->m_bPawnIsAlive() && CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get()) {
+            if (CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get()->m_iTeamNum() == 2 && id == T_MODEL)
+                return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer,
+                                                        unknown_pointer, unknown);
+            if (CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get()->m_iTeamNum() == 3 && id == CT_MODEL)
+                return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer,
+                                                        unknown_pointer, unknown);
+        }
+    }
+
     switch (id)
     {
         case CT_MODEL:
