@@ -52,7 +52,7 @@ static CHook g_LevelInit;
 static __int64 hkLevelInit(void* rcx)
 {
     GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
-    local_player = CGameEntitySystem::GetLocalPlayerController();
+    localPlayerController = CGameEntitySystem::GetLocalPlayerController();
 
     return g_LevelInit.CallOriginal<__int64>(rcx);
 }
@@ -141,22 +141,22 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 
     if (!cmd) return false;
 
-    auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
+    localPlayerController = CGameEntitySystem::GetLocalPlayerController();
 
     if (!localPlayerController || !localPlayerController->m_bPawnIsAlive()) return false;
 
-    C_CSPlayerPawnBase* pawn = localPlayerController->m_hPawn().Get();
+    localPlayerPawn = localPlayerController->m_hPawn().Get();
 
-    if (!pawn) return false;
+    if (!localPlayerPawn) return false;
 
     if (g_Vars.m_Aimbot)
     {
-        aimbot::RunAimbot(cmd, pawn);
+        aimbot::RunAimbot(cmd, localPlayerPawn);
     }
 
     if (g_Vars.m_Bhop)
     {
-        misc::BunnyHop(cmd, pawn);
+        misc::BunnyHop(cmd, localPlayerPawn);
     }
 
     return false;
@@ -167,18 +167,19 @@ static float originalFOV = 0;
 static CHook g_OverrideView;
 static void hkOverrideView(void* input, CViewSetup* view)
 {
+    if(!localPlayerController) return g_OverrideView.CallOriginal<void>(input, view);
+
     if (originalFOV == 0)
     {
         originalFOV = view->flFov;
     }
-    auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
     if (g_Vars.m_ViewModelFov)
     {
         localPlayerController->m_iDesiredFOV() = g_Vars.m_ViewModelFovSlider;
     }
     else
     {
-        localPlayerController->m_iDesiredFOV() = originalFOV;
+            localPlayerController->m_iDesiredFOV() = originalFOV;
     }
 
     return g_OverrideView.CallOriginal<void>(input, view);

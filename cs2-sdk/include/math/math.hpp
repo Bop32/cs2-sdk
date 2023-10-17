@@ -14,6 +14,8 @@ class CMath {
 
     void UpdateViewMatrix(VMatrix* viewMatrix);
 
+    void AngleVectors(Vector angles, Vector& out);
+
     bool WorldToScreen(const Vector& in, ImVec2& out);
     void TransformAABB(const matrix3x4_t& transform, const Vector& minsIn, const Vector& maxsIn, Vector& minsOut, Vector& maxsOut);
     Vector CalculateAngle(Vector& lookFrom, Vector& lookTo, Vector& viewAngles);

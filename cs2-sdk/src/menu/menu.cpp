@@ -68,13 +68,25 @@ void CMenu::RenderWatermark()
     drawList->AddText({ 16, 8 }, IM_COL32(27, 227, 200, 255), framerate);
 }
 
-void SelectedHitBoxes()
+string DropDownPreview(const char* names[], bool itemSelections[], int length)
 {
-    for (int i = 0; i < IM_ARRAYSIZE(g_Vars.m_SelectedHitBoxes); i++)
+    string endResult;
+    int selectedItems = 0;
+    for (int i = 0; i < length; i++)
     {
-        //if(g_Vars.m_SelectedHitBoxes[i])
+        if (itemSelections[i])
+        {
+            if (selectedItems > 0 )
+            {
+                endResult += ", ";
+            }
+            endResult += names[i];
+            selectedItems++;
+        }
     }
-    
+    if(selectedItems == 0) return "-";
+
+    return endResult;
 }
 
 void CMenu::RenderUI()
@@ -105,7 +117,8 @@ void CMenu::RenderUI()
 
     //Bad way of doing it but works for now.
     //TODO: make it render the current hitbox name you have selected in dropdown.
-    if (ImGui::BeginCombo("##combo", g_Vars.m_HitBoxesName[0]))
+    auto length = IM_ARRAYSIZE(g_Vars.m_HitBoxesName);
+    if (ImGui::BeginCombo("##combo", DropDownPreview(g_Vars.m_HitBoxesName, g_Vars.m_SelectedHitBoxes, length).c_str()))
     {
         for (int n = 0; n < IM_ARRAYSIZE(g_Vars.m_HitBoxesName); n++)
         {

@@ -17,6 +17,17 @@ void CMath::UpdateViewMatrix(VMatrix* viewMatrix)
     m_ViewMatrix = *viewMatrix;
 }
 
+void CMath::AngleVectors(Vector angles, Vector& out)
+{
+    float cp = std::cos(DegToRad(angles.x)), sp = std::sin(DegToRad(angles.x));
+    float cy = std::cos(DegToRad(angles.y)), sy = std::sin(DegToRad(angles.y));
+    float cr = std::cos(DegToRad(angles.z)), sr = std::sin(DegToRad(angles.z));
+
+    out.x = cp * cy;
+    out.y = cp * sy;
+    out.z = -sp;
+}
+
 bool CMath::WorldToScreen(const Vector& in, ImVec2& out)
 {
     if (!ImGui::GetCurrentContext()) return false;

@@ -73,6 +73,12 @@ void Config::LoadConfig()
     g_Vars.m_ViewModelFovSlider = configData[PRINTER(g_Vars.m_ViewModelFovSlider)].get<int>();
 
     g_Vars.m_WeaponName = configData[PRINTER(g_Vars.m_WeaponName)].get<bool>();
+    g_Vars.m_SelectedHitBoxes[0] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[0])].get<bool>();
+    g_Vars.m_SelectedHitBoxes[1] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[1])].get<bool>();
+    g_Vars.m_SelectedHitBoxes[2] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[2])].get<bool>();
+    g_Vars.m_SelectedHitBoxes[3] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[3])].get<bool>();
+    g_Vars.m_SelectedHitBoxes[4] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[4])].get<bool>();
+
     fileContents.close();
 }
 
@@ -107,6 +113,8 @@ void Config::SaveConfig()
     j[PRINTER(g_Vars.m_ViewModelFov)] = g_Vars.m_ViewModelFov;
     j[PRINTER(g_Vars.m_ViewModelFovSlider)] = g_Vars.m_ViewModelFovSlider;
     j[PRINTER(g_Vars.m_WeaponName)] = g_Vars.m_WeaponName;
+    j[PRINTER(g_Vars.m_SelectedHitBoxes)] = g_Vars.m_SelectedHitBoxes;
+
     
 
     fstream configFile(config.path, fstream::in | fstream::out | fstream::trunc);

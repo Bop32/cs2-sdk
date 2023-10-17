@@ -52,9 +52,9 @@ void CCachedPlayer::RenderESP()
 {
     CCSPlayerController* controller = Get<CCSPlayerController>();
 
-    auto localPlayer = CGameEntitySystem::GetLocalPlayerController();
+    auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
 
-    if (!controller->m_bPawnIsAlive() || controller->m_iTeamNum() == localPlayer->m_iTeamNum() ||
+    if (!controller->m_bPawnIsAlive() || controller->m_iTeamNum() == localPlayerController->m_iTeamNum() ||
         controller->IsWeapon()) return;
 
     if (g_Vars.m_Glow)
@@ -117,7 +117,7 @@ void CCachedPlayer::RenderESP()
             weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
 
             if (!pItemView) return;
-                                                                                    
+
             weapon::CEconItemDefinition* pItemStaticData = pItemView->GetStaticData();
 
             if (!pItemStaticData) return;
@@ -243,11 +243,11 @@ uint8_t CCachedPlayer::GetTeam()
 
 bool CCachedPlayer::IsEnemyWithLocalPlayer()
 {
-    CCachedPlayer* localPlayer = CMatchCache::Get().GetLocalPlayer();
-    if (!localPlayer) return true;
+    CCachedPlayer* localPlayerController = CMatchCache::Get().GetLocalPlayer();
+    if (!localPlayerController) return true;
 
     static ConVar* mp_teammates_are_enemies = CCVar::Get()->GetCvarByName("mp_teammates_are_enemies");
-    return mp_teammates_are_enemies->GetValue<bool>() ? true : GetTeam() != localPlayer->GetTeam();
+    return mp_teammates_are_enemies->GetValue<bool>() ? true : GetTeam() != localPlayerController->GetTeam();
 }
 
 bool CCachedPlayer::IsLocalPlayer() { return m_Handle.GetEntryIndex() == CEngineClient::Get()->GetLocalPlayer(); }

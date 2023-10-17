@@ -114,7 +114,7 @@ namespace signatures
 
     CSigScan GetSurfaceData("GetSurfaceData", CConstants::CLIENT_LIB,
         {
-            {SDK_SIG("E8 ? ? ? ? 48 85 C0 74 ? 44 38 60")},
+            {SDK_SIG("E8 ? ? ? ? 48 85 C0 74 ? 44 38 60"), [](CPointer& ptr) { ptr.Absolute(1, 0); }},
         });
 
     CSigScan TraceShape("TraceShape (Vis Checker)", CConstants::CLIENT_LIB,
@@ -185,5 +185,18 @@ namespace signatures
     CSigScan WeaponInfo("Weapon Info", CConstants::CLIENT_LIB,
         {
             {SDK_SIG("48 81 EC ? ? ? ? 48 85 C9 75 ? 33 C0 48 81 C4 ? ? ? ? C3 48 89 9C 24")},
-        });  // namespace signatures
+        }); 
+
+    CSigScan ClipTraceToPlayers("ClipTraceToPlayers" , CConstants::CLIENT_LIB,
+        
+        {
+            {SDK_SIG("E8 ? ? ? ? 80 BD ? ? ? ? ? 0F 85 ? ? ? ? F3 0F 10 85 ? ? ? ? 8B 85"),  [](CPointer& ptr) { ptr.Absolute(1,0); }}
+        });
+
+    CSigScan HandleBulletPenetration("HandleBulletPenetration", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("E8 ? ? ? ? BA ? ? ? ? 48 8D 0D ? ? ? ? 0F B6 D8 E8 ? ? ? ? 48 85 C0 75 0B 48 8B 05 ? ? ? ? 48 8B 40 08 66 0F 6E 00"),  [](CPointer& ptr) { ptr.Absolute(1,0); }}
+        });
+        
 };

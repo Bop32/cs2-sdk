@@ -6,6 +6,7 @@
 #include <constants/constants.hpp>
 
 #include <virtual/virtual.hpp>
+#include <bindings/trace.hpp>
 
 CEngineClient* CEngineClient::Get()
 {

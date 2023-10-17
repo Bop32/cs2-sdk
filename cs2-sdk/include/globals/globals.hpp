@@ -23,6 +23,7 @@ namespace globals
         std::uint64_t current_map;
         std::uint64_t current_map_name;
     };
-    inline CCSPlayerController* local_player = nullptr;
+    inline CCSPlayerController* localPlayerController = nullptr;
+    inline C_CSPlayerPawnBase* localPlayerPawn = nullptr;
     inline CGlobalVarsBase* GlobalVars = nullptr;
 }

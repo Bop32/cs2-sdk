@@ -15,7 +15,7 @@ public:
     Vector operator-(const Vector& rhs) const { return Vector { x - rhs.x, y - rhs.y, z - rhs.z }; }
     Vector operator*(float scalar) const { return Vector { x * scalar, y * scalar, z * scalar }; }
     Vector operator+=(const Vector& rhs) { return Vector { x += rhs.x, y += rhs.y, z += rhs.z }; }
-    Vector operator-=(const Vector& rhs) { return Vector { x -= rhs.x, y -= rhs.y, z -= rhs.z}; }
+    Vector operator-=(const Vector& rhs) { return Vector { x -= rhs.x, y -= rhs.y, z -= rhs.z }; }
 
     bool IsZero()
     {
@@ -27,13 +27,33 @@ public:
         return std::sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
     }
 
+    Vector Normalize()
+    {
+        float magnitude = Length(*this);
+
+        if (magnitude == 0.0)
+        {
+            return { 0.0, 0.0, 0.0 };
+        }
+        Vector normalized;
+        normalized.x = this->x / magnitude;
+        normalized.y = this->y / magnitude;
+        normalized.z = this->z / magnitude;
+        return normalized;
+    }
+
+    float Length()
+    {
+        return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+    }
+
     Vector Clamp()
     {
         this->x = std::clamp(this->x, -89.0f, 89.0f);
         this->y = std::clamp(std::remainder(this->y, 360.0f), -180.0f, 180.0f);
         this->z = std::clamp(this->z, -50.0f, 50.0f);
 
-        return Vector(x,y,z);
+        return Vector(x, y, z);
     }
 
     Vector Transform(const matrix3x4_t& matrix) const

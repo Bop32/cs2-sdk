@@ -30,4 +30,6 @@ namespace signatures
     extern CSigScan OverrideView;
     extern CSigScan CL_Bob_Lower_Amt;
     extern CSigScan WeaponInfo;
+    extern CSigScan ClipTraceToPlayers;
+    extern CSigScan HandleBulletPenetration;
 }  // namespace signatures
