@@ -33,16 +33,26 @@ namespace offsets
         fn(start, end, filter, trace, unk, mask, unk2);
     }
 
+
+    bool HandleBulletPenetration(void* ray, void* trace, weapon::CCSWeaponBaseVData* weaponData, int mask, int& showImpacts)
+    {
+        using function_t = bool(__fastcall*)(void*, void*, weapon::CCSWeaponBaseVData*, int, int&);
+        static function_t fn = reinterpret_cast< function_t >(signatures::HandleBulletPenetration.GetPtrAs<void*>());
+
+        return fn(ray, trace, weaponData, mask ,showImpacts);
+    }
+    /*
     bool HandleBulletPenetration(float& weaponPenetration, int& material, bool& hitGrate, void* trace, Vector& direction, void* traceSurface, float penetration, float surfaceDamageModifer, bool unk,uint32_t mask, float weaponPenetrationBefore, int& penetrationCount, Vector& startPosition, float range, float &traceLength, uint32_t playerTeamNum, void* localPlayer)
     {
         using function_t = bool(__fastcall*)(float&, int&, bool&, void*, Vector&, void*, float, float, bool, uint32_t, float, int&, float, float&, uint32_t, void*);
         static function_t fn = reinterpret_cast< function_t >(signatures::HandleBulletPenetration.GetPtrAs<void*>());
 
-        return fn(weaponPenetration, material, hitGrate, 
-            trace, direction, traceSurface, 
-            penetration, surfaceDamageModifer, unk, 
-            mask, weaponPenetrationBefore, penetrationCount, 
-            range, traceLength, 
+        return fn(weaponPenetration, material, hitGrate,
+            trace, direction, traceSurface,
+            penetration, surfaceDamageModifer, unk,
+            mask, weaponPenetrationBefore, penetrationCount,
+            range, traceLength,
             playerTeamNum, localPlayer);
     }
+    */
 }

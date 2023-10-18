@@ -196,7 +196,13 @@ namespace signatures
     CSigScan HandleBulletPenetration("HandleBulletPenetration", CConstants::CLIENT_LIB,
 
         {
-            {SDK_SIG("E8 ? ? ? ? BA ? ? ? ? 48 8D 0D ? ? ? ? 0F B6 D8 E8 ? ? ? ? 48 85 C0 75 0B 48 8B 05 ? ? ? ? 48 8B 40 08 66 0F 6E 00"),  [](CPointer& ptr) { ptr.Absolute(1,0); }}
+            {SDK_SIG("48 8B C4 44 89 48 20 55 57 41 55")}
+        });
+
+    CSigScan FrameStageNotify("FrameStageNotify", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 89 5C 24 ? 56 48 83 EC ? 8B 05 ? ? ? ? 8D 5A") }
         });
         
 };

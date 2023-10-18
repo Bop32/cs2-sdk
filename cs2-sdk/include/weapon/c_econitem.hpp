@@ -13,7 +13,7 @@ public:
     auto Destruct() { return CALL_VIRTUAL(void, 1, this, true); }
 
     void SetPaintKit(float kit) { SetDynamicAttributeValue(6, &kit); }
-    void SetPaintSeed(float seed) { SetDynamicAttributeValue(7, &seed); }
+    void SetPaintSeed(float seed) { SetDynamicAttributeValue(7, &seed); }       
     void SetPaintWear(float wear) { SetDynamicAttributeValue(8, &wear); }
     void SetStatTrak(int count) { SetDynamicAttributeValue(80, &count); }
     void SetStatTrakType(int type) { SetDynamicAttributeValue(81, &type); }

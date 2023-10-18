@@ -95,12 +95,14 @@ bool AutoWall::CanHit(C_CSPlayerPawnBase* enemy, Vector localPlayerEyePosition, 
 
         trace::C_Ray ray;
         trace::C_GameTrace trace;
-        trace::C_TraceFilter filter(0x1C1003, globals::localPlayerPawn, entityToSkip, 3);
+        trace::C_TraceFilter filter(0x1C300B, globals::localPlayerPawn, entityToSkip, 3);
         //Why is this needed?
         ray.UnkType = 0;
         ray.Start = ray.End = ray.Mins = ray.Maxs = Vector();
         filter.V4 |= 2;
 
+        ray.Start = localPlayerEyePosition;
+        ray.End = targetPosition;
 
         offsets::TraceShape(&ray, localPlayerEyePosition, end, &filter, &trace);
 
@@ -115,8 +117,6 @@ bool AutoWall::CanHit(C_CSPlayerPawnBase* enemy, Vector localPlayerEyePosition, 
         offsets::ClipTraceToPlayers(localPlayerEyePosition, endPoint, &filter, &trace, 0.f, 60.f, (1.F / (localPlayerEyePosition - end).Length()) * (trace.EndPos - localPlayerEyePosition).Length());
 
         C_CSPlayerPawnBase* hitEntity = trace.HitEntity;
-
-
 
         if (!hitEntity) break;
 
@@ -149,30 +149,12 @@ bool AutoWall::CanHit(C_CSPlayerPawnBase* enemy, Vector localPlayerEyePosition, 
         if (weaponDefaultDamage > 3000.f && weaponPenetration > 0.f || PenetrationMod < 0.1f)
             penetrationCount = 0;
 
-        /*
-        bool bHBP = offsets::HandleBulletPenetration(
-            weaponInfo->m_flPenetration(), // a1
-            material,                      // a2
-            bHitGrate,                     // a3
-            &trace,                        // a4
-            direction,                     // a5
-            trace.Surface,                 // a6
-            PenetrationMod,                // a7
-            Surface->DamageModifier,       // a8
-            false,                         // a9
-            2,                             // a10
-            weaponPenetration,             // a11
-            penetrationCount,              // a12
-            localPlayerEyePosition,        // a13
-            maxRange,                      // a14
-            currentDistance,               // a15
-            CGameEntitySystem::GetLocalPlayerController()->m_iTeamNum(),     // a16
-            CGameEntitySystem::GetLocalPlayerController()                    // a17
-        );
+        int zero = 1;
+        bool bHBP = offsets::HandleBulletPenetration(&ray, &trace, weaponInfo, 0xFFFFFFFF, zero);
 
         if (bHBP)
             break;
-        */
+
         return false;
     }
     return false;

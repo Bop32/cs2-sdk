@@ -79,14 +79,16 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
 
     if (!strstr(name, "characters/model") || !(id == CT_MODEL || id == T_MODEL || id == ARM)) return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
 
-    if (CGameEntitySystem::GetLocalPlayerController()) {
-        if (CGameEntitySystem::GetLocalPlayerController()->m_bPawnIsAlive() && CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get()) {
+    if (CGameEntitySystem::GetLocalPlayerController())
+    {
+        if (CGameEntitySystem::GetLocalPlayerController()->m_bPawnIsAlive() && CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get())
+        {
             if (CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get()->m_iTeamNum() == 2 && id == T_MODEL)
                 return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer,
-                                                        unknown_pointer, unknown);
+                unknown_pointer, unknown);
             if (CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get()->m_iTeamNum() == 3 && id == CT_MODEL)
                 return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer,
-                                                        unknown_pointer, unknown);
+                unknown_pointer, unknown);
         }
     }
 
@@ -167,7 +169,7 @@ static float originalFOV = 0;
 static CHook g_OverrideView;
 static void hkOverrideView(void* input, CViewSetup* view)
 {
-    if(!localPlayerController) return g_OverrideView.CallOriginal<void>(input, view);
+    if (!localPlayerController) return g_OverrideView.CallOriginal<void>(input, view);
 
     if (originalFOV == 0)
     {
@@ -179,7 +181,7 @@ static void hkOverrideView(void* input, CViewSetup* view)
     }
     else
     {
-            localPlayerController->m_iDesiredFOV() = originalFOV;
+        localPlayerController->m_iDesiredFOV() = originalFOV;
     }
 
     return g_OverrideView.CallOriginal<void>(input, view);
@@ -201,6 +203,14 @@ static void hkGetMatricesForView(void* rcx, void* view, VMatrix* pWorldToView, V
     CESP::Get().Update();
 }
 
+
+static CHook g_FrameStageNotify;
+
+static void hkFrameStageNotify(void* rcx, int frameStage)
+{
+    return g_FrameStageNotify.CallOriginal<void>(rcx, frameStage);
+}
+
 void CGameHooks::Initialize()
 {
     SDK_LOG_PROLOGUE();
@@ -216,6 +226,7 @@ void CGameHooks::Initialize()
     g_LevelInit.Hook(signatures::LevelInit.GetPtrAs<void*>(), SDK_HOOK(hkLevelInit));
     g_DrawObject.Hook(signatures::DrawObjectHook.GetPtrAs<void*>(), SDK_HOOK(hkDrawObject));
     g_OverrideView.Hook(signatures::OverrideView.GetPtrAs<void*>(), SDK_HOOK(hkOverrideView));
+    g_FrameStageNotify.Hook(signatures::FrameStageNotify.GetPtrAs<void*>(), SDK_HOOK(hkFrameStageNotify));
 
     //Sets Cl_Bob_Lower_Amt to 0.
     float* value = signatures::CL_Bob_Lower_Amt.GetPtrAs<float*>();

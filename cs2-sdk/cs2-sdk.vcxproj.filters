@@ -221,5 +221,7 @@
     <ClInclude Include="sdk\include\interfaces\CLocalize.hpp" />
     <ClInclude Include="include\hacks\aimbot\autowall.hpp" />
     <ClInclude Include="include\weapon\itemservices.hpp" />
+    <ClInclude Include="include\weapon\ceconitemschema.hpp" />
+    <ClInclude Include="include\math\types\CUtlMap.hpp" />
   </ItemGroup>
 </Project>

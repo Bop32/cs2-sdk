@@ -32,4 +32,5 @@ namespace signatures
     extern CSigScan WeaponInfo;
     extern CSigScan ClipTraceToPlayers;
     extern CSigScan HandleBulletPenetration;
+    extern CSigScan FrameStageNotify;
 }  // namespace signatures

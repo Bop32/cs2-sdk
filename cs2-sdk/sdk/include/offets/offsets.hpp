@@ -11,6 +11,7 @@ namespace offsets
     uint64_t GetSurfaceData(void* surface);
     bool TraceShape(C_Ray* Ray, Vector& Start, Vector& End, void* Filter, C_GameTrace* TraceResult);
     void ClipTraceToPlayers(Vector& start, Vector& end, trace::C_TraceFilter* filter, trace::C_GameTrace* trace, float unk, float mask, float unk2);
+    /*
     bool HandleBulletPenetration(
         float& weaponPenetration, int& material, bool& hitGrate, 
         void* trace, Vector& direction, void* traceSurface, 
@@ -18,4 +19,6 @@ namespace offsets
         uint32_t mask, float weaponPenetrationBefore, int& penetrationCount, 
         Vector& startPosition, float range, float& traceLength, 
         uint32_t playerTeamNum, void* localPlayer);
+    */
+    bool HandleBulletPenetration(void* ray, void* trace, weapon::CCSWeaponBaseVData* weaponData, int mask, int& showImpacts);
 }

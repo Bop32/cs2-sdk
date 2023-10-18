@@ -30,5 +30,7 @@ namespace weapon
         {
             return vt::CallMethod<CEconItemDefinition*>(this, 13);
         }
+        SCHEMA(uint64_t, m_iItemID, "C_EconItemView", "m_iItemIDs");  // Offset: 268
+
     };
 };
