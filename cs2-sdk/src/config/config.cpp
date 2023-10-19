@@ -3,6 +3,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>                 
 #include <logger/logger.hpp>
+#include <imgui/imgui.h>
 
 Config config;
 
@@ -17,6 +18,15 @@ void Config::CheckDirectory()
 string printer(const char* name)
 {
     return std::format("{}", name);
+}
+
+
+void SetConfigFloatItem(float arr[], string name, json configData, int arraySize)
+{
+    for (int i = 0; i < arraySize; i++)
+    {
+        arr[i] = configData[name][i].get<float>();
+    }
 }
 
 //For now we will only have 1 config as there are literally like 3 features
@@ -40,28 +50,15 @@ void Config::LoadConfig()
     g_Vars.m_PlayerNames = configData[PRINTER(g_Vars.m_PlayerNames)].get<bool>();
     g_Vars.m_PlayerHealthBar = configData[PRINTER(g_Vars.m_PlayerHealthBar)].get<bool>();
     g_Vars.m_Glow = configData[PRINTER(g_Vars.m_Glow)].get<bool>();
-    g_Vars.m_GlowColor[0] = configData[PRINTER(g_Vars.m_GlowColor)][0].get<float>();
-    g_Vars.m_GlowColor[1] = configData[PRINTER(g_Vars.m_GlowColor)][1].get<float>();
-    g_Vars.m_GlowColor[2] = configData[PRINTER(g_Vars.m_GlowColor)][2].get<float>();
-    g_Vars.m_GlowColor[3] = configData[PRINTER(g_Vars.m_GlowColor)][3].get<float>();
     g_Vars.m_WeaponESP = configData[PRINTER(g_Vars.m_WeaponESP)].get<bool>();
     g_Vars.m_ChickenESP = configData[PRINTER(g_Vars.m_ChickenESP)].get<bool>();
     g_Vars.m_OtherESP = configData[PRINTER(g_Vars.m_OtherESP)].get<bool>();
     g_Vars.m_Use3DBoxes = configData[PRINTER(g_Vars.m_Use3DBoxes)].get<bool>();
-    g_Vars.m_PlayerInvisChamsColor[0] = configData[PRINTER(g_Vars.m_PlayerInvisChamsColor)][0].get<float>();
-    g_Vars.m_PlayerInvisChamsColor[1] = configData[PRINTER(g_Vars.m_PlayerInvisChamsColor)][1].get<float>();
-    g_Vars.m_PlayerInvisChamsColor[2] = configData[PRINTER(g_Vars.m_PlayerInvisChamsColor)][2].get<float>();
-    g_Vars.m_PlayerInvisChamsColor[3] = configData[PRINTER(g_Vars.m_PlayerInvisChamsColor)][3].get<float>();
 
-    g_Vars.m_PlayerVisibleChamsColor[0] = configData[PRINTER(g_Vars.m_PlayerVisibleChamsColor)][0].get<float>();
-    g_Vars.m_PlayerVisibleChamsColor[1] = configData[PRINTER(g_Vars.m_PlayerVisibleChamsColor)][1].get<float>();
-    g_Vars.m_PlayerVisibleChamsColor[2] = configData[PRINTER(g_Vars.m_PlayerVisibleChamsColor)][2].get<float>();
-    g_Vars.m_PlayerVisibleChamsColor[3] = configData[PRINTER(g_Vars.m_PlayerVisibleChamsColor)][3].get<float>();
-
-    g_Vars.m_PlayerArmorColor[0] = configData[PRINTER(g_Vars.m_PlayerArmorColor)][0].get<float>();
-    g_Vars.m_PlayerArmorColor[1] = configData[PRINTER(g_Vars.m_PlayerArmorColor)][1].get<float>();
-    g_Vars.m_PlayerArmorColor[2] = configData[PRINTER(g_Vars.m_PlayerArmorColor)][2].get<float>();
-    g_Vars.m_PlayerArmorColor[3] = configData[PRINTER(g_Vars.m_PlayerArmorColor)][3].get<float>();
+    SetConfigFloatItem(g_Vars.m_GlowColor, PRINTER(g_Vars.m_GlowColor), configData, IM_ARRAYSIZE(g_Vars.m_GlowColor));
+    SetConfigFloatItem(g_Vars.m_PlayerInvisChamsColor, PRINTER(g_Vars.m_PlayerInvisChamsColor), configData, IM_ARRAYSIZE(g_Vars.m_PlayerInvisChamsColor));
+    SetConfigFloatItem(g_Vars.m_PlayerVisibleChamsColor, PRINTER(g_Vars.m_PlayerVisibleChamsColor), configData, IM_ARRAYSIZE(g_Vars.m_PlayerVisibleChamsColor));
+    SetConfigFloatItem(g_Vars.m_PlayerArmorColor, PRINTER(g_Vars.m_PlayerArmorColor), configData, IM_ARRAYSIZE(g_Vars.m_PlayerArmorColor));
 
     g_Vars.m_VisibleChams = configData[PRINTER(g_Vars.m_VisibleChams)].get<bool>();
     g_Vars.m_InvisibleChams = configData[PRINTER(g_Vars.m_InvisibleChams)].get<bool>();
@@ -73,11 +70,11 @@ void Config::LoadConfig()
     g_Vars.m_ViewModelFovSlider = configData[PRINTER(g_Vars.m_ViewModelFovSlider)].get<int>();
 
     g_Vars.m_WeaponName = configData[PRINTER(g_Vars.m_WeaponName)].get<bool>();
-    g_Vars.m_SelectedHitBoxes[0] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[0])].get<bool>();
-    g_Vars.m_SelectedHitBoxes[1] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[1])].get<bool>();
-    g_Vars.m_SelectedHitBoxes[2] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[2])].get<bool>();
-    g_Vars.m_SelectedHitBoxes[3] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[3])].get<bool>();
-    g_Vars.m_SelectedHitBoxes[4] = configData[PRINTER(g_Vars.m_SelectedHitBoxes[4])].get<bool>();
+
+    for (auto& hitboxes : g_Vars.m_HitBoxes)
+    {
+        hitboxes.second = configData[PRINTER(g_Vars.m_HitBoxes)].at(hitboxes.first).get<bool>();
+    }
 
     fileContents.close();
 }
@@ -113,9 +110,9 @@ void Config::SaveConfig()
     j[PRINTER(g_Vars.m_ViewModelFov)] = g_Vars.m_ViewModelFov;
     j[PRINTER(g_Vars.m_ViewModelFovSlider)] = g_Vars.m_ViewModelFovSlider;
     j[PRINTER(g_Vars.m_WeaponName)] = g_Vars.m_WeaponName;
-    j[PRINTER(g_Vars.m_SelectedHitBoxes)] = g_Vars.m_SelectedHitBoxes;
+    j[PRINTER(g_Vars.m_HitBoxes)] = g_Vars.m_HitBoxes;
 
-    
+
 
     fstream configFile(config.path, fstream::in | fstream::out | fstream::trunc);
 

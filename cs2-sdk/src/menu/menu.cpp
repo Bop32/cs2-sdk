@@ -68,6 +68,32 @@ void CMenu::RenderWatermark()
     drawList->AddText({ 16, 8 }, IM_COL32(27, 227, 200, 255), framerate);
 }
 
+string DropDownPreviewTest(std::map<const char*, bool> dropDownSelectionMap)
+{
+    string endResult;
+    auto pointInMap = dropDownSelectionMap.begin();
+
+    int selectedItems = 0;
+    while (pointInMap != dropDownSelectionMap.end())
+    {
+        //is hitbox selected?
+        if (pointInMap->second)
+        {
+            if (selectedItems > 0)
+            {
+                endResult += ", ";
+            }
+            endResult += pointInMap->first;
+            selectedItems++;
+        }
+        pointInMap++;
+    }
+    if (selectedItems == 0) return "-";
+
+    return endResult;
+}
+
+
 string DropDownPreview(const char* names[], bool itemSelections[], int length)
 {
     string endResult;
@@ -76,7 +102,7 @@ string DropDownPreview(const char* names[], bool itemSelections[], int length)
     {
         if (itemSelections[i])
         {
-            if (selectedItems > 0 )
+            if (selectedItems > 0)
             {
                 endResult += ", ";
             }
@@ -84,7 +110,7 @@ string DropDownPreview(const char* names[], bool itemSelections[], int length)
             selectedItems++;
         }
     }
-    if(selectedItems == 0) return "-";
+    if (selectedItems == 0) return "-";
 
     return endResult;
 }
@@ -115,8 +141,21 @@ void CMenu::RenderUI()
     ImGui::BeginChild("Aimbot", ImVec2(m_WindowWidth / 2, 150), true, ImGuiWindowFlags_NoScrollbar);
     ImGui::Checkbox("Enable Aimbot", &g_Vars.m_Aimbot);
 
-    //Bad way of doing it but works for now.
-    //TODO: make it render the current hitbox name you have selected in dropdown.
+
+    if (ImGui::BeginCombo("##combo", DropDownPreviewTest(g_Vars.m_HitBoxes).c_str()))
+    {
+        for (auto& hitBox : g_Vars.m_HitBoxes)
+        {
+            bool selected = hitBox.second;
+            if (ImGui::Selectable(hitBox.first, selected, ImGuiSelectableFlags_DontClosePopups))
+            {
+                hitBox.second = !hitBox.second;
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    /*
     auto length = IM_ARRAYSIZE(g_Vars.m_HitBoxesName);
     if (ImGui::BeginCombo("##combo", DropDownPreview(g_Vars.m_HitBoxesName, g_Vars.m_SelectedHitBoxes, length).c_str()))
     {
@@ -130,6 +169,7 @@ void CMenu::RenderUI()
         }
         ImGui::EndCombo();
     }
+    */
 
     ImGui::Checkbox("Auto Shoot", &g_Vars.m_AutoFire);
     ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);

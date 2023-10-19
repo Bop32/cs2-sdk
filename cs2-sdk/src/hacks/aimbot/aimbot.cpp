@@ -47,20 +47,20 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayerController)
     float currentDamage = 0;
 
     //Head
-    if (g_Vars.m_SelectedHitBoxes[0])
+    if (g_Vars.m_HitBoxes.at("Head"))
     {
         bones.emplace_back(6);
     }
 
     //Chest
-    if (g_Vars.m_SelectedHitBoxes[1])
+    if (g_Vars.m_HitBoxes.at("Chest"))
     {
         bones.emplace_back(3);
         bones.emplace_back(4);
 
     }
     //Pelivs
-    if (g_Vars.m_SelectedHitBoxes[2])
+    if (g_Vars.m_HitBoxes.at("Stomach"))
     {
         bones.emplace_back(0);
         bones.emplace_back(1);
@@ -70,7 +70,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayerController)
 
     }
     //Shoulders, Arms and hands?
-    if (g_Vars.m_SelectedHitBoxes[3])
+    if (g_Vars.m_HitBoxes.at("Arms"))
     {
         bones.emplace_back(8);
         bones.emplace_back(9);
@@ -81,7 +81,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayerController)
 
     }
     //Legs and toes
-    if (g_Vars.m_SelectedHitBoxes[4])
+    if (g_Vars.m_HitBoxes.at("Legs"))
     {
         bones.emplace_back(23);
         bones.emplace_back(24);

@@ -150,7 +150,7 @@ bool AutoWall::CanHit(C_CSPlayerPawnBase* enemy, Vector localPlayerEyePosition, 
             penetrationCount = 0;
 
         int zero = 1;
-        bool bHBP = offsets::HandleBulletPenetration(&ray, &trace, weaponInfo, 0xFFFFFFFF, zero);
+        bool bHBP = offsets::HandleBulletPenetration(&direction, &trace, weaponInfo, 0xFFFFFFFF, zero);
 
         if (bHBP)
             break;
