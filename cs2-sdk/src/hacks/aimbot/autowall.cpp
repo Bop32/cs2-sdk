@@ -69,7 +69,6 @@ bool AutoWall::CanHit(C_CSPlayerPawnBase* enemy, Vector localPlayerEyePosition, 
     data.direction = (targetPosition - localPlayerEyePosition).Normalize();
     trace::C_TraceFilter filter(0x1C300B, globals::localPlayerPawn, nullptr, 3);
     data.filter = filter;
-
     if (SimulateFireBullet(weaponInfo, data, enemy))
     {
         damage = data.currentDamage;
@@ -80,73 +79,71 @@ bool AutoWall::CanHit(C_CSPlayerPawnBase* enemy, Vector localPlayerEyePosition, 
 
 bool RebuiltHandleBulletPenetration(CCSWeaponBaseVData* weaponData, FireBulletData& data)
 {
-    C_SurfaceData* enter_surface_data = data.enterTrace.GetSurfaceData();
-    int enter_material = enter_surface_data->Material;
-    float enter_surf_penetration_mod = enter_surface_data->PenetrationModifier;
+    C_SurfaceData* enterSurfaceData = data.enterTrace.GetSurfaceData();
+    int enterMateiral = enterSurfaceData->Material;
+    float enterSurfPenetrationMod = enterSurfaceData->PenetrationModifier;
 
     data.traceLength += data.enterTrace.Fraction * data.traceLengthRemaining;
     data.currentDamage *= pow(weaponData->m_flRangeModifier(), (data.traceLength * 0.002f));
 
-    if ((data.traceLength > 3000.f) || (enter_surf_penetration_mod < 0.1f))
+    if ((data.traceLength > 3000.f) || (enterSurfPenetrationMod < 0.1f))
         data.penetrateCount = 0;
 
     if (data.penetrateCount <= 0)
         return false;
 
     Vector dummy;
-    C_GameTrace trace_exit;
-    C_Ray ray = {};
-    //offsets::TraceShape(&ray, data.src, data.enterTrace.EndPos, &data.filter, &trace_exit);
+    C_GameTrace traceExit;
     int tmpPen = 4;
-    if(!offsets::TraceToExit(data.enterTrace.EndPos, data.direction, data.src, &data.enterTrace, &trace_exit, 4.f, 90, globals::localPlayerPawn, &tmpPen))
+    if(!offsets::TraceToExit(data.enterTrace.EndPos, data.direction, data.src, &data.enterTrace, &traceExit, 4.f, 90.f, nullptr, &tmpPen))
         return false;
 
 
-    C_SurfaceData* exit_surface_data = trace_exit.GetSurfaceData();
-    int exit_material = exit_surface_data->Material;
+    C_SurfaceData* exitSurfaceData = traceExit.GetSurfaceData();
+    int exitMaterial = exitSurfaceData->Material;
 
-    float exit_surf_penetration_mod = exit_surface_data->PenetrationModifier;
-    float final_damage_modifier = 0.16f;
-    float combined_penetration_modifier = 0.0f;
+    float exitSurfPenetrationMod = exitSurfaceData->PenetrationModifier;
+    float finalDamageModifer = 0.16f;
+    float combinedPenetrationModifer = 0.0f;
 
-    if (((data.enterTrace.Contents & 0xFFFFFFFD) != 0) || (enter_material == 89) || (enter_material == 71))
+    if (((data.enterTrace.Contents & 0xFFFFFFFD) != 0) || (enterMateiral == 89) || (enterMateiral == 71))
     {
-        combined_penetration_modifier = 3.0f;
-        final_damage_modifier = 0.05f;
+        combinedPenetrationModifer = 3.0f;
+        finalDamageModifer = 0.05f;
     }
     else
     {
-        combined_penetration_modifier = (enter_surf_penetration_mod + exit_surf_penetration_mod) * 0.5f;
+        combinedPenetrationModifer = (enterSurfPenetrationMod + exitSurfPenetrationMod) * 0.5f;
     }
 
-    if (enter_material == exit_material)
+    if (enterMateiral == exitMaterial)
     {
-        if (exit_material == 87 || exit_material == 85)
-            combined_penetration_modifier = 3.0f;
-        else if (exit_material == 76)
-            combined_penetration_modifier = 2.0f;
+        if (exitMaterial == 87 || exitMaterial == 85)
+            combinedPenetrationModifer = 3.0f;
+        else if (exitMaterial == 76)
+            combinedPenetrationModifer = 2.0f;
     }
 
-    float v34 = fmaxf(0.f, 1.0f / combined_penetration_modifier);
-    float v35 = (data.currentDamage * final_damage_modifier) + v34 * 3.0f * fmaxf(0.0f, (3.0f / weaponData->m_flPenetration()) * 1.25f);
-    float thickness = (trace_exit.EndPos - data.enterTrace.EndPos).Length();
+    float v34 = fmaxf(0.f, 1.0f / combinedPenetrationModifer);
+    float v35 = (data.currentDamage * finalDamageModifer) + v34 * 3.0f * fmaxf(0.0f, (3.0f / weaponData->m_flPenetration()) * 1.25f);
+    float thickness = (traceExit.EndPos - data.enterTrace.EndPos).Length();
 
     thickness *= thickness;
     thickness *= v34;
     thickness /= 24.0f;
 
-    float lost_damage = fmaxf(0.0f, v35 + thickness);
+    float lostDamage = fmaxf(0.0f, v35 + thickness);
 
-    if (lost_damage > data.currentDamage)
+    if (lostDamage > data.currentDamage)
         return false;
 
-    if (lost_damage >= 0.0f)
-        data.currentDamage -= lost_damage;
+    if (lostDamage >= 0.0f)
+        data.currentDamage -= lostDamage;
 
     if (data.currentDamage < 1.0f)
         return false;
 
-    data.src = trace_exit.EndPos;
+    data.src = traceExit.EndPos;
     data.penetrateCount--;
 
     return true;
