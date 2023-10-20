@@ -9,6 +9,7 @@ class CBasePlayerController : public C_BaseEntity {
    public:
        SCHEMA(CHandle<C_CSPlayerPawnBase>, m_hPawn, "CBasePlayerController", "m_hPawn");
        SCHEMA(uint32_t, m_iDesiredFOV, "CBasePlayerController", "m_iDesiredFOV");
+       SCHEMA(uint32_t, m_nTickBase, "CBasePlayerController", "m_nTickBase");
 };
 
 class CCSPlayerController : public CBasePlayerController 

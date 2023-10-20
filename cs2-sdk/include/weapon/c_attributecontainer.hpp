@@ -4,5 +4,5 @@
 class C_AttributeContainer
 {
 public:
-    PSCHEMA(weapon::C_EconItemView, m_Item, "C_AttributeContainer", "m_Item");
+    PSCHEMA(C_EconItemView, m_Item, "C_AttributeContainer", "m_Item");
 };

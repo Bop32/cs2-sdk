@@ -4,7 +4,8 @@
 #include <bindings/playerpawn.hpp>
 #include <offets/offsets.hpp>
 #include <interfaces/gameentitysystem.hpp>
-
+               
+static bool onGround = false;
 void misc::BunnyHop(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
 {
     if (!(pawn->m_iFlags() & 1) != 0)

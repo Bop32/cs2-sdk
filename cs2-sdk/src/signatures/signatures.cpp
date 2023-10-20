@@ -199,10 +199,22 @@ namespace signatures
             {SDK_SIG("48 8B C4 44 89 48 20 55 57 41 55")}
         });
 
+    CSigScan TraceToExit("TraceToExit", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 8B C4 48 89 58 10 4C 89 48 20")}
+        });
+
     CSigScan FrameStageNotify("FrameStageNotify", CConstants::CLIENT_LIB,
 
         {
             {SDK_SIG("48 89 5C 24 ? 56 48 83 EC ? 8B 05 ? ? ? ? 8D 5A") }
+        });
+
+    CSigScan GetDamageToPoint("GetDamageToPoint", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("4C 8B DC 53 55 41") }
         });
         
 };

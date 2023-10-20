@@ -105,3 +105,4 @@ public:
         }
     }
 };
+static_assert(sizeof(CUserCmd) == 0x70);

@@ -20,7 +20,14 @@ struct Vars_t
     bool m_PlayerHasDefuser;
     bool m_Glow;
 
-    std::map<const char*, bool> m_HitBoxes = {{"Head", false}, {"Chest", false}, {"Stomach", false}, {"Arms", false}, {"Legs", false}};
+    std::map<const char*, bool> m_HitBoxes = 
+    {
+        {"Head", false}, 
+        {"Chest", false}, 
+        {"Stomach", false}, 
+        {"Arms", false}, 
+        {"Legs", false}
+    };
 
     float m_GlowColor[4] = { 180.0f / 255.0f, 60.0f / 255.0f, 120.0f / 255.0f,  153.0f / 255.0f };
     float m_PlayerInvisChamsColor[4] = { 150.0f / 255.0f, 200.0f / 255.0f, 60.0f / 255.0f,  255.0f / 255.0f };

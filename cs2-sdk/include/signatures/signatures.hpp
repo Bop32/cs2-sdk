@@ -33,4 +33,6 @@ namespace signatures
     extern CSigScan ClipTraceToPlayers;
     extern CSigScan HandleBulletPenetration;
     extern CSigScan FrameStageNotify;
+    extern CSigScan TraceToExit;
+    extern CSigScan GetDamageToPoint;
 }  // namespace signatures

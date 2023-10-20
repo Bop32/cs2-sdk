@@ -10,5 +10,4 @@ public:
     SCHEMA(int32_t, m_nFallbackPaintKit, "C_EconEntity", "m_nFallbackPaintKit")
     SCHEMA(int32_t, m_nFallbackStatTrak, "C_EconEntity", "m_nFallbackStatTrak")
     SCHEMA(int32_t, m_nFallbackSeed, "C_EconEntity", "m_nFallbackSeed")
-
 };

@@ -6,4 +6,5 @@ class CGameSceneNode {
    public:
     SCHEMA(CTransform, m_nodeToWorld, "CGameSceneNode", "m_nodeToWorld");
     SCHEMA(Vector, m_vecAbsOrigin, "CGameSceneNode", "m_vecAbsOrigin");
+    SCHEMA(bool, m_bDormant, "CGameSceneNode", "m_bDormant");
 };

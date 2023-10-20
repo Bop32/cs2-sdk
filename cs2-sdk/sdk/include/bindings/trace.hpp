@@ -86,6 +86,17 @@ namespace trace
 
         C_TraceFilter(std::uint32_t Mask, C_CSPlayerPawnBase* Skip1,
             C_CSPlayerPawnBase* Skip2, int Layer);
+
+        C_TraceFilter()
+        {
+
+        }
+
+        void CreateFilter(std::uint32_t Mask, C_CSPlayerPawnBase* Skip1,
+            C_CSPlayerPawnBase* Skip2, int Layer)
+        {
+
+        }
     };
 
     class TraceManager

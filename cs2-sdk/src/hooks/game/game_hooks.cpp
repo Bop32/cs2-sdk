@@ -143,7 +143,10 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 
     if (!cmd) return false;
 
-    localPlayerController = CGameEntitySystem::GetLocalPlayerController();
+    if (!localPlayerController)
+    {
+        localPlayerController = CGameEntitySystem::GetLocalPlayerController();
+    }
 
     if (!localPlayerController || !localPlayerController->m_bPawnIsAlive()) return false;
 
@@ -153,7 +156,7 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 
     if (g_Vars.m_Aimbot)
     {
-        aimbot::RunAimbot(cmd, localPlayerPawn);
+        aimbot::RunAimbot(cmd);
     }
 
     if (g_Vars.m_Bhop)

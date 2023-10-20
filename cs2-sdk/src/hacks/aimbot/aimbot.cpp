@@ -16,7 +16,7 @@
 #include <hacks/aimbot/autowall.hpp>
 
 using namespace trace;
-
+using namespace globals;
 bool aimbot::HitChance(C_CSPlayerPawnBase* localPlayerController)
 {
     constexpr float HITCHANCE_MAX = 100.f;
@@ -29,7 +29,7 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* localPlayerController)
 
 static std::vector<uint32_t> bones;
 
-void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayerController)
+void aimbot::RunAimbot(CUserCmd* cmd)
 {
     if (!CEngineClient::Get()->IsInGame()) return;
 
@@ -39,7 +39,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayerController)
 
     Vector target;
 
-    Vector localPlayerEyePosition = localPlayerController->GetEyePosition();
+    Vector localPlayerEyePosition = localPlayerPawn->GetEyePosition();
     Vector angle;
     float aimbotFov = g_Vars.m_AimbotFov * 2.f;
 
@@ -89,22 +89,24 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayerController)
         bones.emplace_back(27);
     }
 
-    C_AttributeContainer* pAttributeContainer = localPlayerController->m_pWeaponServices()->m_hActiveWeapon().Get()->m_AttributeManager();
+    auto currentWeapon = localPlayerPawn->m_pWeaponServices()->m_hActiveWeapon().Get();
+
+    C_AttributeContainer* pAttributeContainer = currentWeapon->m_AttributeManager();
 
     if (!pAttributeContainer) return;
 
-    weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
+    C_EconItemView* pItemView = pAttributeContainer->m_Item();
 
     if (!pItemView) return;
 
-    weapon::CCSWeaponBaseVData* weaponInfo = pItemView->GetWeaponInfo();
+    CCSWeaponBaseVData* weaponInfo = pItemView->GetWeaponInfo();
 
     for (int i = 0; i < CGameEntitySystem::GetHighestEntityIndex(); i++)
     {
         CCSPlayerController* enemyController = reinterpret_cast< CCSPlayerController* >(CGameEntitySystem::GetBaseEntity(i));
 
         if (!enemyController || !enemyController->IsPlayerController() ||
-            enemyController->m_iTeamNum() == localPlayerController->m_iTeamNum() ||
+            enemyController->m_iTeamNum() == localPlayerPawn->m_iTeamNum() ||
             !enemyController->m_bPawnIsAlive()) continue;
 
         C_CSPlayerPawnBase* enemyPawn = enemyController->m_hPawn().Get();
@@ -154,7 +156,7 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayerController)
 
     angle.Clamp();
 
-    auto& aimPunch = localPlayerController->m_aimPunchCache();
+    auto& aimPunch = localPlayerPawn->m_aimPunchCache();
 
     if(aimPunch.m_Size == 0) return;
 
@@ -170,21 +172,15 @@ void aimbot::RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayerController)
 
     if (g_Vars.m_AutoFire)
     {
-        auto weaponService = localPlayerController->m_pWeaponServices();
-
-        if (!weaponService) return;
-
-        auto activeWeapon = weaponService->m_hActiveWeapon().Get();
-
-        if (!activeWeapon) return;
-
-
         if (!globals::GlobalVars)
         {
             globals::GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
         }
+        
+        //This is needed as for community servers you need to compensate tickBase prediction errors. (I think)
+        auto tickDifference = std::abs(currentWeapon->m_nNextPrimaryAttackTick() - (int)localPlayerController->m_nTickBase());
 
-        if (activeWeapon->m_nNextPrimaryAttackTick() > globals::GlobalVars->tick_count) return;
+        if (currentWeapon->m_nNextPrimaryAttackTick() + tickDifference > globals::GlobalVars->tick_count) return;
 
         cmd->buttons |= CUserCmd::IN_ATTACK;
     }

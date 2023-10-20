@@ -40,7 +40,7 @@ public:
     SCHEMA(uint32_t, m_ArmorValue, "C_CSPlayerPawnBase", "m_ArmorValue");
     SCHEMA(CPlayer_CameraServices*, m_pCameraServices, "C_BasePlayerPawn", "m_pCameraServices");
     SCHEMA(CPlayer_ItemServices*, m_pItemServices, "C_BasePlayerPawn", "m_pItemServices");
-
+    SCHEMA(uint32_t, m_nTickBase, "CBasePlayerController", "m_nTickBase");
 
 
 

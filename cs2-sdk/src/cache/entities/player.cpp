@@ -56,6 +56,8 @@ void CCachedPlayer::RenderESP()
 
     if (!controller->m_bPawnIsAlive() || controller->m_iTeamNum() == localPlayerController->m_iTeamNum() ||
         controller->IsWeapon()) return;
+     
+    auto pawn = controller->m_hPawn().Get();
 
     if (g_Vars.m_Glow)
     {
@@ -106,7 +108,6 @@ void CCachedPlayer::RenderESP()
     }
     if (g_Vars.m_WeaponName)
     {
-        auto pawn = controller->m_hPawn().Get();
         //This is needed here otherwise it will crash if the enemy dies
         if (pawn->m_iHealth() > 0)
         {
@@ -114,11 +115,11 @@ void CCachedPlayer::RenderESP()
 
             if (!pAttributeContainer) return;
 
-            weapon::C_EconItemView* pItemView = pAttributeContainer->m_Item();
+            C_EconItemView* pItemView = pAttributeContainer->m_Item();
 
             if (!pItemView) return;
 
-            weapon::CEconItemDefinition* pItemStaticData = pItemView->GetStaticData();
+            CEconItemDefinition* pItemStaticData = pItemView->GetStaticData();
 
             if (!pItemStaticData) return;
 
@@ -130,6 +131,7 @@ void CCachedPlayer::RenderESP()
             drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), weaponName);
         }
     }
+
 
     if (g_Vars.m_PlayerHealthBar)
     {
@@ -175,6 +177,7 @@ void CCachedPlayer::RenderESP()
         { 0, 2 },{ 2, 5 },{ 5, 6 } //spine
     };
 
+    if(!pawn) return;
     for (int i = 0; i < 15; ++i)
     {
         Vector rot1, rot2;
@@ -182,8 +185,8 @@ void CCachedPlayer::RenderESP()
         Vector From;
         Vector To;
 
-        controller->m_hPawn().Get()->GetBonePosition(bones[i][0], From, rot1);
-        controller->m_hPawn().Get()->GetBonePosition(bones[i][1], To, rot1);
+        pawn->GetBonePosition(bones[i][0], From, rot1);
+        pawn->GetBonePosition(bones[i][1], To, rot1);
 
         if (CMath::Get().WorldToScreen(From, Out1) && CMath::Get().WorldToScreen(To, Out2))
         {

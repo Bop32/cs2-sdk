@@ -2,7 +2,6 @@
 #include <weapon/c_econitemview.hpp>
 #include <signatures/signatures.hpp>
 
-using namespace weapon;
 CCSWeaponBaseVData* C_EconItemView::GetWeaponInfo()
 {
     using function_t = CCSWeaponBaseVData * (__fastcall*)(void*);

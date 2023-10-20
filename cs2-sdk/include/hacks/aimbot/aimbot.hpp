@@ -44,6 +44,6 @@ enum HITBOXES : DWORD
 
 namespace aimbot
 {
-    void RunAimbot(CUserCmd* cmd, C_CSPlayerPawnBase* localPlayerController);
+    void RunAimbot(CUserCmd* cmd);
     bool HitChance(C_CSPlayerPawnBase* localPlayerController);
 }

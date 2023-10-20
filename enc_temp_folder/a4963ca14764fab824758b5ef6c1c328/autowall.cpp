@@ -98,7 +98,7 @@ bool RebuiltHandleBulletPenetration(CCSWeaponBaseVData* weaponData, FireBulletDa
     C_Ray ray = {};
     //offsets::TraceShape(&ray, data.src, data.enterTrace.EndPos, &data.filter, &trace_exit);
     int tmpPen = 4;
-    if(!offsets::TraceToExit(data.enterTrace.EndPos, data.direction, data.src, &data.enterTrace, &trace_exit, 4.f, 90, globals::localPlayerPawn, &tmpPen))
+    if(!offsets::TraceToExit(data.src, data.direction, data.enterTrace.EndPos, &data.enterTrace, &trace_exit, 4.f, 90, globals::localPlayerPawn, &tmpPen))
         return false;
 
 
