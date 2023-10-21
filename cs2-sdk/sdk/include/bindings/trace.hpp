@@ -57,16 +57,29 @@ namespace trace
             return 0;
         }
 
-        void* Surface;
-        C_CSPlayerPawnBase* HitEntity;
-        CHitBox* HitboxData;
-        char pad1[0x10];
-        int32_t Contents;
-        char pad2[0x58];
-        Vector EndPos;
-        char pad3[0x1C];
-        float Fraction;
+        void* Surface; //0x0
+        C_CSPlayerPawnBase* HitEntity; //0x08
+        CHitBox* HitboxData;  //0x10
+        char pad1[0x10];    //0x18
+        int32_t Contents;  //0x28
+        char pad2[0x58];   //0x2C
+        Vector EndPos;     //0x84
+        char pad3[0x1C];  // 0x90
+        float Fraction;   // 0xAC
         char pad4[0x10];
+                                        /*
+        void* Surface; //0x0
+        C_CSPlayerPawnBase* HitEntity; //0x08
+        CHitBox* HitboxData;  //0x10
+        char pad1[0x10];    //0x18
+        int32_t Contents;  //0x28
+        char pad2[0x58];   //0x2C
+        Vector EndPos;     //0x84
+        char pad3[0x1C];  // 0x90
+        float Fraction;   // 0xAC
+        char pad4[0x6];  // 0xB0
+        bool allsolid;   // 0xB6
+                                        */
     };
 
     class C_TraceFilter

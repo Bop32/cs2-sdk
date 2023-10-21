@@ -67,7 +67,7 @@ bool AutoWall::CanHit(C_CSPlayerPawnBase* enemy, Vector localPlayerEyePosition, 
 {
     auto data = FireBulletData(localPlayerEyePosition);
     data.direction = (targetPosition - localPlayerEyePosition).Normalize();
-    trace::C_TraceFilter filter(0x1C300B, globals::localPlayerPawn, nullptr, 3);
+    trace::C_TraceFilter filter(0x1C3003, globals::localPlayerPawn, nullptr, 3);
     data.filter = filter;
     if (SimulateFireBullet(weaponInfo, data, enemy))
     {
@@ -92,10 +92,9 @@ bool RebuiltHandleBulletPenetration(CCSWeaponBaseVData* weaponData, FireBulletDa
     if (data.penetrateCount <= 0)
         return false;
 
-    Vector dummy;
     C_GameTrace traceExit;
-    int tmpPen = 4;
-    if(!offsets::TraceToExit(data.enterTrace.EndPos, data.direction, data.src, &data.enterTrace, &traceExit, 4.f, 90.f, nullptr, &tmpPen))
+    bool didHit;
+    if (!offsets::TraceToExit(data.enterTrace.EndPos, data.direction, data.src, &data.enterTrace, &traceExit, 4.f, 90.f, nullptr, &didHit))
         return false;
 
 
@@ -106,7 +105,7 @@ bool RebuiltHandleBulletPenetration(CCSWeaponBaseVData* weaponData, FireBulletDa
     float finalDamageModifer = 0.16f;
     float combinedPenetrationModifer = 0.0f;
 
-    if (((data.enterTrace.Contents & 0xFFFFFFFD) != 0) || (enterMateiral == 89) || (enterMateiral == 71))
+    if (((data.enterTrace.Contents & 0x1C3001) != 0) || (enterMateiral == 89) || (enterMateiral == 71))
     {
         combinedPenetrationModifer = 3.0f;
         finalDamageModifer = 0.05f;
@@ -118,10 +117,17 @@ bool RebuiltHandleBulletPenetration(CCSWeaponBaseVData* weaponData, FireBulletDa
 
     if (enterMateiral == exitMaterial)
     {
-        if (exitMaterial == 87 || exitMaterial == 85)
-            combinedPenetrationModifer = 3.0f;
-        else if (exitMaterial == 76)
+        if (((exitMaterial - 85) & 0xFFFFFFFD) != 0)
+        {
+            if (exitMaterial == 76)
+            {
+                combinedPenetrationModifer = 3.0f;
+            }
+        }
+        else
+        {
             combinedPenetrationModifer = 2.0f;
+        }
     }
 
     float v34 = fmaxf(0.f, 1.0f / combinedPenetrationModifer);
@@ -153,11 +159,11 @@ bool AutoWall::SimulateFireBullet(CCSWeaponBaseVData* weaponData, FireBulletData
     C_CSPlayerPawnBase* entityToSkip = nullptr;
     data.penetrateCount = 4;
     data.traceLength = 0.0f;
-    data.currentDamage = (float)weaponData->m_nDamage();
+    data.currentDamage = ( float )weaponData->m_nDamage();
 
     while (data.penetrateCount > 0 && data.currentDamage >= 1.f)
     {
-        data.traceLengthRemaining = weaponData->m_flRange() - data.traceLength;
+        data.traceLengthRemaining = weaponData->m_flRange() - data.traceLength  ;
 
         trace::C_Ray ray;
         //Why is this needed?

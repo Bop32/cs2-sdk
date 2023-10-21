@@ -26,9 +26,9 @@ namespace offsets
     }
 
 
-    bool TraceToExit(Vector& start, Vector& direction, Vector& end, trace::C_GameTrace* enterTrace, trace::C_GameTrace* exitTrace, float step, float unk, void* pawn, int* unk1)
+    bool TraceToExit(Vector& start, Vector& direction, Vector& end, trace::C_GameTrace* enterTrace, trace::C_GameTrace* exitTrace, float step, float unk, void* pawn, bool* unk1)
     {
-        using function_t = bool(__fastcall*)(Vector&, Vector&, Vector&, trace::C_GameTrace*, trace::C_GameTrace*, float, float, void*, int*);
+        using function_t = bool(__fastcall*)(Vector&, Vector&, Vector&, trace::C_GameTrace*, trace::C_GameTrace*, float, float, void*, bool*);
         static function_t fn = reinterpret_cast< function_t >(signatures::TraceToExit.GetPtrAs<void*>());
 
         return fn(start, direction, end, enterTrace, exitTrace, step, unk, pawn, unk1);

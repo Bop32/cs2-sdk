@@ -211,10 +211,10 @@ namespace signatures
             {SDK_SIG("48 89 5C 24 ? 56 48 83 EC ? 8B 05 ? ? ? ? 8D 5A") }
         });
 
-    CSigScan GetDamageToPoint("GetDamageToPoint", CConstants::CLIENT_LIB,
+    CSigScan TraceRay("TraceRay", CConstants::CLIENT_LIB,
 
         {
-            {SDK_SIG("4C 8B DC 53 55 41") }
+            {SDK_SIG("E8 ?? ?? ?? ?? 48 8D 4C 24 30 48 89 5D 80") }
         });
         
 };
