@@ -35,4 +35,7 @@ namespace signatures
     extern CSigScan FrameStageNotify;
     extern CSigScan TraceToExit;
     extern CSigScan GetDamageToPoint;
+    extern CSigScan GetContents;
+    extern CSigScan TraceRay;
+    extern CSigScan DebugOverlay;
 }  // namespace signatures

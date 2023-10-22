@@ -390,6 +390,7 @@
     <ClInclude Include="sdk\include\types\handle.hpp" />
     <ClInclude Include="sdk\include\types\utlvector.hpp" />
     <ClInclude Include="include\hacks\misc\misc.hpp" />
+    <ClInclude Include="sdk\include\debugoverlay\CDebugOverlayGameSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

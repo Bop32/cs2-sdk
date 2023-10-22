@@ -7,6 +7,8 @@
 #include <renderer/renderer.hpp>
 #include <imgui/imgui_internal.h>
 #include <math/math.hpp>
+#include <debugoverlay/CDebugOverlayGameSystem.hpp>
+
 using namespace AutoWall;
 
 bool PlayerHasArmor(C_CSPlayerPawnBase* player, int hitgroup)
@@ -77,6 +79,57 @@ bool AutoWall::CanHit(C_CSPlayerPawnBase* enemy, Vector localPlayerEyePosition, 
     return false;
 }
 
+bool RebuiltTraceToExit(Vector start, Vector direction, Vector& wallEnd, trace::C_GameTrace enterTrace, trace::C_GameTrace& exitTrace, float step, float maxRange, void* localPlayer, int* didHit)
+{
+
+    float currentDistance {};
+    int firstContents {};
+
+    while (currentDistance <= maxRange)
+    {
+        currentDistance += step;
+
+        wallEnd = start + (direction * currentDistance);
+
+        Vector traceEnd = wallEnd - (direction * step);
+
+        int contents = offsets::GetContents(wallEnd, 0x1C3003, 7);
+
+        if (!firstContents)
+            firstContents = contents;
+
+        if ((contents & 0x1C3001) == 0 || (contents & 2) != 0 && firstContents != contents)
+        {
+            trace::C_Ray ray {};
+            trace::C_TraceFilter filter(0x1C3001, globals::localPlayerPawn, 0, 0);
+
+            CDebugOverlayGameSystem::Get()->AddLineOverlay(wallEnd, traceEnd, IM_COL32(255,255,255,255), false, 0.01f);
+            offsets::TraceShape(&ray, wallEnd, traceEnd, &filter, &exitTrace);
+            //offsets::TraceRay(&ray, &enterTrace, &filter, 0, &exitTrace);
+
+            if (exitTrace.allSolid && exitTrace.GetHitGroup())
+            {
+                return 0;
+            }
+            else if (exitTrace.Fraction < 1.f)
+            {
+                if (((exitTrace.surface_flags >> 7) & 1) && !((exitTrace.surface_flags >> 7) & 1))
+                    continue;
+
+                Vector normal = exitTrace.normal;
+
+                if (normal.x * direction.x + normal.y * direction.y + normal.z * direction.z <= 1.f)
+                {
+                    wallEnd = wallEnd - (direction * step * exitTrace.Fraction);
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
 bool RebuiltHandleBulletPenetration(CCSWeaponBaseVData* weaponData, FireBulletData& data)
 {
     C_SurfaceData* enterSurfaceData = data.enterTrace.GetSurfaceData();
@@ -93,8 +146,9 @@ bool RebuiltHandleBulletPenetration(CCSWeaponBaseVData* weaponData, FireBulletDa
         return false;
 
     C_GameTrace traceExit;
-    bool didHit;
-    if (!offsets::TraceToExit(data.enterTrace.EndPos, data.direction, data.src, &data.enterTrace, &traceExit, 4.f, 90.f, nullptr, &didHit))
+    int didHit;
+
+    if (!RebuiltTraceToExit(data.src, data.direction, data.enterTrace.EndPos, data.enterTrace, traceExit, 4.0f, 90.f, nullptr, &didHit))
         return false;
 
 
@@ -163,7 +217,7 @@ bool AutoWall::SimulateFireBullet(CCSWeaponBaseVData* weaponData, FireBulletData
 
     while (data.penetrateCount > 0 && data.currentDamage >= 1.f)
     {
-        data.traceLengthRemaining = weaponData->m_flRange() - data.traceLength  ;
+        data.traceLengthRemaining = weaponData->m_flRange() - data.traceLength;
 
         trace::C_Ray ray;
         //Why is this needed?
@@ -199,13 +253,10 @@ bool AutoWall::SimulateFireBullet(CCSWeaponBaseVData* weaponData, FireBulletData
         if (hitgroup >= HITGROUP_HEAD && hitgroup <= HITGROUP_NECK)
         {
             data.traceLength += data.enterTrace.Fraction * data.traceLengthRemaining;
-
             data.currentDamage *= pow(weaponData->m_flRangeModifier(), data.traceLength * 0.002f);
             ScaleDamage(enemy, weaponData, data.currentDamage, hitgroup);
             return true;
         }
-
-        int zero = 0;
 
         if (!RebuiltHandleBulletPenetration(weaponData, data))
             break;

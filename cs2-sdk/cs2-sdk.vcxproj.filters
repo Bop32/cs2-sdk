@@ -223,5 +223,6 @@
     <ClInclude Include="include\weapon\itemservices.hpp" />
     <ClInclude Include="include\weapon\ceconitemschema.hpp" />
     <ClInclude Include="include\math\types\CUtlMap.hpp" />
+    <ClInclude Include="sdk\include\debugoverlay\CDebugOverlayGameSystem.hpp" />
   </ItemGroup>
 </Project>

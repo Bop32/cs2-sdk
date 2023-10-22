@@ -185,10 +185,10 @@ namespace signatures
     CSigScan WeaponInfo("Weapon Info", CConstants::CLIENT_LIB,
         {
             {SDK_SIG("48 81 EC ? ? ? ? 48 85 C9 75 ? 33 C0 48 81 C4 ? ? ? ? C3 48 89 9C 24")},
-        }); 
+        });
 
-    CSigScan ClipTraceToPlayers("ClipTraceToPlayers" , CConstants::CLIENT_LIB,
-        
+    CSigScan ClipTraceToPlayers("ClipTraceToPlayers", CConstants::CLIENT_LIB,
+
         {
             {SDK_SIG("E8 ? ? ? ? 80 BD ? ? ? ? ? 0F 85 ? ? ? ? F3 0F 10 85 ? ? ? ? 8B 85"),  [](CPointer& ptr) { ptr.Absolute(1,0); }}
         });
@@ -214,7 +214,19 @@ namespace signatures
     CSigScan TraceRay("TraceRay", CConstants::CLIENT_LIB,
 
         {
-            {SDK_SIG("E8 ?? ?? ?? ?? 48 8D 4C 24 30 48 89 5D 80") }
+            {SDK_SIG("E8 ? ? ? ? 48 8D 4C 24 30 48 89 5D 80") }
         });
-        
+
+    CSigScan GetContents("GetContents", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("E8 ? ? ? ? 48 A9 01 30 1C 00"), [](CPointer& ptr) { ptr.Absolute(1,0); }}
+        });
+
+    CSigScan DebugOverlay("DebugOverlay", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 8B 3D ? ? ? ? 48 8D 4D 07"), [](CPointer& ptr) { ptr.Absolute(3,0); }}
+        });
+
+
 };

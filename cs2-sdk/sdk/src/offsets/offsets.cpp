@@ -42,6 +42,13 @@ namespace offsets
         fn(start, end, filter, trace, unk, mask, unk2);
     }
 
+    void TraceRay(trace::C_Ray* ray, trace::C_GameTrace* trace, trace::C_TraceFilter* filter, float unk, void* unk1)
+    {
+        using function_t = void* (__fastcall*)(C_Ray*, C_GameTrace*, C_TraceFilter*, float, void*);
+        static function_t fn = reinterpret_cast< function_t >(signatures::TraceRay.GetPtrAs<void*>());
+
+        fn(ray, trace, filter, unk, unk1);
+    }
 
     bool HandleBulletPenetration(void* ray, void* trace, CCSWeaponBaseVData* weaponData, int mask, int& showImpacts)
     {
@@ -52,11 +59,12 @@ namespace offsets
     }
 
     //Could call this instead of HandleBulletPen? not sure tho
-    bool GetDamageToPoint(void* ray, float a2, float a3, float a4, unsigned int a5, int a6, int* a7)
-    {
-        using function_t = bool(__fastcall*)(void*, float, float, float, unsigned int, int, int*);
-        static function_t fn = reinterpret_cast< function_t >(signatures::GetDamageToPoint.GetPtrAs<void*>());
 
-        return fn(ray, a2, a3, a4, a5, a6, a7);
+    int GetContents(Vector& endPosition, int mask, int unk)
+    {
+        using function_t = bool(__fastcall*)(void*, Vector&, int, int);
+        static function_t fn = reinterpret_cast< function_t >(signatures::GetContents.GetPtrAs<void*>());
+
+        return fn(TraceManager::Get(), endPosition, mask, unk);
     }
 }

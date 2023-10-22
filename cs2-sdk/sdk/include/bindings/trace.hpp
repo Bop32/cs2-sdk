@@ -15,12 +15,13 @@ namespace trace
 
     struct C_Ray
     {
-        Vector Start;
-        Vector End;
-        Vector Mins;
-        Vector Maxs;
-        char pad1[0x4];
-        std::uint8_t UnkType;
+        Vector Start;  // 0x0
+        Vector End;    // 0xC
+        Vector Mins;   // 0x18
+        Vector Maxs;   // 0x24
+        char pad1[0x4]; //0x30
+        std::uint8_t UnkType; //0x34
+        //size = 0x35
     };
 
     struct C_SurfaceData
@@ -57,6 +58,7 @@ namespace trace
             return 0;
         }
 
+        /*
         void* Surface; //0x0
         C_CSPlayerPawnBase* HitEntity; //0x08
         CHitBox* HitboxData;  //0x10
@@ -67,6 +69,25 @@ namespace trace
         char pad3[0x1C];  // 0x90
         float Fraction;   // 0xAC
         char pad4[0x10];
+        */
+
+        void* Surface; //0x0000
+        C_CSPlayerPawnBase* HitEntity; //0x0008
+        CHitBox* HitboxData; //0x0010
+        char pad_0017[16]; //0x0018
+        int32_t Contents;  //0x0028
+        char pad_0018[36]; //0x002C
+        uint32_t surface_flags; //0x0050
+        char pad_0054[36]; //0x0054
+        Vector startPos; //0x0078
+        Vector EndPos; //0x0084
+        Vector normal; //0x0090
+        Vector another_endpos; //0x009C
+        char pad_00A8[4]; //0x00A8
+        float Fraction; //0x00AC
+        char pad_00B0[6]; //0x00B0
+        bool allSolid; //0x00B6
+        char pad_00B7[77]; //0x00B7
                                         /*
         void* Surface; //0x0
         C_CSPlayerPawnBase* HitEntity; //0x08
@@ -85,14 +106,14 @@ namespace trace
     class C_TraceFilter
     {
     public:
-        uint64_t TraceMask;
-        uint64_t V1[2];
-        uint32_t SkipHandles[4];
-        uint16_t Collisions[2];
-        uint16_t V2;
-        uint8_t V3;
-        uint8_t V4;
-        uint8_t V5;
+        uint64_t TraceMask;       //0x0
+        uint64_t V1[2];           //0x8
+        uint32_t SkipHandles[4];  //0x18
+        uint16_t Collisions[2];   //0x28
+        uint16_t V2;              //0x2C
+        uint8_t V3;               //0x2E
+        uint8_t V4;               //0x2F
+        uint8_t V5;               //0x30
 
         virtual ~C_TraceFilter() {}
         virtual bool function() { return true; }
