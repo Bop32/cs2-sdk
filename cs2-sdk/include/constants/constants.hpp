@@ -10,6 +10,16 @@ class CConstants
 {
 public:
 
+
+    static constexpr auto RESOURCE_SYSTEM_DLL = []
+        {
+#ifdef _WIN32
+            return "resourcesystem.dll";
+#elif __linux__
+            return "scenesystem.dll";
+#endif
+        }();
+
     static constexpr auto LOCALIZE_DLL = []
         {
 #ifdef _WIN32

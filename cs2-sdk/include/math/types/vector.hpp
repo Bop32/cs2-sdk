@@ -47,6 +47,7 @@ public:
         return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
     }
 
+
     Vector Clamp()
     {
         this->x = std::clamp(this->x, -89.0f, 89.0f);

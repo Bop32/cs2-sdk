@@ -48,13 +48,13 @@ namespace trace
 
         int GetHitboxId()
         {
-            if (HitboxData) return HitboxData->m_nGroupId;
+            if (pHitBox) return pHitBox->nGroupId;
             return 0;
         }
 
         int GetHitGroup()
         {
-            if (HitboxData) return HitboxData->m_nGroupId;
+            if (pHitBox) return pHitBox->nGroupId;
             return 0;
         }
 
@@ -71,36 +71,21 @@ namespace trace
         char pad4[0x10];
         */
 
-        void* Surface; //0x0000
-        C_CSPlayerPawnBase* HitEntity; //0x0008
-        CHitBox* HitboxData; //0x0010
-        char pad_0017[16]; //0x0018
-        int32_t Contents;  //0x0028
-        char pad_0018[36]; //0x002C
-        uint32_t surface_flags; //0x0050
-        char pad_0054[36]; //0x0054
-        Vector startPos; //0x0078
-        Vector EndPos; //0x0084
-        Vector normal; //0x0090
-        Vector another_endpos; //0x009C
-        char pad_00A8[4]; //0x00A8
-        float Fraction; //0x00AC
-        char pad_00B0[6]; //0x00B0
-        bool allSolid; //0x00B6
-        char pad_00B7[77]; //0x00B7
-                                        /*
-        void* Surface; //0x0
-        C_CSPlayerPawnBase* HitEntity; //0x08
-        CHitBox* HitboxData;  //0x10
-        char pad1[0x10];    //0x18
-        int32_t Contents;  //0x28
-        char pad2[0x58];   //0x2C
-        Vector EndPos;     //0x84
-        char pad3[0x1C];  // 0x90
-        float Fraction;   // 0xAC
-        char pad4[0x6];  // 0xB0
-        bool allsolid;   // 0xB6
-                                        */
+        void* pSurfaceProperties; // 0x00
+        C_CSPlayerPawnBase* pHitEntity; // 0x08
+        CHitBox* pHitBox; // 0x10
+        std::byte pad0[0x38]; // 0x18
+        std::uint32_t nSurfaceFlags; // 0x50
+        std::byte pad1[0x24]; // 0x54
+        Vector vecStart; // 0x78 // initial position
+        Vector vecEnd; // 0x84 // final position
+        Vector vecNormal; // 0x90 // surface normal at impact
+        std::byte pad2[0x10]; // 0x9C
+        float flFraction; // 0xAC // time completed, 1.0 = didn't hit anything
+        std::byte pad3[0x6]; // 0xB0
+        std::uint8_t nShapeType; // 0xB6
+        bool bStartSolid; // 0xB7 // if true, the initial point was in a solid area
+        std::byte pad4[0x9];
     };
 
     class C_TraceFilter

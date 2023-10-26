@@ -27,5 +27,5 @@ trace::C_TraceFilter::C_TraceFilter(std::uint32_t Mask,
 trace::C_SurfaceData* trace::C_GameTrace::GetSurfaceData()
 {
     if (!offsets::GetSurfaceData) return nullptr;
-    return reinterpret_cast< C_SurfaceData* >(offsets::GetSurfaceData(Surface));
+    return reinterpret_cast< C_SurfaceData* >(offsets::GetSurfaceData(pSurfaceProperties));
 }

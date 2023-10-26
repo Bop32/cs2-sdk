@@ -155,22 +155,6 @@ void CMenu::RenderUI()
         ImGui::EndCombo();
     }
 
-    /*
-    auto length = IM_ARRAYSIZE(g_Vars.m_HitBoxesName);
-    if (ImGui::BeginCombo("##combo", DropDownPreview(g_Vars.m_HitBoxesName, g_Vars.m_SelectedHitBoxes, length).c_str()))
-    {
-        for (int n = 0; n < IM_ARRAYSIZE(g_Vars.m_HitBoxesName); n++)
-        {
-            bool is_selected = g_Vars.m_SelectedHitBoxes[n];
-            if (ImGui::Selectable(g_Vars.m_HitBoxesName[n], is_selected, ImGuiSelectableFlags_DontClosePopups))
-            {
-                g_Vars.m_SelectedHitBoxes[n] = !g_Vars.m_SelectedHitBoxes[n];
-            }
-        }
-        ImGui::EndCombo();
-    }
-    */
-
     ImGui::Checkbox("Auto Shoot", &g_Vars.m_AutoFire);
     ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);
     ImGui::Text("FOV");
@@ -194,6 +178,34 @@ void CMenu::RenderUI()
     ImGui::Checkbox("Player Behind Wall", &g_Vars.m_InvisibleChams);
     ImGui::SameLine(m_WindowWidth / 2 - 30, ImGui::GetStyle().ItemSpacing.x);
     ImGui::ColorEdit4("##InvisibleChams", g_Vars.m_PlayerInvisChamsColor, ImGuiColorEditFlags_NoInputs);
+
+    if (ImGui::BeginCombo("##ChamsType", DropDownPreviewTest(g_Vars.m_ChamsType).c_str()))
+    {
+        int selectedIndex = 0;
+        for (auto& chamsType : g_Vars.m_ChamsType)
+        {
+            bool selected = chamsType.second;
+            if (ImGui::Selectable(chamsType.first, selected))
+            {
+                chamsType.second = !chamsType.second;
+                int index = 0;
+                for (auto& removeChamsType : g_Vars.m_ChamsType)
+                {
+                    if (index != selectedIndex && removeChamsType.second)
+                    {
+                        removeChamsType.second = false;
+                        ImGui::Selectable(chamsType.first, false);
+                    }
+                    index++;
+                }
+                break;
+            }
+            selectedIndex++;
+        }
+        ImGui::EndCombo();
+    }
+
+
 
     ImGui::Checkbox("Player Glow", &g_Vars.m_Glow);
     ImGui::SameLine(m_WindowWidth / 2 - 30, ImGui::GetStyle().ItemSpacing.x);

@@ -34,9 +34,9 @@ namespace offsets
         return fn(start, direction, end, enterTrace, exitTrace, step, unk, pawn, unk1);
     }
 
-    void ClipTraceToPlayers(Vector& start, Vector& end, trace::C_TraceFilter* filter, trace::C_GameTrace* trace, float unk, float mask, float unk2)
+    void ClipTraceToPlayers(Vector& start, Vector& end, trace::C_TraceFilter* filter, trace::C_GameTrace* trace, float unk, int mask, float unk2)
     {
-        using function_t = void* (__fastcall*)(Vector&, Vector&, trace::C_TraceFilter*, trace::C_GameTrace*, float, float, float);
+        using function_t = void* (__fastcall*)(Vector&, Vector&, trace::C_TraceFilter*, trace::C_GameTrace*, float, int, float);
         static function_t fn = reinterpret_cast< function_t >(signatures::ClipTraceToPlayers.GetPtrAs<void*>());
 
         fn(start, end, filter, trace, unk, mask, unk2);
@@ -67,4 +67,13 @@ namespace offsets
 
         return fn(TraceManager::Get(), endPosition, mask, unk);
     }
+
+    void TraceFunction(C_GameTrace* trace, Vector& direction, Vector& unk, C_TraceFilter& filter, int penetrationCount)
+    {
+        using function_t = void(__fastcall*)(C_GameTrace*, Vector&, Vector&, C_TraceFilter, int);
+        static function_t fn = reinterpret_cast< function_t >(signatures::TraceFunction.GetPtrAs<void*>());
+
+        fn(trace, direction, unk, filter, penetrationCount);
+    }
+
 }

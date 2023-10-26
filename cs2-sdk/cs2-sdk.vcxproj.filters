@@ -73,6 +73,7 @@
     <ClCompile Include="sdk\src\interfaces\CLocalize.cpp" />
     <ClCompile Include="src\hacks\aimbot\autowall.cpp" />
     <ClCompile Include="src\weapon\c_econitemview.cpp" />
+    <ClCompile Include="sdk\src\interfaces\CResourceSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch\pch.hpp" />
@@ -224,5 +225,6 @@
     <ClInclude Include="include\weapon\ceconitemschema.hpp" />
     <ClInclude Include="include\math\types\CUtlMap.hpp" />
     <ClInclude Include="sdk\include\debugoverlay\CDebugOverlayGameSystem.hpp" />
+    <ClInclude Include="sdk\include\interfaces\CResourceSystem.hpp" />
   </ItemGroup>
 </Project>

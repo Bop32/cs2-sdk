@@ -62,12 +62,11 @@ public:
         //fn(this, origin, line_offset, duration, text);
     }
 
+    */
     void AddTextOverlay(const Vector& origin, float duration, int line_offset, const ImU32& color, const char* text...)
     {
-        //auto fn = reinterpret_cast< void(__fastcall*)(CDebugOverlayGameSystem*, const Vector&, int, double, char, char, char, char, const char*, ...) >(get_vfunction(this, 59));
+        auto fn = reinterpret_cast< void(__fastcall*)(CDebugOverlayGameSystem*, const Vector&, int, double, char, char, char, char, const char*, ...) >(vt::GetMethod(this, 59).Get<void*>());
 
-        CALL_VIRTUAL(void, 59, this, origin, duration, line_offset, 255, 255, 255, 255, text);
-        //fn(this, origin, duration, line_offset, 255, 255, 255, 255, text);
+        fn(this, origin, duration, line_offset, 255, 255, 255, 255, text);
     }
-    */
 };

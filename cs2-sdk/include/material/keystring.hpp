@@ -55,7 +55,21 @@ static void SetMaterialFunctions(void* data, const char* functions_name, int val
     set_other(data, functions, value, 0x12);
 }
 
-static CMaterial2* CreateMaterialVisible()
+static const char* GetMaterialType()
+{
+    if (g_Vars.m_ChamsType.at("Texture"))
+    {
+        return "materials/dev/reflectivity_90.vmat";
+    }
+    else if (g_Vars.m_ChamsType.at("Flat"))
+    {
+        return "materials/editor/env_cubemap_model.vmat";
+    }
+
+    return 0;
+}
+
+static CMaterial2* CreateMaterialVisibleInternal()
 {
     CMaterialSystem2* material_system = CMaterialSystem2::Get();
 
@@ -64,15 +78,21 @@ static CMaterial2* CreateMaterialVisible()
 
     CMaterial2** material_prototype;
 
-    material_system->FindMaterial(&material_prototype, "materials/dev/primary_white.vmat");
+
+    material_system->FindMaterial(&material_prototype, GetMaterialType());
 
     material_system->SetCreateDataByMaterial(data, &material_prototype);
 
     SetMaterialShaderType(data, "csgo_unlitgeneric.vfx");
 
-    SetMaterialFunctions(data, "F_BLEND_MODE", 1);
+    
+    //SetMaterialFunctions(data, "F_BLEND_MODE", 1);
 
-    SetMaterialFunctions(data, "F_TRANSLUCENT", true);
+    //SetMaterialFunctions(data, "F_TRANSLUCENT", true);
+
+    //SetMaterialFunctions(data, "F_OVERLAY", true);
+
+
 
     CMaterial2** custom_material;
 
@@ -80,6 +100,23 @@ static CMaterial2* CreateMaterialVisible()
 
     return *custom_material;
 }
+
+static CMaterial2* CreateMaterialVisible()
+{
+    static CMaterial2* material = CreateMaterialVisibleInternal();
+
+    static const char* materialType = GetMaterialType();
+
+    auto tmp = GetMaterialType();
+    if (materialType != tmp)
+    {
+        material = CreateMaterialVisibleInternal();
+        materialType = tmp;
+    }
+
+    return material;
+}
+
 
 static CMaterial2* CreateMaterialInvisible()
 {
@@ -90,7 +127,7 @@ static CMaterial2* CreateMaterialInvisible()
 
     CMaterial2** material_prototype;
 
-    material_system->FindMaterial(&material_prototype, "materials/dev/primary_white.vmat");
+    material_system->FindMaterial(&material_prototype, GetMaterialType());
 
     material_system->SetCreateDataByMaterial(data, &material_prototype);
 
@@ -104,7 +141,7 @@ static CMaterial2* CreateMaterialInvisible()
 
     CMaterial2** custom_material;
 
-    material_system->CreateMaterial(&custom_material, "materials/dev/glowproperty.vmat", data);
+    material_system->CreateMaterial(&custom_material, "invisible_material", data);
 
     return *custom_material;
 }

@@ -118,6 +118,7 @@
     <ClCompile Include="sdk\src\bindings\trace.cpp" />
     <ClCompile Include="sdk\src\interfaces\CLocalize.cpp" />
     <ClCompile Include="sdk\src\interfaces\CMaterialSystem2.cpp" />
+    <ClCompile Include="sdk\src\interfaces\CResourceSystem.cpp" />
     <ClCompile Include="sdk\src\interfaces\cvar.cpp" />
     <ClCompile Include="sdk\src\interfaces\engineclient.cpp" />
     <ClCompile Include="sdk\src\interfaces\gameentitysystem.cpp" />
@@ -378,6 +379,7 @@
     <ClInclude Include="sdk\include\input\cusercmd.hpp" />
     <ClInclude Include="sdk\include\interfaces\CLocalize.hpp" />
     <ClInclude Include="sdk\include\interfaces\CMaterialSystem2.hpp" />
+    <ClInclude Include="sdk\include\interfaces\CResourceSystem.hpp" />
     <ClInclude Include="sdk\include\interfaces\cvar.hpp" />
     <ClInclude Include="sdk\include\interfaces\engineclient.hpp" />
     <ClInclude Include="sdk\include\interfaces\gameentitysystem.hpp" />

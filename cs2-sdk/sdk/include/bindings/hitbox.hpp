@@ -2,26 +2,28 @@
 
 #include <types/utlvector.hpp>
 
-class CHitBox {
-   public:
-    //SCHEMA_EXTENDED(Vector, m_vMinBounds, CConstants::ANIMATIONSYSTEM_LIB, "CHitBox", "m_vMinBounds", 0);
-    //SCHEMA_EXTENDED(Vector, m_vMaxBounds, CConstants::ANIMATIONSYSTEM_LIB, "CHitBox", "m_vMaxBounds", 0);
-	char* m_name; //0x0000
-	char* m_sSurfaceProperty; //0x0008
-	char* m_sBoneName; //0x0010
-	Vector m_vMinBounds; //0x0018
-	Vector m_vMaxBounds; //0x0024
-	float m_flShapeRadius; //0x0030
-	uint32_t m_nBoneNameHash; //0x0034
-	int32_t m_nGroupId; //0x0038
-	int8_t m_nShapeType; //0x003C
-	bool m_bTranslationOnly; //0x003D
-	char pad_003E[2]; //0x003E
-	uint32_t m_CRC; //0x0040
-	uint32_t m_cRenderColor; //0x0044
-	int16_t m_nHitBoxIndex; //0x0048
-	char pad_004A[38]; //0x004A
-};			   //Size: 0x0070
+// also available at schema table of "animationsystym.dll"
+class CHitBox
+{
+public:
+	const char* szName; // 0x0
+	const char* szSurfaceProperty; // 0x8
+	const char* szBoneName; // 0x10
+	Vector m_vMinBounds; // 0x18
+	Vector m_vMaxBounds; // 0x24
+	float flShapeRadius; // 0x30
+	uint32_t uBoneNameHash; // 0x34
+	int nGroupId; // 0x38
+	std::uint8_t nShapeType; // 0x3C
+	bool bTranslationOnly; // 0x3D	
+private:
+	std::byte pad0[0x2]; // 0x3E
+public:
+	uint32_t uCRC; // 0x40	
+	uint32_t colRender; // 0x44	
+	std::uint16_t nHitBoxIndex; // 0x48	
+};
+//static_assert(sizeof(CHitBox) == 0x70); // size verify:   @ida: client.dll -> [ABS["E8 ? ? ? ? 0F B6 45 77" + 0x1] + 0x1B]		   //Size: 0x0070
 
 class CHitBoxSet {
    public:

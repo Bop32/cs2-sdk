@@ -38,4 +38,5 @@ namespace signatures
     extern CSigScan GetContents;
     extern CSigScan TraceRay;
     extern CSigScan DebugOverlay;
+    extern CSigScan TraceFunction;
 }  // namespace signatures

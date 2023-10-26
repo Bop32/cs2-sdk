@@ -29,6 +29,7 @@
 #include <material/keystring.hpp>
 #include <bindings/c_overrideview.hpp>
 #include <interfaces/CLocalize.hpp>
+#include <interfaces/CResourceSystem.hpp>
 
 using namespace globals;
 static CHook g_MouseInputEnabled;
@@ -70,7 +71,7 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
     CMaterial2* material = *( CMaterial2** )(( uintptr_t )data + 0x18);
 
     static CMaterial2* invisible_material = CreateMaterialInvisible();
-    static CMaterial2* visible_material = CreateMaterialVisible();
+    CMaterial2* visible_material = CreateMaterialVisible();
 
     void* objectInfo = *( void** )(( uintptr_t )data + 0x48);
     int id = *( int* )(( uintptr_t )objectInfo + 0xb0);
@@ -79,18 +80,19 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
 
     if (!strstr(name, "characters/model") || !(id == CT_MODEL || id == T_MODEL || id == ARM)) return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
 
-    if (CGameEntitySystem::GetLocalPlayerController())
+    if (localPlayerController)
     {
-        if (CGameEntitySystem::GetLocalPlayerController()->m_bPawnIsAlive() && CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get())
+        if (localPlayerController->m_bPawnIsAlive() && localPlayerPawn)
         {
-            if (CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get()->m_iTeamNum() == 2 && id == T_MODEL)
+            if (localPlayerPawn->m_iTeamNum() == 2 && id == T_MODEL)
                 return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer,
                 unknown_pointer, unknown);
-            if (CGameEntitySystem::GetLocalPlayerController()->m_hPawn().Get()->m_iTeamNum() == 3 && id == CT_MODEL)
+            if (localPlayerPawn->m_iTeamNum() == 3 && id == CT_MODEL)
                 return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer,
                 unknown_pointer, unknown);
         }
     }
+
 
     switch (id)
     {
@@ -163,6 +165,7 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
     {
         misc::BunnyHop(cmd, localPlayerPawn);
     }
+
 
     return false;
 }

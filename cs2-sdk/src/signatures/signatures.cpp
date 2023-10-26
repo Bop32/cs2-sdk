@@ -114,7 +114,7 @@ namespace signatures
 
     CSigScan GetSurfaceData("GetSurfaceData", CConstants::CLIENT_LIB,
         {
-            {SDK_SIG("E8 ? ? ? ? 48 85 C0 74 ? 44 38 60"), [](CPointer& ptr) { ptr.Absolute(1, 0); }},
+            {SDK_SIG("48 63 41 10 48 8B 0D")},
         });
 
     CSigScan TraceShape("TraceShape (Vis Checker)", CConstants::CLIENT_LIB,
@@ -228,5 +228,10 @@ namespace signatures
             {SDK_SIG("48 8B 3D ? ? ? ? 48 8D 4D 07"), [](CPointer& ptr) { ptr.Absolute(3,0); }}
         });
 
+    CSigScan TraceFunction("TraceFunction", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("E8 ? ? ? ? 48 8D 85 C8 ? ? ? 4C 89 B5 C8 ? ? ?"), [](CPointer& ptr) { ptr.Absolute(3,0); }}
+        });
 
 };
