@@ -211,10 +211,10 @@ namespace signatures
             {SDK_SIG("48 89 5C 24 ? 56 48 83 EC ? 8B 05 ? ? ? ? 8D 5A") }
         });
 
-    CSigScan TraceRay("TraceRay", CConstants::CLIENT_LIB,
+    CSigScan InitializeTrace("InitializeTrace", CConstants::CLIENT_LIB,
 
         {
-            {SDK_SIG("E8 ? ? ? ? 48 8D 4C 24 30 48 89 5D 80") }
+            {SDK_SIG("48 89 5C 24 08 57 48 83 EC 20 48 8B D9 33 FF 48 8B 0D") }
         });
 
     CSigScan GetContents("GetContents", CConstants::CLIENT_LIB,
@@ -232,6 +232,18 @@ namespace signatures
 
         {
             {SDK_SIG("E8 ? ? ? ? 48 8D 85 C8 ? ? ? 4C 89 B5 C8 ? ? ?"), [](CPointer& ptr) { ptr.Absolute(3,0); }}
+        });
+
+    CSigScan CreateTrace("CreateTrace", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 40 F2")}
+        });
+
+    CSigScan GetTraceInfo("GetTraceInfo", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 60 48 8B E9 0F")}
         });
 
 };

@@ -23,6 +23,24 @@ namespace AutoWall
         int             penetrateCount;
     };
 
+    struct WeaponData
+    {
+        WeaponData(const float weaponDamage, const float weaponPenetration, const float weaponRange, const float weaponRangeModifer,
+            const int penetrationCount, const bool failed) :
+            weaponDamage(weaponDamage),
+            weaponPenetration(weaponPenetration),
+            weaponRange(weaponRange),
+            weaponRangeModifer(weaponRangeModifer),
+            penetrationCount(penetrationCount),
+            failed(failed)
+        {
+        }
+
+        float weaponDamage { }, weaponPenetration { }, weaponRange { }, weaponRangeModifer { };
+        int penetrationCount { };
+        bool failed { };
+    };
+
     void ScaleDamage(C_CSPlayerPawnBase* pawn, CCSWeaponBaseVData* weaponData, float& damage, int hitgroup);
     bool CanHit(C_CSPlayerPawnBase* player, Vector localPlayerPosition, Vector shootPosition, CCSWeaponBaseVData* weaponInfo, float& damage);
     bool SimulateFireBullet(CCSWeaponBaseVData* weaponData, FireBulletData& data, C_CSPlayerPawnBase* enemy);

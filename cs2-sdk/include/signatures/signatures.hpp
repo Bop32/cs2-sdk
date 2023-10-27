@@ -36,7 +36,9 @@ namespace signatures
     extern CSigScan TraceToExit;
     extern CSigScan GetDamageToPoint;
     extern CSigScan GetContents;
-    extern CSigScan TraceRay;
+    extern CSigScan InitializeTrace;
     extern CSigScan DebugOverlay;
     extern CSigScan TraceFunction;
+    extern CSigScan CreateTrace;
+    extern CSigScan GetTraceInfo;
 }  // namespace signatures

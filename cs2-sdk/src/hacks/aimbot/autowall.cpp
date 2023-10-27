@@ -8,9 +8,10 @@
 #include <imgui/imgui_internal.h>
 #include <math/math.hpp>
 #include <debugoverlay/CDebugOverlayGameSystem.hpp>
+#include <vars/vars.hpp>
 
 using namespace AutoWall;
-
+using namespace trace;
 bool PlayerHasArmor(C_CSPlayerPawnBase* player, int hitgroup)
 {
     if (player->m_ArmorValue() <= 0) return false;
@@ -69,8 +70,10 @@ bool AutoWall::CanHit(C_CSPlayerPawnBase* enemy, Vector localPlayerEyePosition, 
 {
     auto data = FireBulletData(localPlayerEyePosition);
     data.direction = (targetPosition - localPlayerEyePosition).Normalize();
-    trace::C_TraceFilter filter(0x1C300B, globals::localPlayerPawn, nullptr, 3);
+    C_TraceFilter filter(0x1C300B, globals::localPlayerPawn, nullptr, 3);
     data.filter = filter;
+    data.currentDamage = ( float )weaponInfo->m_nDamage();
+
     if (SimulateFireBullet(weaponInfo, data, enemy))
     {
         damage = data.currentDamage;
@@ -101,8 +104,8 @@ bool RebuiltTraceToExit(Vector& end, C_GameTrace enterTrace, Vector start, Vecto
 
         if ((contents & 0x1C3001) == 0 || (contents & 2) != 0 && firstContents != contents)
         {
-            trace::C_Ray ray {};
-            trace::C_TraceFilter filter(0x1C3003, 0, 0, 0);
+            C_Ray ray {};
+            C_TraceFilter filter(0x1C3003, 0, 0, 0);
 
             offsets::TraceShape(&ray, end, traceEnd, &filter, &exitTrace);
             //CDebugOverlayGameSystem::Get()->AddTextOverlay(exitTrace.EndPos, 0.01f, 0.5f, IM_COL32(255, 255, 255, 255), "End");
@@ -112,7 +115,7 @@ bool RebuiltTraceToExit(Vector& end, C_GameTrace enterTrace, Vector start, Vecto
 
             if (exitTrace.bStartSolid && exitTrace.nSurfaceFlags & 0x0080)
             {
-                trace::C_TraceFilter filter(0x1C3003, 0, exitTrace.pHitEntity, 0);
+                C_TraceFilter filter(0x1C3003, 0, exitTrace.pHitEntity, 0);
                 offsets::TraceShape(&ray, end, start, &filter, &exitTrace);
 
                 if (exitTrace.flFraction < 1.0f && !exitTrace.bStartSolid)
@@ -143,90 +146,57 @@ bool RebuiltTraceToExit(Vector& end, C_GameTrace enterTrace, Vector start, Vecto
     return false;
 }
 
-bool RebuiltHandleBulletPenetration(CCSWeaponBaseVData* weaponData, FireBulletData& data)
+
+bool AutoWall::SimulateFireBullet(CCSWeaponBaseVData* weaponInfo, FireBulletData& data, C_CSPlayerPawnBase* enemy)
 {
-    C_SurfaceData* enterSurfaceData = data.enterTrace.GetSurfaceData();
-    int enterMateiral = enterSurfaceData->Material;
-    float enterSurfPenetrationMod = enterSurfaceData->PenetrationModifier;
+    TraceData traceData { };
+    traceData.arrayPointer = &traceData.arr;
+    Vector endPosition = data.direction * weaponInfo->m_flRange();
 
-    data.traceLength += data.enterTrace.flFraction * data.traceLengthRemaining;
-    data.currentDamage *= pow(weaponData->m_flRangeModifier(), (data.traceLength * 0.002f));
+    C_TraceFilter filter(0x1C300B, globals::localPlayerPawn, 0, 3);
+    offsets::CreateTrace(&traceData, data.src, endPosition, &filter, 4);
 
-    if ((data.traceLength > 3000.f) || (enterSurfPenetrationMod < 0.1f))
-        data.penetrateCount = 0;
+    if (traceData.numberOfUpdates <= 0) return false;
 
-    if (data.penetrateCount <= 0)
-        return false;
+    WeaponData weaponData(weaponInfo->m_nDamage(), weaponInfo->m_flPenetration(), weaponInfo->m_flRange(), weaponInfo->m_flRangeModifier(), 4, false);
 
-    C_GameTrace traceExit;
-
-    Vector dummy;
-
-    bool test;
-    if (!offsets::TraceToExit(data.enterTrace.vecEnd, data.direction, dummy, &data.enterTrace, &traceExit, 4, 90.0f, nullptr, &test))
-        return false;
-    //if (!RebuiltTraceToExit(dummy, data.enterTrace, data.enterTrace.EndPos, data.direction, traceExit))
-        //return false;
-
-    C_SurfaceData* exitSurfaceData = traceExit.GetSurfaceData();
-    int exitMaterial = exitSurfaceData->Material;
-
-    float exitSurfPenetrationMod = exitSurfaceData->PenetrationModifier;
-    float finalDamageModifer = 0.16f;
-    float combinedPenetrationModifer = 3.0f;
-
-    if (enterMateiral == exitMaterial)
+    for (int i { }; i < traceData.numberOfUpdates; i++)
     {
-        if (((exitMaterial - 85) & 0xFFFFFFFD) != 0)
+        auto* value = reinterpret_cast< UpdateValue* const >(reinterpret_cast< std::uintptr_t >(
+            traceData.pointerUpdateValue) + i * sizeof(UpdateValue));
+
+        C_GameTrace trace {};
+        offsets::InitializeTrace(&trace);
+        auto whatTheFuckIsThis = reinterpret_cast< void* >(
+            reinterpret_cast< std::uintptr_t >(traceData.arr.data())
+            + sizeof(TraceArrElements) * (value->handleIdx & 0x7FFF));
+
+        offsets::GetTraceInfo(&traceData, &trace, 0.0f, whatTheFuckIsThis);
+
+
+        if (trace.pHitEntity == enemy)
         {
-            if (exitMaterial == 76)
+            ScaleDamage(enemy, weaponInfo, data.currentDamage, trace.GetHitboxId());
+            //Hp + 1
+            if (g_Vars.m_MinimumDamage >= 100 && data.currentDamage >= enemy->m_iHealth() + 1)
             {
-                combinedPenetrationModifer = 2.0f;
+                return true;
+            }
+            else if (data.currentDamage >= g_Vars.m_MinimumDamage)
+            {
+                return true;
             }
         }
-        else
-        {
-            combinedPenetrationModifer = 3.0f;
-        }
+
+        if (offsets::HandleBulletPenetration(&traceData, &weaponData, value, false))
+            return false;
+
+        data.currentDamage = weaponData.weaponDamage;
     }
-
-
-    float penetrationModifer = fmaxf(1.0 / combinedPenetrationModifer, 0.0);
-    float v35 = ((fmaxf(3.75 / weaponData->m_flPenetration(), 0.0) * penetrationModifer) * 3.0) + (data.currentDamage * finalDamageModifer);
-    //float penetrationWeaponModifer = (data.currentDamage * finalDamageModifer) + penetrationModifer * 3.0f * fmaxf(0.0f, (3.0f / weaponData->m_flPenetration()) * 1.25f);
-
-    //Calculating thickness is correct as if you sqrt it and multiply by 2.54 (inches to cm) you get what valve gets, damage values are wrong.
-    float thickness = (traceExit.vecEnd.z - data.enterTrace.vecEnd.z) * (traceExit.vecEnd.z - data.enterTrace.vecEnd.z)
-        + (traceExit.vecEnd.y - data.enterTrace.vecEnd.y) * (traceExit.vecEnd.y - data.enterTrace.vecEnd.y)
-        + (traceExit.vecEnd.x - data.enterTrace.vecEnd.x) * (traceExit.vecEnd.x - data.enterTrace.vecEnd.x);
-
-    CDebugOverlayGameSystem::Get()->AddTextOverlay(traceExit.vecEnd, 0.01f, 1, IM_COL32(255, 255, 255, 255), "End");
-    CDebugOverlayGameSystem::Get()->AddTextOverlay(data.enterTrace.vecEnd, 0.01f, 1, IM_COL32(255, 255, 255, 255), "Start");
-
-    float distance = sqrtf(thickness);
-
-    thickness *= penetrationModifer;
-    thickness *= 0.041666668;
-    thickness += v35;
-
-    float lostDamage = thickness;
-    CDebugOverlayGameSystem::Get()->AddTextOverlay(Vector(traceExit.vecEnd.x, traceExit.vecEnd.y, traceExit.vecEnd.z + 15), 0.001f, 1, IM_COL32(255, 255, 255, 255), std::to_string(distance * 2.54f).c_str());
-
-    if (lostDamage > data.currentDamage)
-        return false;
-
-    if (lostDamage >= 0.0f)
-        data.currentDamage -= lostDamage;
-
-    if (data.currentDamage < 1.0f)
-        return false;
-
-
-    data.src = traceExit.vecEnd;
-    data.penetrateCount--;
-
-    return true;
+    return false;
 }
+
+/*
 bool AutoWall::SimulateFireBullet(CCSWeaponBaseVData* weaponData, FireBulletData& data, C_CSPlayerPawnBase* enemy)
 {
     C_CSPlayerPawnBase* entityToSkip = nullptr;
@@ -238,7 +208,7 @@ bool AutoWall::SimulateFireBullet(CCSWeaponBaseVData* weaponData, FireBulletData
     {
         data.traceLengthRemaining = weaponData->m_flRange() - data.traceLength;
 
-        trace::C_Ray ray;
+        C_Ray ray;
         //Why is this needed?
         ray.UnkType = 0;
         ray.Start = ray.End = ray.Mins = ray.Maxs = Vector();
@@ -275,5 +245,5 @@ bool AutoWall::SimulateFireBullet(CCSWeaponBaseVData* weaponData, FireBulletData
     }
     return false;
 }
-
+                              */
 

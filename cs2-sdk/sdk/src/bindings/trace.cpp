@@ -4,7 +4,7 @@
 #include <bindings/trace.hpp>
 #include <offets/offsets.hpp>
 
-trace::C_TraceFilter::C_TraceFilter(std::uint32_t Mask,
+C_TraceFilter::C_TraceFilter(std::uint32_t Mask,
     C_CSPlayerPawnBase* Skip1,
     C_CSPlayerPawnBase* Skip2, int Layer)
 {
@@ -24,7 +24,7 @@ trace::C_TraceFilter::C_TraceFilter(std::uint32_t Mask,
     Collisions[1] = 0;
 }
 
-trace::C_SurfaceData* trace::C_GameTrace::GetSurfaceData()
+C_SurfaceData* C_GameTrace::GetSurfaceData()
 {
     if (!offsets::GetSurfaceData) return nullptr;
     return reinterpret_cast< C_SurfaceData* >(offsets::GetSurfaceData(pSurfaceProperties));

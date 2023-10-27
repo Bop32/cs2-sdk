@@ -23,7 +23,7 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* localPlayerController)
     constexpr int   SEED_MAX = 255;
     Vector     start { localPlayerController->GetEyePosition() }, end, fwd, right, up, dir, wep_spread;
     float      inaccuracy, spread;
-    trace::C_GameTrace tr;
+    C_GameTrace tr;
     return true;
 }
 

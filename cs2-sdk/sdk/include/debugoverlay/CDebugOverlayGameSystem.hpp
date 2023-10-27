@@ -65,7 +65,7 @@ public:
     */
     void AddTextOverlay(const Vector& origin, float duration, int line_offset, const ImU32& color, const char* text...)
     {
-        auto fn = reinterpret_cast< void(__fastcall*)(CDebugOverlayGameSystem*, const Vector&, int, double, char, char, char, char, const char*, ...) >(vt::GetMethod(this, 59).Get<void*>());
+        auto fn = reinterpret_cast< void(__fastcall*)(CDebugOverlayGameSystem*, const Vector&, float, double, char, char, char, char, const char*, ...) >(vt::GetMethod(this, 59).Get<void*>());
 
         fn(this, origin, duration, line_offset, 255, 255, 255, 255, text);
     }

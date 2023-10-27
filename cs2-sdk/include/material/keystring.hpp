@@ -63,7 +63,7 @@ static const char* GetMaterialType()
     }
     else if (g_Vars.m_ChamsType.at("Flat"))
     {
-        return "materials/editor/env_cubemap_model.vmat";
+        return "materials/dev/primary_white.vmat";
     }
 
     return 0;
@@ -85,10 +85,9 @@ static CMaterial2* CreateMaterialVisibleInternal()
 
     SetMaterialShaderType(data, "csgo_unlitgeneric.vfx");
 
-    
-    //SetMaterialFunctions(data, "F_BLEND_MODE", 1);
+    SetMaterialFunctions(data, "F_BLEND_MODE", 1);
 
-    //SetMaterialFunctions(data, "F_TRANSLUCENT", true);
+    SetMaterialFunctions(data, "F_TRANSLUCENT", true);
 
     //SetMaterialFunctions(data, "F_OVERLAY", true);
 
@@ -118,7 +117,7 @@ static CMaterial2* CreateMaterialVisible()
 }
 
 
-static CMaterial2* CreateMaterialInvisible()
+static CMaterial2* CreateMaterialInvisibleInternal()
 {
     CMaterialSystem2* material_system = CMaterialSystem2::Get();
 
@@ -144,5 +143,21 @@ static CMaterial2* CreateMaterialInvisible()
     material_system->CreateMaterial(&custom_material, "invisible_material", data);
 
     return *custom_material;
+}
+
+static CMaterial2* CreateMaterialInvisible()
+{
+    static CMaterial2* material = CreateMaterialInvisibleInternal();
+
+    static const char* materialType = GetMaterialType();
+
+    auto tmp = GetMaterialType();
+    if (materialType != tmp)
+    {
+        material = CreateMaterialInvisibleInternal();
+        materialType = tmp;
+    }
+
+    return material;
 }
 

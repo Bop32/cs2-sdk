@@ -76,6 +76,13 @@ void Config::LoadConfig()
         hitboxes.second = configData[PRINTER(g_Vars.m_HitBoxes)].at(hitboxes.first).get<bool>();
     }
 
+    for (auto& chamsType : g_Vars.m_ChamsType)
+    {
+        chamsType.second = configData[PRINTER(g_Vars.m_ChamsType)].at(chamsType.first).get<bool>();
+    }
+
+    g_Vars.m_MinimumDamage = configData[PRINTER(g_Vars.m_MinimumDamage)].get<int>();
+
     fileContents.close();
 }
 
@@ -111,6 +118,8 @@ void Config::SaveConfig()
     j[PRINTER(g_Vars.m_ViewModelFovSlider)] = g_Vars.m_ViewModelFovSlider;
     j[PRINTER(g_Vars.m_WeaponName)] = g_Vars.m_WeaponName;
     j[PRINTER(g_Vars.m_HitBoxes)] = g_Vars.m_HitBoxes;
+    j[PRINTER(g_Vars.m_MinimumDamage)] = g_Vars.m_MinimumDamage;
+    j[PRINTER(g_Vars.m_ChamsType)] = g_Vars.m_ChamsType;
 
 
 

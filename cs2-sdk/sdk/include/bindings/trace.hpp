@@ -8,10 +8,42 @@
 #include <memory/memory.hpp>
 
 #include <cstdint>
+#include <array>
 
 
 namespace trace
 {
+
+    struct UpdateValue
+    {
+        float previousLengthMod { };
+        float currentLengthMod { };
+        char pad1[0x8];
+        int16_t handleIdx { };
+        char pad2[0x6];
+    };
+
+    struct TraceArrElements
+    {
+        char pad1[0x30];
+    };
+
+    struct TraceData
+    {
+        int32_t unk1 { };
+        float unk2 { 52.0f };
+        void* arrayPointer { };
+        int32_t unk3 { 128 };
+        int32_t unk4 { static_cast< std::int32_t >(0x80000000) };
+        std::array<TraceArrElements, 0x80 > arr = { };
+        char pad1[0x8];
+        int64_t numberOfUpdates;
+        void* pointerUpdateValue;
+        char pad2[0xC8];
+        Vector start;
+        Vector end;
+        char pad3[0x50];
+    };
 
     struct C_Ray
     {
@@ -128,4 +160,4 @@ namespace trace
         }
     };
 
-};  // namespace os2::sdk
+};  

@@ -40,6 +40,8 @@ struct Vars_t
     float m_PlayerVisibleChamsColor[4] = { 150.0f / 255.0f, 200.0f / 255.0f, 60.0f / 255.0f,  255.0f / 255.0f };
     float m_PlayerArmorColor[4] = { 102.f / 255.f, 190.f / 255.f, 208.f / 255.f, 255.f / 255.f };
 
+    int m_MinimumDamage = 50;
+
     bool m_VisibleChams;
     bool m_InvisibleChams;
 

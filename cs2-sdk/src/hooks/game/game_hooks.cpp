@@ -175,21 +175,6 @@ static float originalFOV = 0;
 static CHook g_OverrideView;
 static void hkOverrideView(void* input, CViewSetup* view)
 {
-    if (!localPlayerController) return g_OverrideView.CallOriginal<void>(input, view);
-
-    if (originalFOV == 0)
-    {
-        originalFOV = view->flFov;
-    }
-    if (g_Vars.m_ViewModelFov)
-    {
-        localPlayerController->m_iDesiredFOV() = g_Vars.m_ViewModelFovSlider;
-    }
-    else
-    {
-        localPlayerController->m_iDesiredFOV() = originalFOV;
-    }
-
     return g_OverrideView.CallOriginal<void>(input, view);
 }
 
