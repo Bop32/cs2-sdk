@@ -78,7 +78,8 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
 
     auto name = material->GetName();
 
-    if (!strstr(name, "characters/model") || !(id == CT_MODEL || id == T_MODEL || id == ARM)) return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
+    if (!strstr(name, "characters/model") || !(id == CT_MODEL || id == T_MODEL || id == ARM)) 
+        return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
 
     if (localPlayerController)
     {

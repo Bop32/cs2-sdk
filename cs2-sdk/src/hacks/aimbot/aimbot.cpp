@@ -180,7 +180,7 @@ void aimbot::RunAimbot(CUserCmd* cmd)
         //This is needed as for community servers you need to compensate tickBase prediction errors. (I think)
         auto tickDifference = std::abs(currentWeapon->m_nNextPrimaryAttackTick() - (int)localPlayerController->m_nTickBase());
 
-        if (currentWeapon->m_nNextPrimaryAttackTick() + tickDifference > globals::GlobalVars->tick_count) return;
+        if (currentWeapon->m_nNextPrimaryAttackTick() - tickDifference > globals::GlobalVars->tick_count) return;
 
         cmd->buttons |= CUserCmd::IN_ATTACK;
     }

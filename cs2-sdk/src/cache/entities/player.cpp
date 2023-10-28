@@ -177,7 +177,6 @@ void CCachedPlayer::RenderESP()
         { 0, 2 },{ 2, 5 },{ 5, 6 } //spine
     };
 
-    if(!pawn) return;
     for (int i = 0; i < 15; ++i)
     {
         Vector rot1, rot2;
@@ -185,6 +184,7 @@ void CCachedPlayer::RenderESP()
         Vector From;
         Vector To;
 
+        if(!pawn || !controller || !controller->m_bPawnIsAlive()) break;
         pawn->GetBonePosition(bones[i][0], From, rot1);
         pawn->GetBonePosition(bones[i][1], To, rot1);
 
