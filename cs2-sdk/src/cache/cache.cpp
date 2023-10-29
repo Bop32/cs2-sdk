@@ -35,9 +35,15 @@ void CMatchCache::AddEntity(CEntityInstance* inst, CBaseHandle handle)
     C_BaseEntity* ent = static_cast< C_BaseEntity* >(inst);
     if (!ent || handle.GetEntryIndex() > 0x3FFF) return;
 
-    CachedEntityPtr cachedEntity = CreateCachedEntityPointer(ent, handle);
+    if (ent->GetRefEHandle() != handle)
+    {
+        return CLogger::Log("[cache] CHandle mismatch detected! Needs debugging...");
+    }
+
+    CachedEntityPtr cachedEntity = CreateCachedEntityPointer(ent);
     if (!cachedEntity) return;
 
+    cachedEntity->Set(handle);
     {
         const std::lock_guard<std::mutex> lock(m_EntitiesLock);
         m_CachedEntities.emplace(handle.ToInt(), std::move(cachedEntity));
@@ -92,35 +98,36 @@ CMatchCache::CachedEntityPtr& CMatchCache::GetEntityByIndex(int i)
 CCachedPlayer* CMatchCache::GetLocalPlayer()
 {
     CachedEntityPtr& cachedEntity = GetEntityByIndex(CEngineClient::Get()->GetLocalPlayer());
-    if (cachedEntity)
+
+    if (cachedEntity && cachedEntity->GetType() == CCachedBaseEntity::Type::PLAYER)
     {
-        return dynamic_cast< CCachedPlayer* >(cachedEntity.get());
+        return static_cast< CCachedPlayer* >(cachedEntity.get());
     }
 
     return nullptr;
 }
 
-CMatchCache::CachedEntityPtr CMatchCache::CreateCachedEntityPointer(C_BaseEntity* ent, CBaseHandle handle)
+CMatchCache::CachedEntityPtr CMatchCache::CreateCachedEntityPointer(C_BaseEntity* ent)
 {
     if (ent->IsPlayerController())
     {
-        return std::make_unique<CCachedPlayer>(handle);
+        return std::make_unique<CCachedPlayer>();
     }
     else if (ent->IsWeapon())
     {
-        return std::make_unique<CCachedWeapon>(handle);
+        return std::make_unique<CCachedGun>();
     }
     else if (ent->IsProjectile())
     {
-        return std::make_unique<CCachedBaseEntity>(handle);
+        return std::make_unique<CCachedBaseEntity>();
     }
     else if (ent->IsPlantedC4())
     {
-        return std::make_unique<CCachedBaseEntity>(handle);
+        return std::make_unique<CCachedBaseEntity>();
     }
     else if (ent->IsChicken())
     {
-        return std::make_unique<CCachedHen>(handle);
+        return std::make_unique<CCachedHen>();
     }
 
     return nullptr;

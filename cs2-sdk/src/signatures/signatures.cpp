@@ -107,6 +107,17 @@ namespace signatures
             {SDK_SIG("48 89 6C 24 ? 48 89 74 24 ? 48 89 7C 24 ? 41 56 48 83 EC ? 4D 8B F1")},
         });
 
+    CSigScan GetBoneFlags("GetBoneFlags", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("85 D2 78 16 3B 91")},
+        });
+
+
+    CSigScan GetBoneParent("GetBoneParent", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("85 D2 78 17 3B 91 70")},
+        });
+
     CSigScan GetEntityHandle("GetEntityHandle", CConstants::CLIENT_LIB,
         {
             {SDK_SIG("48 85 C9 74 ? 48 8B 41 ? 48 85 C0 74 ? 44 8B 40 ? BA ? ? ? ? 8B 48 ? 41 8B C0 83 E1")},

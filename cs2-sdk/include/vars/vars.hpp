@@ -16,6 +16,7 @@ struct Vars_t
     bool m_PlayerNames;
     bool m_WeaponName;
     bool m_PlayerHealthBar;
+    bool m_SkeletonEsp;
     bool m_PlayerArmorBar;
     bool m_PlayerHasDefuser;
     bool m_Glow;

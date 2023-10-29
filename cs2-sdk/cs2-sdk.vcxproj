@@ -111,11 +111,11 @@
     <ClCompile Include="api\src\hook\hook.cpp" />
     <ClCompile Include="api\src\module\module.cpp" />
     <ClCompile Include="api\src\pointer\pointer.cpp" />
-    <ClCompile Include="sdk\include\bindings\modeldata.cpp" />
     <ClCompile Include="sdk\src\bindings\baseentity.cpp" />
     <ClCompile Include="sdk\src\bindings\entityinstance.cpp" />
     <ClCompile Include="sdk\src\bindings\playerpawn.cpp" />
     <ClCompile Include="sdk\src\bindings\trace.cpp" />
+    <ClCompile Include="sdk\src\bonesystem\bonesystem.cpp" />
     <ClCompile Include="sdk\src\interfaces\CLocalize.cpp" />
     <ClCompile Include="sdk\src\interfaces\CMaterialSystem2.cpp" />
     <ClCompile Include="sdk\src\interfaces\CResourceSystem.cpp" />
@@ -368,6 +368,7 @@
     <ClInclude Include="sdk\include\bindings\CSkeletonInstance.hpp" />
     <ClInclude Include="sdk\include\bindings\c_overrideview.hpp" />
     <ClInclude Include="sdk\include\bindings\c_player_cameraservices.hpp" />
+    <ClInclude Include="sdk\include\bindings\c_smokegrenadeprojectile.hpp" />
     <ClInclude Include="sdk\include\bindings\entityidentity.hpp" />
     <ClInclude Include="sdk\include\bindings\hitbox.hpp" />
     <ClInclude Include="sdk\include\bindings\playercontroller.hpp" />
@@ -375,6 +376,8 @@
     <ClInclude Include="sdk\include\bindings\gamescenenode.hpp" />
     <ClInclude Include="sdk\include\bindings\playerpawn.hpp" />
     <ClInclude Include="sdk\include\bindings\trace.hpp" />
+    <ClInclude Include="sdk\include\bonesystem\bonesystem.hpp" />
+    <ClInclude Include="sdk\include\cstronghandle\CStrongHandle.hpp" />
     <ClInclude Include="sdk\include\input\ccsgoinput.hpp" />
     <ClInclude Include="sdk\include\input\cusercmd.hpp" />
     <ClInclude Include="sdk\include\interfaces\CLocalize.hpp" />

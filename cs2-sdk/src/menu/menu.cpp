@@ -167,6 +167,7 @@ void CMenu::RenderUI()
     ImGui::Checkbox("Enable", &g_Vars.m_EnableESP);
     ImGui::Checkbox("Players box", &g_Vars.m_PlayerBoxes);
     ImGui::Checkbox("Players name", &g_Vars.m_PlayerNames);
+    ImGui::Checkbox("Player Skeleton", &g_Vars.m_SkeletonEsp);
     ImGui::Checkbox("Weapon name", &g_Vars.m_WeaponName);
     ImGui::Checkbox("Player healthbar", &g_Vars.m_PlayerHealthBar);
     ImGui::Checkbox("Player armorbar ", &g_Vars.m_PlayerArmorBar);

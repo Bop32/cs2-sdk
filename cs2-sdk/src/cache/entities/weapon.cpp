@@ -8,7 +8,7 @@
 
 #include <imgui/imgui.h>
 
-CCachedWeapon::CCachedWeapon(CBaseHandle handle) : CCachedBaseEntity(handle) { m_BoxColor = IM_COL32(255, 255, 0, 255); }
+#include <interfaces/schemasystem.hpp>
 
 void RenderGlow(C_BaseEntity* entity, bool on)
 {
@@ -18,18 +18,14 @@ void RenderGlow(C_BaseEntity* entity, bool on)
         g_Vars.m_GlowColor[1] * 255, g_Vars.m_GlowColor[2] * 255, g_Vars.m_GlowColor[3] * 255);
 }
 
-
-bool CCachedWeapon::CanDrawESP()
+bool CCachedGun::CanDrawESP()
 {
-    C_BaseEntity* weapon = Get<C_BaseEntity>();
-
     if (!g_Vars.m_WeaponESP)
     {
-        weapon->m_Glow().m_bGlowing() = false;
         return false;
     }
 
-
+    C_BaseEntity* weapon = Get<C_BaseEntity>();
     if (!weapon || weapon->m_hOwnerEntity().IsValid())
     {
         return false;
@@ -38,9 +34,16 @@ bool CCachedWeapon::CanDrawESP()
     return true;
 }
 
-void CCachedWeapon::RenderESP()
+void CCachedGun::RenderESP()
 {
     C_BaseEntity* weapon = Get<C_BaseEntity>();
-    RenderGlow(weapon, true);
+    
+    if(!weapon->IsProjectile()) return;
+
+    CSchemaClassInfo* dynamicBinding = weapon->Schema_DynamicBinding();
+
+    if(!dynamicBinding) return;
+
+    //dynamicBinding->m_n
 }
 

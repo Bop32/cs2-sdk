@@ -13,6 +13,8 @@ namespace signatures
     extern CSigScan GetHitboxSet;
     extern CSigScan HitboxToWorldTransforms;
     extern CSigScan GetBonePosition;
+    extern CSigScan GetBoneFlags;
+    extern CSigScan GetBoneParent;
     extern CSigScan SetViewAngles;
     extern CSigScan GetViewAngles;
     extern CSigScan GetEntityHandle;

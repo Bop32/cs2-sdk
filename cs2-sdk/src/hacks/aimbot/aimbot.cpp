@@ -29,6 +29,13 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* localPlayerController)
 
 static std::vector<uint32_t> bones;
 
+bool WeaponCanFire(C_BasePlayerWeapon* weapon, CUserCmd* cmd)
+{
+    float flServerTime = ( float )(localPlayerController->m_nTickBase() * globals::GlobalVars->interval_per_tick);
+
+    auto weaponAttackTime = weapon->m_nNextPrimaryAttackTick() * globals::GlobalVars->interval_per_tick;
+    return weaponAttackTime > flServerTime;
+}
 void aimbot::RunAimbot(CUserCmd* cmd)
 {
     if (!CEngineClient::Get()->IsInGame()) return;
@@ -89,7 +96,7 @@ void aimbot::RunAimbot(CUserCmd* cmd)
         bones.emplace_back(27);
     }
 
-    auto currentWeapon = localPlayerPawn->m_pWeaponServices()->m_hActiveWeapon().Get();
+    C_BasePlayerWeapon* currentWeapon = localPlayerPawn->m_pWeaponServices()->m_hActiveWeapon().Get();
 
     C_AttributeContainer* pAttributeContainer = currentWeapon->m_AttributeManager();
 
@@ -120,17 +127,6 @@ void aimbot::RunAimbot(CUserCmd* cmd)
         {
             enemyPawn->GetBonePosition(bone, bone_position, bone_rotation);
 
-            /*
-            we can maybe have it so the user chooses to have autowall on or off so we use this shit.
-            C_TraceFilter filter(0x1C1003, localPlayerController, nullptr, 4);
-            C_Ray ray = {};
-            C_GameTrace trace = {};
-
-            offsets::TraceShape(&ray, localPlayerEyePosition, bone_position, &filter, &trace);
-
-            if (trace.HitEntity != enemyPawn && trace.Fraction < 0.97f) continue;
-            */
-
             if (!AutoWall::CanHit(enemyPawn, localPlayerEyePosition, bone_position, weaponInfo, currentDamage)) continue;
 
             angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
@@ -158,7 +154,7 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
     auto& aimPunch = localPlayerPawn->m_aimPunchCache();
 
-    if(aimPunch.m_Size == 0) return;
+    if (aimPunch.m_Size == 0) return;
 
     localPlayerViewAngles += angle - aimPunch.m_Data[aimPunch.m_Size - 1] * 2;
 
@@ -176,13 +172,11 @@ void aimbot::RunAimbot(CUserCmd* cmd)
         {
             globals::GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
         }
-        
-        //This is needed as for community servers you need to compensate tickBase prediction errors. (I think)
-        auto tickDifference = std::abs(currentWeapon->m_nNextPrimaryAttackTick() - (int)localPlayerController->m_nTickBase());
 
-        if (currentWeapon->m_nNextPrimaryAttackTick() - tickDifference > globals::GlobalVars->tick_count) return;
+        if (WeaponCanFire(currentWeapon, cmd) || weaponInfo->m_nNumBullets() <= 0) return;
 
         cmd->buttons |= CUserCmd::IN_ATTACK;
     }
 }
+
 

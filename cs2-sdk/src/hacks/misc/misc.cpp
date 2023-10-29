@@ -8,7 +8,7 @@
 static bool onGround = false;
 void misc::BunnyHop(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
 {
-    if (!(pawn->m_iFlags() & 1) != 0)
+    if (!(pawn->m_iFlags() & FL_ONGROUND) && cmd->buttons & CUserCmd::IN_JUMP)
     {
         cmd->buttons &= ~CUserCmd::IN_JUMP;
     }

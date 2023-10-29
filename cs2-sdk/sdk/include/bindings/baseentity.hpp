@@ -51,12 +51,10 @@ public:
 
     void GetBonePosition(uint32_t bone_index, Vector& position, Vector& rotation)
     {
-        using function_t = std::int64_t(__fastcall*)(C_BaseEntity*, std::uint32_t, Vector*, Vector*);
+        using function_t = void(__fastcall*)(void*, uint32_t, Vector&, Vector&);
         static function_t fn = reinterpret_cast< function_t >(signatures::GetBonePosition.GetPtrAs<void*>());
 
-        fn(this, bone_index, &position, &rotation);
-
-        //return signatures::GetBonePosition.GetPtr().Call<bool (*)(void*, uint32_t, Vector*, Vector*)>(this, bone_index, position, rotation);
+        fn(this, bone_index, position, rotation);
     }
 };
 
@@ -95,13 +93,4 @@ enum flags_t : uint32_t
     FL_UNBLOCKABLE_BY_PLAYER = (1 << 30)
 };
 
-class CModel
-{
-public:
-    std::int32_t GetBoneParent(std::int32_t index);
-
-public:
-    std::uint8_t padding_0[0x170];
-    std::int32_t BoneCount;
-};
 

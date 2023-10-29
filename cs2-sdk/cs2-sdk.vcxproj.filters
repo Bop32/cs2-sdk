@@ -68,12 +68,12 @@
     <ClCompile Include="sdk\src\offsets\offsets.cpp" />
     <ClCompile Include="src\hacks\aimbot\aimbot.cpp" />
     <ClCompile Include="src\config\config.cpp" />
-    <ClCompile Include="sdk\include\bindings\modeldata.cpp" />
     <ClCompile Include="sdk\src\interfaces\CMaterialSystem2.cpp" />
     <ClCompile Include="sdk\src\interfaces\CLocalize.cpp" />
     <ClCompile Include="src\hacks\aimbot\autowall.cpp" />
     <ClCompile Include="src\weapon\c_econitemview.cpp" />
     <ClCompile Include="sdk\src\interfaces\CResourceSystem.cpp" />
+    <ClCompile Include="sdk\src\bonesystem\bonesystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch\pch.hpp" />
@@ -226,5 +226,8 @@
     <ClInclude Include="include\math\types\CUtlMap.hpp" />
     <ClInclude Include="sdk\include\debugoverlay\CDebugOverlayGameSystem.hpp" />
     <ClInclude Include="sdk\include\interfaces\CResourceSystem.hpp" />
+    <ClInclude Include="sdk\include\cstronghandle\CStrongHandle.hpp" />
+    <ClInclude Include="sdk\include\bonesystem\bonesystem.hpp" />
+    <ClInclude Include="sdk\include\bindings\c_smokegrenadeprojectile.hpp" />
   </ItemGroup>
 </Project>

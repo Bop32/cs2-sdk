@@ -7,6 +7,4 @@
 
 #include <bindings/baseentity.hpp>
 
-CCachedHen::CCachedHen(CBaseHandle handle) : CCachedBaseEntity(handle) { m_BoxColor = IM_COL32(206, 66, 245, 255); }
-
 bool CCachedHen::CanDrawESP() { return Get() && g_Vars.m_ChickenESP; }
