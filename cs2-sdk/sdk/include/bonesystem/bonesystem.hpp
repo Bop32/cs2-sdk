@@ -4,6 +4,7 @@
 #include <cstronghandle/CStrongHandle.hpp>
 #include <bindings/gamescenenode.hpp>
 #include <schemamgr/schema_manager.hpp>
+#include <signatures/signatures.hpp>
 
 using CUtlSymLargeId = std::int32_t*;
 
@@ -68,6 +69,8 @@ struct alignas(16) CBoneData
 {
     Vector position;
     float scale;
+
+    float rotation[0x4];
 };
 
 class CModelState
@@ -85,4 +88,11 @@ class CSkeletonInstance : public CGameSceneNode
 public:
     SCHEMA(CModelState, m_modelState, "CSkeletonInstance", "m_modelState");
     SCHEMA(uint8_t, m_nHitboxSet, "CSkeletonInstance", "m_nHitboxSet");
+
+    inline void calcWorldSpaceBones(int32_t mask) {
+        using function_t = void(__fastcall*)(CSkeletonInstance*, int32_t);
+        static function_t fn = reinterpret_cast<function_t>(signatures::CalcWorldSpaceBones.GetPtrAs<void*>());
+
+        fn(this, mask);
+    }
 };

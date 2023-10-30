@@ -157,8 +157,17 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 
     if (!localPlayerPawn) return false;
 
+    Vector old_angles = cmd->base->view->angles;
+    float old_fmove = cmd->base->m_forwardmove;
+    float old_smove = cmd->base->m_rightmove;
+
+    cmd->base->view->angles.x = 89;
+    cmd->base->view->angles.y += 180;
+    cmd->base->view->angles.Clamp();
+
     if (g_Vars.m_Aimbot)
     {
+    
         aimbot::RunAimbot(cmd);
     }
 
@@ -167,6 +176,7 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
         misc::BunnyHop(cmd, localPlayerPawn);
     }
 
+    CMath::Get().CorrectMovement(old_angles, cmd, old_fmove, old_smove);
 
     return false;
 }

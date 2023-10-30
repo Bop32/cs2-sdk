@@ -118,6 +118,10 @@ namespace signatures
             {SDK_SIG("85 D2 78 17 3B 91 70")},
         });
 
+    CSigScan CalcWorldSpaceBones("CalcWorldSpaceBones", CConstants::CLIENT_LIB,
+        {{SDK_SIG("E8 ? ? ? ? 41 0F B7 47 10 0F B7 BB F4 ? ? ?"), [](CPointer& ptr) { ptr.Absolute(1, 0); }},
+        });
+
     CSigScan GetEntityHandle("GetEntityHandle", CConstants::CLIENT_LIB,
         {
             {SDK_SIG("48 85 C9 74 ? 48 8B 41 ? 48 85 C0 74 ? 44 8B 40 ? BA ? ? ? ? 8B 48 ? 41 8B C0 83 E1")},

@@ -55,7 +55,7 @@ void RenderSkeleton(C_CSPlayerPawnBase* pawn, ImDrawList* drawList) noexcept
 
     CSkeletonInstance* skeleton_instance = gameSceneNode->GetSkeletonInstance();
 
-    if (skeleton_instance == nullptr) return;
+    if (!skeleton_instance) return;
 
     CModelState model_state = skeleton_instance->m_modelState();
 
@@ -65,11 +65,7 @@ void RenderSkeleton(C_CSPlayerPawnBase* pawn, ImDrawList* drawList) noexcept
 
     for (std::int32_t i = 0; i < model->BoneCount; ++i)
     {
-        auto flag = model->GetBoneFlag(i);
-
-        bool hasFlag = flag & 0x100;
-
-        if (!hasFlag) continue;
+        if (!(model->GetBoneFlag(i) & 0x100)) continue;
 
         auto boneParentIndex = model->GetBoneParent(i);
 
@@ -82,6 +78,7 @@ void RenderSkeleton(C_CSPlayerPawnBase* pawn, ImDrawList* drawList) noexcept
             model_state.bones[i].position.x,
             model_state.bones[i].position.y,
             model_state.bones[i].position.z);
+
         Vector secondPoint = Vector(
             model_state.bones[boneParentIndex].position.x,
             model_state.bones[boneParentIndex].position.y,
@@ -89,9 +86,8 @@ void RenderSkeleton(C_CSPlayerPawnBase* pawn, ImDrawList* drawList) noexcept
 
         if (CMath::Get().WorldToScreen(firstPoint, bone_screen_position) && 
             CMath::Get().WorldToScreen(secondPoint, bone_screen_parent_position))
-        {
-            drawList->AddLine(bone_screen_position, bone_screen_parent_position, ImColor(255, 255, 255, 255));
-        }
+                drawList->AddLine(bone_screen_position, bone_screen_parent_position, ImColor(255, 255, 255, 255));
+        
     }
 }
 

@@ -15,6 +15,7 @@ namespace signatures
     extern CSigScan GetBonePosition;
     extern CSigScan GetBoneFlags;
     extern CSigScan GetBoneParent;
+    extern CSigScan CalcWorldSpaceBones;
     extern CSigScan SetViewAngles;
     extern CSigScan GetViewAngles;
     extern CSigScan GetEntityHandle;

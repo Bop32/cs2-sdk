@@ -2,7 +2,7 @@
 
 #include <math/types/transform.hpp>
 #include <math/types/vmatrix.hpp>
-
+#include <input/cusercmd.hpp>
 struct ImVec2;
 
 class CMath {
@@ -19,6 +19,7 @@ class CMath {
     bool WorldToScreen(const Vector& in, ImVec2& out);
     void TransformAABB(const matrix3x4_t& transform, const Vector& minsIn, const Vector& maxsIn, Vector& minsOut, Vector& maxsOut);
     Vector CalculateAngle(Vector& lookFrom, Vector& lookTo, Vector& viewAngles);
+    void CorrectMovement(Vector old_angles, CUserCmd* cmd, float old_forwardmove, float old_sidemove);
    private:
     VMatrix m_ViewMatrix;
 };
