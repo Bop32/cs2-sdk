@@ -135,6 +135,7 @@
     <ClCompile Include="src\config\config.cpp" />
     <ClCompile Include="src\hacks\aimbot\aimbot.cpp" />
     <ClCompile Include="src\hacks\aimbot\autowall.cpp" />
+    <ClCompile Include="src\hacks\anti_aim\anti_aim.cpp" />
     <ClCompile Include="src\hacks\esp\esp.cpp" />
     <ClCompile Include="src\hacks\misc\misc.cpp" />
     <ClCompile Include="src\hooks\render\vulkan\vulkan_hooks.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="include\globals\globals.hpp" />
     <ClInclude Include="include\hacks\aimbot\aimbot.hpp" />
     <ClInclude Include="include\hacks\aimbot\autowall.hpp" />
+    <ClInclude Include="include\hacks\anti_aim\anti_aim.hpp" />
     <ClInclude Include="include\hacks\esp\esp.hpp" />
     <ClInclude Include="include\hacks\Glow\CGlowProperty.hpp" />
     <ClInclude Include="include\hooks\game\game_hooks.hpp" />

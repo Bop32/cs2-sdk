@@ -15,7 +15,7 @@ public:
 	float flFovViewmodel; // 0x04DC
 	Vector vecOrigin; // 0x04E0
 	char pad03[0xC]; // 0x04EC
-	CmdQAngle angView; // 0x04F8
+	Vector angView; // 0x04F8
 	char pad04[0x14]; // 0x0504
 	float flAspectRatio; // 0x0518
 };

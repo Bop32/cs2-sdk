@@ -83,6 +83,7 @@ void Config::LoadConfig()
 
     g_Vars.m_MinimumDamage = configData[PRINTER(g_Vars.m_MinimumDamage)].get<int>();
     g_Vars.m_SkeletonEsp = configData[PRINTER(g_Vars.m_SkeletonEsp)].get<bool>();
+    g_Vars.m_RapidFire = configData[PRINTER(g_Vars.m_RapidFire)].get<bool>();
 
     fileContents.close();
 }
@@ -122,6 +123,7 @@ void Config::SaveConfig()
     j[PRINTER(g_Vars.m_MinimumDamage)] = g_Vars.m_MinimumDamage;
     j[PRINTER(g_Vars.m_ChamsType)] = g_Vars.m_ChamsType;
     j[PRINTER(g_Vars.m_SkeletonEsp)] = g_Vars.m_SkeletonEsp;
+    j[PRINTER(g_Vars.m_RapidFire)] = g_Vars.m_RapidFire;
 
 
 

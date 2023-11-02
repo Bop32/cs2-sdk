@@ -17,6 +17,35 @@ void CMath::UpdateViewMatrix(VMatrix* viewMatrix)
     m_ViewMatrix = *viewMatrix;
 }
 
+void CMath::AngleVectors(const Vector& angles, Vector* forward, Vector* right, Vector* up)
+{
+    float cp = std::cos(DegToRad(angles.x)), sp = std::sin(DegToRad(angles.x));
+    float cy = std::cos(DegToRad(angles.y)), sy = std::sin(DegToRad(angles.y));
+    float cr = std::cos(DegToRad(angles.z)), sr = std::sin(DegToRad(angles.z));
+
+    if (forward)
+    {
+        forward->x = cp * cy;
+        forward->y = cp * sy;
+        forward->z = -sp;
+    }
+
+    if (right)
+    {
+        right->x = -1.f * sr * sp * cy + -1.f * cr * -sy;
+        right->y = -1.f * sr * sp * sy + -1.f * cr * cy;
+        right->z = -1.f * sr * cp;
+    }
+
+    if (up)
+    {
+        up->x = cr * sp * cy + -sr * -sy;
+        up->y = cr * sp * sy + -sr * cy;
+        up->z = cr * cp;
+    }
+}
+
+
 void CMath::AngleVectors(Vector angles, Vector& out)
 {
     float cp = std::cos(DegToRad(angles.x)), sp = std::sin(DegToRad(angles.x));
@@ -84,31 +113,41 @@ Vector CMath::CalculateAngle(Vector& lookFrom, Vector& lookTo, Vector& viewAngle
     return angles;
 }
 
-void CMath::CorrectMovement(Vector old_angles, CUserCmd* cmd, float old_forwardmove, float old_sidemove) {
+void CMath::CorrectMovement(Vector old_angles, CUserCmd* cmd, float old_forwardmove, float old_sidemove)
+{
     float delta_view;
     float f1 = 0.f;
     float f2 = 0.f;
 
-    if (old_angles.y < 0.f) {
+    if (old_angles.y < 0.f)
+    {
         f1 = 360.0f + old_angles.y;
-    } else {
+    }
+    else
+    {
         f1 = old_angles.y;
     }
 
-    if (cmd->base->view->angles.y < 0.0f) {
+    if (cmd->base->view->angles.y < 0.0f)
+    {
         f2 = 360.0f + cmd->base->view->angles.y;
-    } else {
+    }
+    else
+    {
         f2 = cmd->base->view->angles.y;
     }
 
-    if (f2 < f1) {
+    if (f2 < f1)
+    {
         delta_view = abs(f2 - f1);
-    } else {
+    }
+    else
+    {
         delta_view = 360.0f - abs(f1 - f2);
     }
 
     delta_view = 360.0f - delta_view;
-    
+
     cmd->base->m_forwardmove = std::clamp(std::cos(DegToRad(delta_view)) * old_forwardmove + std::cos(DegToRad(delta_view + 90.f)) * old_sidemove, -450.f, 450.f);
     cmd->base->m_rightmove = std::clamp(std::sin(DegToRad(delta_view)) * old_forwardmove + std::sin(DegToRad(delta_view + 90.f)) * old_sidemove, -450.f, 450.f);
 }

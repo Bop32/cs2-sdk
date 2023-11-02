@@ -30,6 +30,7 @@
 #include <bindings/c_overrideview.hpp>
 #include <interfaces/CLocalize.hpp>
 #include <interfaces/CResourceSystem.hpp>
+#include <hacks/anti_aim/anti_aim.hpp>
 
 using namespace globals;
 static CHook g_MouseInputEnabled;
@@ -78,7 +79,7 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
 
     auto name = material->GetName();
 
-    if (!strstr(name, "characters/model") || !(id == CT_MODEL || id == T_MODEL || id == ARM)) 
+    if (!strstr(name, "characters/model") || !(id == CT_MODEL || id == T_MODEL || id == ARM))
         return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
 
     if (localPlayerController)
@@ -137,12 +138,29 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
     return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
 }
 
+static CHook g_BulletMessage;
+
+static void* hkModifyBulletMessage(CSGOInputMessage* inputMessage, CSGOInputHistoryEntryPB* inputHistoryEntry, bool verify, int64_t a3, int64_t a4, C_CSPlayerPawnBase* player)
+{
+    if (g_Vars.m_RapidFire)
+    {
+        inputMessage->m_player_tick_count = 1;
+        inputMessage->m_target_head_position = aimbotData.shotPosition;
+        inputMessage->m_shoot_position = aimbotData.shotPosition;
+        inputMessage->m_target_angle = aimbotData.angle;
+        inputMessage->m_target_abs_origin = aimbotData.shotPosition;
+        inputMessage->m_view_angles = player->GetEyePosition();
+        inputHistoryEntry->m_target_index = inputMessage->m_target_index;
+    }
+
+    return g_BulletMessage.CallOriginal<void*>(inputMessage, inputHistoryEntry, verify, a3, a4, player);
+}
 static CHook g_CreateMove;
 static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 {
     g_CreateMove.CallOriginal<bool>(this_ptr, a1, a2);
 
-    CUserCmd* cmd = this_ptr->GetUserCmd();
+    cmd = this_ptr->GetUserCmd();
 
     if (!cmd) return false;
 
@@ -157,17 +175,19 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 
     if (!localPlayerPawn) return false;
 
+    if (!globals::GlobalVars)
+    {
+        globals::GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
+    }
+
     Vector old_angles = cmd->base->view->angles;
     float old_fmove = cmd->base->m_forwardmove;
     float old_smove = cmd->base->m_rightmove;
 
-    cmd->base->view->angles.x = 89;
-    cmd->base->view->angles.y += 180;
-    cmd->base->view->angles.Clamp();
 
     if (g_Vars.m_Aimbot)
     {
-    
+
         aimbot::RunAimbot(cmd);
     }
 
@@ -176,6 +196,8 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
         misc::BunnyHop(cmd, localPlayerPawn);
     }
 
+
+    AntiAim::RunAntiAim(cmd, this_ptr);
     CMath::Get().CorrectMovement(old_angles, cmd, old_fmove, old_smove);
 
     return false;
@@ -229,6 +251,7 @@ void CGameHooks::Initialize()
     g_DrawObject.Hook(signatures::DrawObjectHook.GetPtrAs<void*>(), SDK_HOOK(hkDrawObject));
     g_OverrideView.Hook(signatures::OverrideView.GetPtrAs<void*>(), SDK_HOOK(hkOverrideView));
     g_FrameStageNotify.Hook(signatures::FrameStageNotify.GetPtrAs<void*>(), SDK_HOOK(hkFrameStageNotify));
+    g_BulletMessage.Hook(signatures::BulletMessage.GetPtrAs<void*>(), SDK_HOOK(hkModifyBulletMessage));
 
     //Sets Cl_Bob_Lower_Amt to 0.
     float* value = signatures::CL_Bob_Lower_Amt.GetPtrAs<float*>();

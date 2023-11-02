@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <weapon/ceconitemdefinition.hpp>
 #include <virtual/virtual.hpp>
+#include <signatures/signatures.hpp>
 
 class CCSWeaponBaseVData
 {

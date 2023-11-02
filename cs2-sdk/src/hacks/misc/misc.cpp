@@ -4,41 +4,33 @@
 #include <bindings/playerpawn.hpp>
 #include <offets/offsets.hpp>
 #include <interfaces/gameentitysystem.hpp>
-               
+
 static bool onGround = false;
 void misc::BunnyHop(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
 {
+    /*
     if (!(pawn->m_iFlags() & FL_ONGROUND) && cmd->buttons & CUserCmd::IN_JUMP)
     {
         cmd->buttons &= ~CUserCmd::IN_JUMP;
     }
-}
+    */
 
-void misc::NoRecoil(CUserCmd* cmd, C_CSPlayerPawnBase* pawn)
-{
-    auto aimPunch = pawn->m_aimPunchCache();
-
-    if (aimPunch.m_Size > 0 && aimPunch.m_Size < 0xFFFF)
+    if (static bool bShouldFakeJump = false; bShouldFakeJump)
     {
-        auto recoil = aimPunch.m_Data[aimPunch.m_Size - 1];
-
-        static Vector prev = Vector(0.f, 0.f, 0.f);
-
-        auto delta = prev - recoil;
-
-        bulletsPre.push_back(delta);
-
-        cmd->base->view->angles += delta * 2;
-
-        cmd->base->view->angles.Clamp(); // Remove?
-
-        CCSGOInput::Get()->SetViewAngles(cmd->base->view->angles);
- 
-        bulletsPost.push_back(cmd->base->view->angles);
-
-        prev = recoil;
-    } else {
-        bulletsPre.clear();
-        bulletsPost.clear();
+        cmd->buttons |= CUserCmd::IN_JUMP;
+        bShouldFakeJump = false;
+    }
+    // check is player want to jump
+    else if (cmd->buttons & CUserCmd::IN_JUMP)
+    {
+        // check is player on the ground
+        if (pawn->m_iFlags() & FL_ONGROUND)
+        {
+            bShouldFakeJump = true;
+        }
+        else
+        {
+            cmd->buttons &= ~CUserCmd::IN_JUMP;
+        }
     }
 }

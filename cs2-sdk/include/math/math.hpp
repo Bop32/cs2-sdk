@@ -14,6 +14,8 @@ class CMath {
 
     void UpdateViewMatrix(VMatrix* viewMatrix);
 
+    void AngleVectors(const Vector& angles, Vector* forward, Vector* right, Vector* up);
+
     void AngleVectors(Vector angles, Vector& out);
 
     bool WorldToScreen(const Vector& in, ImVec2& out);

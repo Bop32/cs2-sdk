@@ -17,14 +17,46 @@
 
 using namespace trace;
 using namespace globals;
-bool aimbot::HitChance(C_CSPlayerPawnBase* localPlayerController)
+bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector& angle, C_BasePlayerWeapon* weapon, float weaponRange)
 {
+    return true;
+    /*
     constexpr float HITCHANCE_MAX = 100.f;
     constexpr int   SEED_MAX = 255;
     Vector     start { localPlayerController->GetEyePosition() }, end, fwd, right, up, dir, wep_spread;
     float      inaccuracy, spread;
     C_GameTrace tr;
+    size_t     total_hits { }, needed_hits { ( size_t )std::ceil((100 * SEED_MAX) / HITCHANCE_MAX) };
+
+    CMath::Get().AngleVectors(angle, &fwd, &right, &up);
+
+    inaccuracy = weapon->GetInaccuracy();
+    spread = weapon->GetSpread();
+
+    for (int i { }; i <= SEED_MAX; ++i)
+    {
+        wep_spread = weapon->CalculateSpread(i, inaccuracy, spread);
+
+        dir = (fwd + (right * wep_spread.x) + (up * wep_spread.y)).Normalize();
+
+        end = start + (dir * weaponRange);
+
+        offsets::TraceShape(&ray, )
+
+        if (tr.pHitEntity == enemy)
+            ++total_hits;
+
+        if (total_hits >= needed_hits)
+            return true;
+
+        if ((SEED_MAX - i + total_hits) < needed_hits)
+            return false;
+    }
+
+    return false;
+
     return true;
+    */
 }
 
 static std::vector<uint32_t> bones;
@@ -44,10 +76,11 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
     Vector localPlayerViewAngles = cmd->base->view->angles;
 
-    Vector target;
-
+    aimbotData.enemy = nullptr;
+    aimbotData.shotPosition = {};
+    aimbotData.angle = {};
+    aimbotData.canFire = false;
     Vector localPlayerEyePosition = localPlayerPawn->GetEyePosition();
-    Vector angle;
     float aimbotFov = g_Vars.m_AimbotFov * 2.f;
 
     float bestDamage = 0;
@@ -98,6 +131,8 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
     C_BasePlayerWeapon* currentWeapon = localPlayerPawn->m_pWeaponServices()->m_hActiveWeapon().Get();
 
+    if (!currentWeapon) return;
+
     C_AttributeContainer* pAttributeContainer = currentWeapon->m_AttributeManager();
 
     if (!pAttributeContainer) return;
@@ -107,6 +142,8 @@ void aimbot::RunAimbot(CUserCmd* cmd)
     if (!pItemView) return;
 
     CCSWeaponBaseVData* weaponInfo = pItemView->GetWeaponInfo();
+
+    if (!weaponInfo) return;
 
     for (int i = 0; i < CGameEntitySystem::GetHighestEntityIndex(); i++)
     {
@@ -129,15 +166,16 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
             if (!AutoWall::CanHit(enemyPawn, localPlayerEyePosition, bone_position, weaponInfo, currentDamage)) continue;
 
-            angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
+            aimbotData.angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
 
-            angle.Clamp();
+            aimbotData.angle.Clamp();
 
-            auto fov = hypotf(angle.x, angle.y);
+            auto fov = hypotf(aimbotData.angle.x, aimbotData.angle.y);
 
             if (fov < aimbotFov && currentDamage > bestDamage)
             {
-                target = bone_position;
+                aimbotData.enemy = enemyPawn;
+                aimbotData.shotPosition = bone_position;
                 aimbotFov = fov;
                 bestDamage = currentDamage;
             }
@@ -146,17 +184,19 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
     bones.clear();
 
-    if (target.IsZero()) return;
+    if (aimbotData.shotPosition.IsZero()) return;
 
-    angle = CMath::Get().CalculateAngle(localPlayerEyePosition, target, localPlayerViewAngles);
+    aimbotData.angle = CMath::Get().CalculateAngle(localPlayerEyePosition, aimbotData.shotPosition, localPlayerViewAngles);
 
-    angle.Clamp();
+    aimbotData.angle.Clamp();
 
     auto& aimPunch = localPlayerPawn->m_aimPunchCache();
 
+    aimbotData.angle -= aimPunch.m_Data[aimPunch.m_Size - 1] * 2;
+
     if (aimPunch.m_Size == 0) return;
 
-    localPlayerViewAngles += angle - aimPunch.m_Data[aimPunch.m_Size - 1] * 2;
+    localPlayerViewAngles += aimbotData.angle;
 
     cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
 
@@ -166,15 +206,17 @@ void aimbot::RunAimbot(CUserCmd* cmd)
         CCSGOInput::Get()->SetViewAngles(localPlayerViewAngles);
     }
 
+    
     if (g_Vars.m_AutoFire)
     {
-        if (!globals::GlobalVars)
+
+        if (WeaponCanFire(currentWeapon, cmd) || weaponInfo->m_nNumBullets() <= 0)
         {
-            globals::GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
+            aimbotData.canFire = false;
+            return;
         }
 
-        if (WeaponCanFire(currentWeapon, cmd) || weaponInfo->m_nNumBullets() <= 0) return;
-
+        aimbotData.canFire = true;
         cmd->buttons |= CUserCmd::IN_ATTACK;
     }
 }

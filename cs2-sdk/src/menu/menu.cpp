@@ -138,7 +138,7 @@ void CMenu::RenderUI()
     ImGui::Begin("cs2-sdk v2", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::Text("Aimbot");
-    ImGui::BeginChild("Aimbot", ImVec2(m_WindowWidth / 2, 175), true, ImGuiWindowFlags_NoScrollbar);
+    ImGui::BeginChild("Aimbot", ImVec2(m_WindowWidth / 2, 200), true, ImGuiWindowFlags_NoScrollbar);
     ImGui::Checkbox("Enable Aimbot", &g_Vars.m_Aimbot);
 
 
@@ -158,6 +158,7 @@ void CMenu::RenderUI()
     ImGui::SliderInt("##Minimum Damage", &g_Vars.m_MinimumDamage, 1, 100);
     ImGui::Checkbox("Auto Shoot", &g_Vars.m_AutoFire);
     ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);
+    ImGui::Checkbox("Rapid Fire", &g_Vars.m_RapidFire);
     ImGui::Text("FOV");
     ImGui::SliderInt("##FOV", &g_Vars.m_AimbotFov, 1, 180);
     ImGui::EndChild();

@@ -102,6 +102,16 @@ namespace signatures
                 {SDK_SIG("4C 63 C2 4B 8D 04 40 4C 8D 0C C1")},
         });
 
+    CSigScan GetInaccuracy("GetInaccuracy", CConstants::CLIENT_LIB,
+        {
+                {SDK_SIG("48 89 5C 24 ? 57 48 81 EC ? ? ? ? 0F 29 7C 24 ?")},
+        });
+
+    CSigScan GetSpread("GetSpread", CConstants::CLIENT_LIB,
+        {
+                {SDK_SIG("48 83 EC 38 48 63 91 ? ? ? ?")},
+        });
+
     CSigScan GetBonePosition("GetBonePosition", CConstants::CLIENT_LIB,
         {
             {SDK_SIG("48 89 6C 24 ? 48 89 74 24 ? 48 89 7C 24 ? 41 56 48 83 EC ? 4D 8B F1")},
@@ -112,6 +122,10 @@ namespace signatures
             {SDK_SIG("85 D2 78 16 3B 91")},
         });
 
+    CSigScan BulletMessage("Bullet Message", CConstants::CLIENT_LIB,
+        {
+            {SDK_SIG("E8 ? ? ? ? 8B 4E 20 FF C9"), [](CPointer& ptr) { ptr.Absolute(1, 0); }}
+        });
 
     CSigScan GetBoneParent("GetBoneParent", CConstants::CLIENT_LIB,
         {

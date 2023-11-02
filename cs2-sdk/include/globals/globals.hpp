@@ -1,16 +1,18 @@
 #pragma once
 #include <bindings/playercontroller.hpp>
 #include <interfaces/gameentitysystem.hpp>
+#include <hacks/aimbot/aimbot.hpp>
 class Globals;
 
 #define TICK_INTERVAL			(GlobalVars->interval_per_tick)
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 #define TICKS_TO_TIME( t )		( TICK_INTERVAL *( t ) )
 #define ROUND_TO_TICKS( t )		( TICK_INTERVAL * TIME_TO_TICKS( t ) )
+
+
+using namespace aimbot;
 namespace globals
 {
-
-
     class CGlobalVarsBase
     {
     public:
@@ -32,4 +34,6 @@ namespace globals
     inline CCSPlayerController* localPlayerController = nullptr;
     inline C_CSPlayerPawnBase* localPlayerPawn = nullptr;
     inline CGlobalVarsBase* GlobalVars = nullptr;
+    inline AimbotData aimbotData;
+    inline CUserCmd* cmd = nullptr;
 }

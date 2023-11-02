@@ -1,6 +1,6 @@
 #pragma once
 #include "cusercmd.hpp"
-#include "../../../include/signatures/signatures.hpp"
+#include <signatures/signatures.hpp>
 
 class CCSGOInput
 {
@@ -26,17 +26,18 @@ public:
 
     void SetViewAngles(Vector angle)
     {
-        using function_t = std::int64_t(__fastcall*)(CCSGOInput*, std::int32_t, Vector&);
+        using function_t = void(__fastcall*)(CCSGOInput*, std::int32_t, Vector&);
         static function_t fn = reinterpret_cast< function_t >(signatures::SetViewAngles.GetPtrAs<void*>());
 
         fn(this, 0, angle);
     }
 
-    Vector GetViewAngles() {
-        using function_t = uint64_t(__fastcall*)(CCSGOInput*, std::int32_t);
-        static function_t fn = reinterpret_cast<function_t>(signatures::GetViewAngles.GetPtrAs<void*>());
+    void GetViewAngles(Vector& angle)
+    {
+        using function_t = void*(__fastcall*)(CCSGOInput*, std::int32_t);
+        static function_t fn = reinterpret_cast< function_t >(signatures::GetViewAngles.GetPtrAs<void*>());
 
-        return *reinterpret_cast<Vector*>(fn(this, 0));
+        angle = *reinterpret_cast< Vector* >(fn(this, 0));
     }
 
 };

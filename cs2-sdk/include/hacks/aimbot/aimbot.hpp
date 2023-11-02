@@ -12,7 +12,7 @@ enum HITGROUP
     HITGROUP_STOMACH = 3,
     HITGROUP_LEFTARM = 4,
     HITGROUP_RIGHTARM = 5,
-    HITGROUP_LEFTLEG =6,
+    HITGROUP_LEFTLEG = 6,
     HITGROUP_RIGHTLEG = 7,
     HITGROUP_NECK = 8,
     HITGROUP_UNUSED = 9,
@@ -44,6 +44,30 @@ enum HITBOXES : DWORD
 
 namespace aimbot
 {
+    struct AimbotData
+    {
+        AimbotData(C_CSPlayerPawnBase* enemy, Vector& shotPosition, Vector& angle, bool canFire) :
+            enemy(enemy),
+            shotPosition(shotPosition),
+            angle(angle),
+            canFire(canFire)
+        {
+        }
+
+        AimbotData()
+        {
+            enemy = nullptr;
+            shotPosition = {};
+            angle = {};
+            canFire = false;
+        }
+
+        C_CSPlayerPawnBase* enemy = nullptr;
+        Vector shotPosition {};
+        Vector angle {};
+        bool canFire = false;
+    };
+
     void RunAimbot(CUserCmd* cmd);
-    bool HitChance(C_CSPlayerPawnBase* localPlayerController);
+    bool HitChance(C_CSPlayerPawnBase* enemy, Vector& angle, C_BasePlayerWeapon* weapon, float weaponRange);
 }

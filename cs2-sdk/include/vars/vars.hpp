@@ -21,6 +21,8 @@ struct Vars_t
     bool m_PlayerHasDefuser;
     bool m_Glow;
 
+    bool m_RapidFire;
+
     std::map<const char*, bool> m_HitBoxes = 
     {
         {"Head", false}, 

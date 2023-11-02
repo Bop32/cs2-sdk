@@ -41,6 +41,7 @@ public:
     SCHEMA(CPlayer_CameraServices*, m_pCameraServices, "C_BasePlayerPawn", "m_pCameraServices");
     SCHEMA(CPlayer_ItemServices*, m_pItemServices, "C_BasePlayerPawn", "m_pItemServices");
     SCHEMA(uint32_t, m_nTickBase, "CBasePlayerController", "m_nTickBase");
+    SCHEMA(uint32_t, m_MoveType, "C_BaseEntity", "m_MoveType");
 
 
 
@@ -91,6 +92,24 @@ enum flags_t : uint32_t
     FL_DISSOLVING = (1 << 28),
     FL_TRANSRAGDOLL = (1 << 29),
     FL_UNBLOCKABLE_BY_PLAYER = (1 << 30)
+};
+
+enum movetype_t : std::uint32_t
+{
+    MOVETYPE_NONE = 0,
+    MOVETYPE_ISOMETRIC,
+    MOVETYPE_WALK,
+    MOVETYPE_STEP,
+    MOVETYPE_FLY,
+    MOVETYPE_FLYGRAVITY,
+    MOVETYPE_VPHYSICS,
+    MOVETYPE_PUSH,
+    MOVETYPE_NOCLIP,
+    MOVETYPE_LADDER,
+    MOVETYPE_OBSERVER,
+    MOVETYPE_CUSTOM,
+    MOVETYPE_LAST = MOVETYPE_CUSTOM,
+    MOVETYPE_MAX_BITS = 4
 };
 
 

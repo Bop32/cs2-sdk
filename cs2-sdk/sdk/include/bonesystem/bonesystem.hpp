@@ -5,6 +5,7 @@
 #include <bindings/gamescenenode.hpp>
 #include <schemamgr/schema_manager.hpp>
 #include <signatures/signatures.hpp>
+#include <imgui/imgui.h>
 
 using CUtlSymLargeId = std::int32_t*;
 
@@ -69,8 +70,7 @@ struct alignas(16) CBoneData
 {
     Vector position;
     float scale;
-
-    float rotation[0x4];
+    ImVec4 rotation;
 };
 
 class CModelState

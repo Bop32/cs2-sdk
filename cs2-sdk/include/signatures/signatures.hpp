@@ -44,4 +44,7 @@ namespace signatures
     extern CSigScan TraceFunction;
     extern CSigScan CreateTrace;
     extern CSigScan GetTraceInfo;
+    extern CSigScan GetInaccuracy;
+    extern CSigScan GetSpread;
+    extern CSigScan BulletMessage;
 }  // namespace signatures

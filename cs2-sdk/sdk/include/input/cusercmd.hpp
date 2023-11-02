@@ -1,5 +1,119 @@
 #pragma once
-#include "../../../include/math/types/vector.hpp"
+#include <imgui/imgui.h>
+#include <math/types/vector.hpp>
+#include <virtual/virtual.hpp>
+
+class CBasePB
+{
+    void* vftable;
+    uint32_t has_bits;
+    uint64_t cached_size;
+};
+
+static_assert(sizeof(CBasePB) == 0x18);
+
+
+template< typename T >
+struct RepeatedPtrField
+{
+    struct Rep
+    {
+        int allocated_size;
+        T* elements[(std::numeric_limits< int >::max() - 2 * sizeof(int)) /
+            sizeof(void*)];
+    };
+
+    void* arena;
+    int current_size;
+    int total_size;
+    Rep* rep;
+};
+
+class CMsgVector : public CBasePB
+{
+public:
+    ImVec4 position;
+
+};
+
+class CMsgQAngle : public CBasePB
+{
+public:
+    Vector angles;
+};
+
+
+class CSGOInterpolationInfoPB : public CBasePB
+{
+    float frac;
+    int32_t src_tick;
+    int32_t dst_tick;
+};
+
+
+struct CSGOInputHistoryEntryPB : public CBasePB
+{
+    CMsgQAngle* m_angle_message; //0x0018
+    CMsgVector* m_shoot_position; //0x0020
+    CMsgVector* m_target_head_position; //0x0028 I wonder guys I wonder
+    CMsgVector* m_target_abs_origin_message; //0x0030
+    CMsgQAngle* m_target_angle_message; //0x0038
+    CSGOInterpolationInfoPB* m_interpolation_messages[4]; //0x0040
+    int32_t m_frame_tick_count; //0x0060
+    float m_frame_tick_fraction; //0x0064
+    int32_t m_player_tickbase; //0x0068
+    float m_player_tickbase_fraction; //0x006C
+    int32_t m_frame_count; //0x0070 I think
+    int32_t m_target_index; //0x0074 <--- pay attention to this
+
+    CMsgVector* GetAllocationParameter()
+    {
+        CMsgVector tmp;
+        auto fn = reinterpret_cast< CMsgVector* (__fastcall*)(void*, CMsgVector*) >(vt::GetMethod(this, 5).Get<CSGOInputHistoryEntryPB*>());
+        return fn(this, &tmp);
+    }
+};
+
+static_assert(sizeof(CSGOInputHistoryEntryPB) == 0x78);
+
+struct CSGOInputMessage
+{
+    int32_t m_frame_tick_count; //0x0000
+    float m_frame_tick_fraction; //0x0004
+    int32_t m_player_tick_count; //0x0008
+    float m_player_tick_fraction; //0x000C
+    Vector m_view_angles; //0x0010
+    Vector m_shoot_position; //0x001C
+    int32_t m_target_index; //0x0028
+    Vector m_target_head_position; //0x002C What's this???
+    Vector m_target_abs_origin; //0x0038
+    Vector m_target_angle; //0x0044
+    int32_t m_sv_show_hit_registration; //0x0050
+    int32_t m_entry_index_max; //0x0054
+    int32_t m_index_idk; //0x0058
+}; //Size: 0x005C
+
+static_assert(sizeof(CSGOInputMessage) == 0x005C);
+
+class CCSGOUserCmdPB
+{
+public:
+    int32_t nTickCount;
+    char pad1[0x4];
+    uint8_t* tickPointer;
+
+    CSGOInputHistoryEntryPB* GetInputHistoryEntry(std::int32_t nTick)
+    {
+        if (nTick < this->nTickCount)                 
+        {
+            CSGOInputHistoryEntryPB** arrTickList = reinterpret_cast< CSGOInputHistoryEntryPB** >(reinterpret_cast< std::uintptr_t >(tickPointer) + 0x8);
+            return arrTickList[nTick];
+        }
+
+        return nullptr;
+    }
+};
+static_assert(sizeof(CCSGOUserCmdPB) == 0x10);
 
 class CmdQAngle
 {
@@ -12,39 +126,12 @@ public:
 struct CBaseUserCmd
 {
     char pad1[0x40];
-    CmdQAngle* view;
+    CMsgQAngle* view;
     int m_command_number;
     int m_tick_count;
     float m_forwardmove;
     float m_rightmove;
     float m_upmove;
-};
-
-
-class CSubTickCmd
-{
-public:
-    char pad1[0x18];
-    CmdQAngle* view;
-};
-
-class CSubTickContainer
-{
-public:
-    int32_t tickCount;
-    char pad1[0x4];
-    uint8_t* tickPointer;
-
-    CSubTickCmd* GetTick(std::int32_t index)
-    {
-        if (index < this->tickCount)
-        {
-            CSubTickCmd** tick_list = reinterpret_cast< CSubTickCmd** >(this->tickPointer + 0x8);
-            return tick_list[index];
-        }
-
-        return nullptr;
-    }
 };
 
 class CUserCmd
@@ -75,7 +162,7 @@ public:
 
 
     char pad1[0x20];
-    CSubTickContainer subTickContainer;
+    CCSGOUserCmdPB csgoUserCmd;
     CBaseUserCmd* base;
     int startHistoryIndexAttack1;
     int startHistoryIndexAttack2;
@@ -86,21 +173,15 @@ public:
     uint64_t buttonsScroll;
     char pad3[0x8];
 
-    CSubTickContainer GetSubTickContainer()
-    {
-        return *reinterpret_cast< CSubTickContainer* >(reinterpret_cast< std::uintptr_t >(this) + 0x20);
-    }
-
     void SetSubTickAngles(CUserCmd* cmd, Vector& angles)
     {
-        CSubTickContainer container = cmd->GetSubTickContainer();
-        for (int i = 0; i < container.tickCount; i++)
+        for (int i = 0; i < this->csgoUserCmd.nTickCount; i++)
         {
-            CSubTickCmd* tick = container.GetTick(i);
+            auto* tick = this->csgoUserCmd.GetInputHistoryEntry(i);
 
-            if (tick && tick->view)
+            if (tick && tick->m_angle_message)
             {
-                tick->view->angles = angles;
+                tick->m_angle_message->angles = angles;
             }
         }
     }
