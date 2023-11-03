@@ -27,6 +27,19 @@ public:
         return std::sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
     }
 
+    Vector forward()
+    {
+        float length = std::sqrt(x * x + y * y + z * z);
+        if (length > 0.0f)
+        {
+            return Vector(x / length, y / length, z / length);
+        }
+        else
+        {
+            return Vector(0.0f, 0.0f, 0.0f); // Avoid division by zero
+        }
+    }
+
     Vector Normalize()
     {
         float magnitude = Length(*this);
@@ -57,6 +70,11 @@ public:
         return Vector(x, y, z);
     }
 
+    float Length2D()
+    {
+        return std::sqrt((this->x * this->x) + (this->y * this->y));
+    }
+
     Vector Transform(const matrix3x4_t& matrix) const
     {
         return Vector { x * matrix[0][0] + y * matrix[0][1] + z * matrix[0][2] + matrix[0][3],
@@ -69,5 +87,14 @@ public:
     Vector Min(const Vector& rhs) const { return Vector { std::min(x, rhs.x), std::min(y, rhs.y), std::min(z, rhs.z) }; }
     Vector Max(const Vector& rhs) const { return Vector { std::max(x, rhs.x), std::max(y, rhs.y), std::max(z, rhs.z) }; }
 
+    float Length2D(const Vector& rhs) const
+    { 
+        return std::sqrt((rhs.x * rhs.x) + (rhs.y * rhs.y));
+    }
+
+    Vector Cross(const Vector& rhs)
+    {
+        return Vector { this->y * rhs.z - this->z * rhs.y, this->z * rhs.x - this->x * rhs.z, this->x * rhs.y - this->y * rhs.x };
+    }
     float x, y, z;
 };

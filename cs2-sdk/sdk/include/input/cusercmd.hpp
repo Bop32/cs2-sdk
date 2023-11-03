@@ -7,27 +7,11 @@ class CBasePB
 {
     void* vftable;
     uint32_t has_bits;
-    uint64_t cached_size;
+    uint64_t flag;
 };
 
 static_assert(sizeof(CBasePB) == 0x18);
 
-
-template< typename T >
-struct RepeatedPtrField
-{
-    struct Rep
-    {
-        int allocated_size;
-        T* elements[(std::numeric_limits< int >::max() - 2 * sizeof(int)) /
-            sizeof(void*)];
-    };
-
-    void* arena;
-    int current_size;
-    int total_size;
-    Rep* rep;
-};
 
 class CMsgVector : public CBasePB
 {
@@ -51,8 +35,9 @@ class CSGOInterpolationInfoPB : public CBasePB
 };
 
 
-struct CSGOInputHistoryEntryPB : public CBasePB
+class CSGOInputHistoryEntryPB : public CBasePB
 {
+public:
     CMsgQAngle* m_angle_message; //0x0018
     CMsgVector* m_shoot_position; //0x0020
     CMsgVector* m_target_head_position; //0x0028 I wonder guys I wonder
@@ -66,12 +51,6 @@ struct CSGOInputHistoryEntryPB : public CBasePB
     int32_t m_frame_count; //0x0070 I think
     int32_t m_target_index; //0x0074 <--- pay attention to this
 
-    CMsgVector* GetAllocationParameter()
-    {
-        CMsgVector tmp;
-        auto fn = reinterpret_cast< CMsgVector* (__fastcall*)(void*, CMsgVector*) >(vt::GetMethod(this, 5).Get<CSGOInputHistoryEntryPB*>());
-        return fn(this, &tmp);
-    }
 };
 
 static_assert(sizeof(CSGOInputHistoryEntryPB) == 0x78);
@@ -104,7 +83,7 @@ public:
 
     CSGOInputHistoryEntryPB* GetInputHistoryEntry(std::int32_t nTick)
     {
-        if (nTick < this->nTickCount)                 
+        if (nTick < this->nTickCount)
         {
             CSGOInputHistoryEntryPB** arrTickList = reinterpret_cast< CSGOInputHistoryEntryPB** >(reinterpret_cast< std::uintptr_t >(tickPointer) + 0x8);
             return arrTickList[nTick];

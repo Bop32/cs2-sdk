@@ -138,7 +138,7 @@ void CMenu::RenderUI()
     ImGui::Begin("cs2-sdk v2", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::Text("Aimbot");
-    ImGui::BeginChild("Aimbot", ImVec2(m_WindowWidth / 2, 200), true, ImGuiWindowFlags_NoScrollbar);
+    ImGui::BeginChild("Aimbot", ImVec2(m_WindowWidth / 2, 225), true, ImGuiWindowFlags_NoScrollbar);
     ImGui::Checkbox("Enable Aimbot", &g_Vars.m_Aimbot);
 
 
@@ -156,6 +156,12 @@ void CMenu::RenderUI()
     }
 
     ImGui::SliderInt("##Minimum Damage", &g_Vars.m_MinimumDamage, 1, 100);
+    ImGui::Checkbox("Minimum hit chance", &g_Vars.m_HitChance);
+    if (g_Vars.m_HitChance)
+    {
+        ImGui::SliderInt("##HitChance", &g_Vars.m_HitChanceValue, 1, 100);
+    }
+
     ImGui::Checkbox("Auto Shoot", &g_Vars.m_AutoFire);
     ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);
     ImGui::Checkbox("Rapid Fire", &g_Vars.m_RapidFire);
@@ -223,6 +229,7 @@ void CMenu::RenderUI()
 
     ImGui::Text("Misc");
     ImGui::BeginChild("Misc", ImVec2(m_WindowWidth / 2, 100), true, ImGuiWindowFlags_NoScrollbar);
+    ImGui::Checkbox("Third Person", &g_Vars.m_Thirdperson);
     ImGui::Checkbox("Automatic Jump", &g_Vars.m_Bhop);
     ImGui::Checkbox("Enable View Model Fov", &g_Vars.m_ViewModelFov);
     ImGui::SliderInt("##View Model Fov", &g_Vars.m_ViewModelFovSlider, 80, 110);

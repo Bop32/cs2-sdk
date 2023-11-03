@@ -21,6 +21,7 @@ struct Vars_t
     bool m_PlayerHasDefuser;
     bool m_Glow;
 
+    bool m_Thirdperson;
     bool m_RapidFire;
 
     std::map<const char*, bool> m_HitBoxes = 
@@ -44,6 +45,8 @@ struct Vars_t
     float m_PlayerArmorColor[4] = { 102.f / 255.f, 190.f / 255.f, 208.f / 255.f, 255.f / 255.f };
 
     int m_MinimumDamage = 50;
+    bool m_HitChance;
+    int m_HitChanceValue = 100;
 
     bool m_VisibleChams;
     bool m_InvisibleChams;

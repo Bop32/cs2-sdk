@@ -84,6 +84,9 @@ void Config::LoadConfig()
     g_Vars.m_MinimumDamage = configData[PRINTER(g_Vars.m_MinimumDamage)].get<int>();
     g_Vars.m_SkeletonEsp = configData[PRINTER(g_Vars.m_SkeletonEsp)].get<bool>();
     g_Vars.m_RapidFire = configData[PRINTER(g_Vars.m_RapidFire)].get<bool>();
+    g_Vars.m_Thirdperson = configData[PRINTER(g_Vars.m_Thirdperson)].get<bool>();
+    g_Vars.m_HitChance = configData[PRINTER(g_Vars.m_HitChance)].get<bool>();
+    g_Vars.m_HitChanceValue = configData[PRINTER(g_Vars.m_HitChanceValue)].get<int>();
 
     fileContents.close();
 }
@@ -124,6 +127,7 @@ void Config::SaveConfig()
     j[PRINTER(g_Vars.m_ChamsType)] = g_Vars.m_ChamsType;
     j[PRINTER(g_Vars.m_SkeletonEsp)] = g_Vars.m_SkeletonEsp;
     j[PRINTER(g_Vars.m_RapidFire)] = g_Vars.m_RapidFire;
+    j[PRINTER(g_Vars.m_Thirdperson)] = g_Vars.m_Thirdperson;
 
 
 

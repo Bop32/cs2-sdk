@@ -14,19 +14,20 @@
 #include <bindings/trace.hpp>
 #include <globals/globals.hpp>
 #include <hacks/aimbot/autowall.hpp>
+#include <debugoverlay/CDebugOverlayGameSystem.hpp>
 
 using namespace trace;
 using namespace globals;
-bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector& angle, C_BasePlayerWeapon* weapon, float weaponRange)
+bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector angle, C_BasePlayerWeapon* weapon, CCSWeaponBaseVData* weaponInfo, float weaponRange)
 {
-    return true;
-    /*
     constexpr float HITCHANCE_MAX = 100.f;
     constexpr int   SEED_MAX = 255;
-    Vector     start { localPlayerController->GetEyePosition() }, end, fwd, right, up, dir, wep_spread;
+    Vector     start { localPlayerPawn->GetEyePosition() }, end, fwd, right, up, dir, wep_spread;
     float      inaccuracy, spread;
     C_GameTrace tr;
-    size_t     total_hits { }, needed_hits { ( size_t )std::ceil((100 * SEED_MAX) / HITCHANCE_MAX) };
+    size_t     total_hits { }, needed_hits { ( size_t )std::ceil((g_Vars.m_HitChanceValue * SEED_MAX) / HITCHANCE_MAX) };
+    C_TraceFilter filter(0x1C300B, localPlayerPawn, 0, 3);
+    C_Ray ray;
 
     CMath::Get().AngleVectors(angle, &fwd, &right, &up);
 
@@ -35,13 +36,13 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector& angle, C_BasePlayerWea
 
     for (int i { }; i <= SEED_MAX; ++i)
     {
-        wep_spread = weapon->CalculateSpread(i, inaccuracy, spread);
+        wep_spread = weapon->CalculateSpread(weaponInfo, i, inaccuracy, spread);
 
         dir = (fwd + (right * wep_spread.x) + (up * wep_spread.y)).Normalize();
 
         end = start + (dir * weaponRange);
 
-        offsets::TraceShape(&ray, )
+        offsets::TraceShape(&ray, start, end, &filter, &tr);
 
         if (tr.pHitEntity == enemy)
             ++total_hits;
@@ -49,14 +50,11 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector& angle, C_BasePlayerWea
         if (total_hits >= needed_hits)
             return true;
 
-        if ((SEED_MAX - i + total_hits) < needed_hits)
+        if ((SEED_MAX - static_cast<unsigned long long>(i) + total_hits) < needed_hits)
             return false;
     }
 
     return false;
-
-    return true;
-    */
 }
 
 static std::vector<uint32_t> bones;
@@ -164,11 +162,17 @@ void aimbot::RunAimbot(CUserCmd* cmd)
         {
             enemyPawn->GetBonePosition(bone, bone_position, bone_rotation);
 
-            if (!AutoWall::CanHit(enemyPawn, localPlayerEyePosition, bone_position, weaponInfo, currentDamage)) continue;
+            Vector out;
+
+            CMath::Get().VectorAngles(bone_position - localPlayerEyePosition, out);
 
             aimbotData.angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
 
             aimbotData.angle.Clamp();
+
+            if (!HitChance(enemyPawn, out, currentWeapon, weaponInfo, weaponInfo->m_flRange()))  continue;
+
+            if (!AutoWall::CanHit(enemyPawn, localPlayerEyePosition, bone_position, weaponInfo, currentDamage)) continue;
 
             auto fov = hypotf(aimbotData.angle.x, aimbotData.angle.y);
 
@@ -206,7 +210,7 @@ void aimbot::RunAimbot(CUserCmd* cmd)
         CCSGOInput::Get()->SetViewAngles(localPlayerViewAngles);
     }
 
-    
+
     if (g_Vars.m_AutoFire)
     {
 

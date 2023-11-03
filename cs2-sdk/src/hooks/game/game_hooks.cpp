@@ -31,6 +31,7 @@
 #include <interfaces/CLocalize.hpp>
 #include <interfaces/CResourceSystem.hpp>
 #include <hacks/anti_aim/anti_aim.hpp>
+#include <interfaces/engineclient.hpp>
 
 using namespace globals;
 static CHook g_MouseInputEnabled;
@@ -140,20 +141,27 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
 
 static CHook g_BulletMessage;
 
-static void* hkModifyBulletMessage(CSGOInputMessage* inputMessage, CSGOInputHistoryEntryPB* inputHistoryEntry, bool verify, int64_t a3, int64_t a4, C_CSPlayerPawnBase* player)
+static void* hkModifyBulletMessage(CSGOInputMessage* input_message, CSGOInputHistoryEntryPB* input_history_entry, const bool verify, const int64_t a3, const int64_t a4, C_CSPlayerPawnBase* player_pawn)
 {
+    auto result = g_BulletMessage.CallOriginal<void*>(input_message, input_history_entry, verify, a3, a4, player_pawn);
     if (g_Vars.m_RapidFire)
     {
-        inputMessage->m_player_tick_count = 1;
-        inputMessage->m_target_head_position = aimbotData.shotPosition;
-        inputMessage->m_shoot_position = aimbotData.shotPosition;
-        inputMessage->m_target_angle = aimbotData.angle;
-        inputMessage->m_target_abs_origin = aimbotData.shotPosition;
-        inputMessage->m_view_angles = player->GetEyePosition();
-        inputHistoryEntry->m_target_index = inputMessage->m_target_index;
+        input_message->m_player_tick_count = 1;
+        input_message->m_target_head_position = aimbotData.shotPosition;
+        input_message->m_target_angle = aimbotData.angle;
+        //input_message->m_target_abs_origin = aimbotData.enemy->m_pGameSceneNode()->m_vecAbsOrigin();
+        input_history_entry->m_target_index = input_message->m_target_index;
+        //input_history_entry->m_player_tickbase = 1;
+        result = g_BulletMessage.CallOriginal<void*>(input_message, input_history_entry, verify, a3, a4, player_pawn);
     }
 
-    return g_BulletMessage.CallOriginal<void*>(inputMessage, inputHistoryEntry, verify, a3, a4, player);
+    if (input_history_entry->m_shoot_position)
+    {
+        return g_BulletMessage.CallOriginal<void*>(input_message, input_history_entry, verify, a3, a4, player_pawn);
+    }
+
+
+    return result;
 }
 static CHook g_CreateMove;
 static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
@@ -196,7 +204,6 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
         misc::BunnyHop(cmd, localPlayerPawn);
     }
 
-
     AntiAim::RunAntiAim(cmd, this_ptr);
     CMath::Get().CorrectMovement(old_angles, cmd, old_fmove, old_smove);
 
@@ -204,11 +211,34 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
 }
 
 
-static float originalFOV = 0;
 static CHook g_OverrideView;
 static void hkOverrideView(void* input, CViewSetup* view)
 {
-    return g_OverrideView.CallOriginal<void>(input, view);
+    if (!CEngineClient::Get()->IsInGame() || !g_Vars.m_Thirdperson)
+        return g_OverrideView.CallOriginal<void>(input, view);
+
+    if (localPlayerPawn)
+    {
+        Vector angle;
+        Vector cameraOffset;
+        Vector forward;
+
+        CCSGOInput::Get()->GetViewAngles(angle);
+
+        cameraOffset = Vector(angle.x, angle.y, 150.f);
+
+        CMath::Get().AngleVectorss(angle, forward);
+
+        view->vecOrigin = Vector(
+            view->vecOrigin.x + -cameraOffset.z * forward.x,
+            view->vecOrigin.y + -cameraOffset.z * forward.y,
+            view->vecOrigin.z + -cameraOffset.z * forward.z
+        );
+
+        view->angView = Vector(cameraOffset.x, cameraOffset.y, 0.f);
+    }
+
+    g_OverrideView.CallOriginal<void>(input, view);
 }
 
 static CHook g_IsDemoOrHLTV;
@@ -252,11 +282,4 @@ void CGameHooks::Initialize()
     g_OverrideView.Hook(signatures::OverrideView.GetPtrAs<void*>(), SDK_HOOK(hkOverrideView));
     g_FrameStageNotify.Hook(signatures::FrameStageNotify.GetPtrAs<void*>(), SDK_HOOK(hkFrameStageNotify));
     g_BulletMessage.Hook(signatures::BulletMessage.GetPtrAs<void*>(), SDK_HOOK(hkModifyBulletMessage));
-
-    //Sets Cl_Bob_Lower_Amt to 0.
-    float* value = signatures::CL_Bob_Lower_Amt.GetPtrAs<float*>();
-
-    DWORD oldProtect;
-    VirtualProtect(value, sizeof(*value), PAGE_READWRITE, &oldProtect);
-    *value = 0;
 }

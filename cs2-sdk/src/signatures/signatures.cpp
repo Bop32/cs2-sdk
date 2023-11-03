@@ -99,7 +99,7 @@ namespace signatures
 
     CSigScan GetViewAngles("GetViewAngles", CConstants::CLIENT_LIB,
         {
-                {SDK_SIG("4C 63 C2 4B 8D 04 40 4C 8D 0C C1")},
+                {SDK_SIG("4C 63 C2 4B 8D 04 40 8B 84 C1 A0 45 00 00 85 C0 74 22")},
         });
 
     CSigScan GetInaccuracy("GetInaccuracy", CConstants::CLIENT_LIB,

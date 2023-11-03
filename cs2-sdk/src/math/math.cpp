@@ -3,13 +3,16 @@
 #include <math/math.hpp>
 
 #include <imgui/imgui_internal.h>
+#include <memory/memory.hpp>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <cmath>
+#include <constants/constants.hpp>
 
 #define DegToRad(x)  ((float)(x) * (float)(M_PI / 180.f))
 #define RadToDegree(x)  ((float)(x) * (float)(180.f / M_PI))
+
 
 void CMath::UpdateViewMatrix(VMatrix* viewMatrix)
 {
@@ -46,7 +49,52 @@ void CMath::AngleVectors(const Vector& angles, Vector* forward, Vector* right, V
 }
 
 
-void CMath::AngleVectors(Vector angles, Vector& out)
+void CMath::VectorAngles(const Vector& forward, Vector& angles, Vector* up)
+{
+    Vector  left;
+    float   len, up_z, pitch, yaw, roll;
+
+    len = forward.Length2D(forward);
+
+    if (up && len > 0.001f)
+    {
+        pitch = RadToDegree(std::atan2(-forward.z, len));
+        yaw = RadToDegree(std::atan2(forward.y, forward.x));
+
+        // get left direction vector using cross product.
+        left = (*up).Cross(forward).Normalize();
+
+        // calculate up_z.
+        up_z = (left.y * forward.x) - (left.x * forward.y);
+
+        // calculate roll.
+        roll = RadToDegree(std::atan2(left.z, up_z));
+    }
+
+    else
+    {
+        if (len > 0.f)
+        {
+            // calculate pitch and yaw.
+            pitch = RadToDegree(std::atan2(-forward.z, len));
+            yaw = RadToDegree(std::atan2(forward.y, forward.x));
+            roll = 0.f;
+        }
+
+        else
+        {
+            pitch = (forward.z > 0.f) ? -90.f : 90.f;
+            yaw = 0.f;
+            roll = 0.f;
+        }
+    }
+
+    // set out angles.
+    angles = { pitch, yaw, roll };
+}
+
+
+void CMath::AngleVectorss(Vector angles, Vector& out)
 {
     float cp = std::cos(DegToRad(angles.x)), sp = std::sin(DegToRad(angles.x));
     float cy = std::cos(DegToRad(angles.y)), sy = std::sin(DegToRad(angles.y));
@@ -72,6 +120,18 @@ bool CMath::WorldToScreen(const Vector& in, ImVec2& out)
     out = ImFloor(out);
 
     return true;
+}
+
+void math::fnRandomSeed(int seed)
+{
+    static const auto fn = CMemory::GetProcAddress(CConstants::TIER_LIB, "RandomSeed");
+    return fn.Call<decltype(&fnRandomSeed)>(seed);
+}
+
+float math::fnRandomFloat(float min, float max)
+{
+    static const auto fn = CMemory::GetProcAddress(CConstants::TIER_LIB, "RandomFloat");
+    return fn.Call<decltype(&fnRandomFloat)>(min, max);
 }
 
 void CMath::TransformAABB(const matrix3x4_t& transform, const Vector& minsIn, const Vector& maxsIn, Vector& minsOut, Vector& maxsOut)
