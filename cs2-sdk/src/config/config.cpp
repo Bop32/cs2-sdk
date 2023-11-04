@@ -128,6 +128,8 @@ void Config::SaveConfig()
     j[PRINTER(g_Vars.m_SkeletonEsp)] = g_Vars.m_SkeletonEsp;
     j[PRINTER(g_Vars.m_RapidFire)] = g_Vars.m_RapidFire;
     j[PRINTER(g_Vars.m_Thirdperson)] = g_Vars.m_Thirdperson;
+    j[PRINTER(g_Vars.m_HitChance)] = g_Vars.m_HitChance;
+    j[PRINTER(g_Vars.m_HitChanceValue)] = g_Vars.m_HitChanceValue;
 
 
 

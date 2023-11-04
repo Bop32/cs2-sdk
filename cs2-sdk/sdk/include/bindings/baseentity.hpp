@@ -42,6 +42,7 @@ public:
     SCHEMA(CPlayer_ItemServices*, m_pItemServices, "C_BasePlayerPawn", "m_pItemServices");
     SCHEMA(uint32_t, m_nTickBase, "CBasePlayerController", "m_nTickBase");
     SCHEMA(uint32_t, m_MoveType, "C_BaseEntity", "m_MoveType");
+    SCHEMA(Vector, m_vecVelocity, "C_BaseEntity", "m_vecVelocity");
 
 
 

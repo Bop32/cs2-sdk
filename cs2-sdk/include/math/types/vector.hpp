@@ -16,6 +16,7 @@ public:
     Vector operator*(float scalar) const { return Vector { x * scalar, y * scalar, z * scalar }; }
     Vector operator+=(const Vector& rhs) { return Vector { x += rhs.x, y += rhs.y, z += rhs.z }; }
     Vector operator-=(const Vector& rhs) { return Vector { x -= rhs.x, y -= rhs.y, z -= rhs.z }; }
+    Vector operator-() { return Vector { -x, -y, -z }; }
 
     bool IsZero()
     {
@@ -88,7 +89,7 @@ public:
     Vector Max(const Vector& rhs) const { return Vector { std::max(x, rhs.x), std::max(y, rhs.y), std::max(z, rhs.z) }; }
 
     float Length2D(const Vector& rhs) const
-    { 
+    {
         return std::sqrt((rhs.x * rhs.x) + (rhs.y * rhs.y));
     }
 

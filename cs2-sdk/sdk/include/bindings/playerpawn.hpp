@@ -16,6 +16,8 @@ public:
     bool IsObserverPawn();
 
     SCHEMA(CPlayer_WeaponServices*, m_pWeaponServices, "C_BasePlayerPawn", "m_pWeaponServices");
+    SCHEMA(bool, m_bIsScoped, "C_CSPlayerPawnBase", "m_bIsScoped");
+
 
     uint32_t GetOwnerHandle()
     {

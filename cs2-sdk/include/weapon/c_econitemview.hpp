@@ -15,7 +15,10 @@ public:
     SCHEMA(float, m_flPenetration, "CCSWeaponBaseVData", "m_flPenetration");  // Offset: 3388
     SCHEMA(float, m_flRange, "CCSWeaponBaseVData", "m_flRange"); // Offset: 3392
     SCHEMA(float, m_flRangeModifier, "CCSWeaponBaseVData", "m_flRangeModifier");  // Offset: 3396
-    SCHEMA(int32_t, m_nNumBullets, "CBasePlayerWeaponVData", "m_nNumBullets");  // Offset: 268
+    SCHEMA(int32_t, m_nNumBullets, "CBasePlayerWeaponVData", "m_nNumBullets");
+    SCHEMA(int32_t, m_iWeight, "CBasePlayerWeaponVData", "m_iWeight");
+    SCHEMA(float, m_flMaxSpeed, "CCSWeaponBaseVData", "m_flMaxSpeed");
+    SCHEMA(int32_t, m_nZoomLevels, "CCSWeaponBaseVData", "m_nZoomLevels ");
 };
 
 

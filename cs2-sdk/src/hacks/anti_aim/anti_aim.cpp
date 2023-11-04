@@ -7,7 +7,7 @@ using namespace globals;
 void AntiAim::RunAntiAim(CUserCmd* cmd, CCSGOInput* input)
 {
     if(localPlayerPawn->m_MoveType() == movetype_t::MOVETYPE_NOCLIP || 
-        localPlayerPawn->m_MoveType() == movetype_t::MOVETYPE_LADDER) return;
+        localPlayerPawn->m_MoveType() == movetype_t::MOVETYPE_LADDER || cmd->buttons & CUserCmd::IN_USE) return;
 
     Vector currentViewAngles;
     CCSGOInput::Get()->GetViewAngles(currentViewAngles);

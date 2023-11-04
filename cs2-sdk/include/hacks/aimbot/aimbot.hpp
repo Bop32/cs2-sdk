@@ -69,5 +69,6 @@ namespace aimbot
     };
 
     void RunAimbot(CUserCmd* cmd);
-    bool HitChance(C_CSPlayerPawnBase* enemy, Vector shotPosition, C_BasePlayerWeapon* weapon, CCSWeaponBaseVData* weaponInfo, float weaponRange);
+    bool HitChance(C_CSPlayerPawnBase* enemy, Vector shotPosition, C_BasePlayerWeapon* weapon, CCSWeaponBaseVData* weaponInfo);
 }
+

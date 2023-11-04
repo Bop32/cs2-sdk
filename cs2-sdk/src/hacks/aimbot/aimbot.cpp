@@ -18,7 +18,7 @@
 
 using namespace trace;
 using namespace globals;
-bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector angle, C_BasePlayerWeapon* weapon, CCSWeaponBaseVData* weaponInfo, float weaponRange)
+bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector angle, C_BasePlayerWeapon* weapon, CCSWeaponBaseVData* weaponInfo)
 {
     constexpr float HITCHANCE_MAX = 100.f;
     constexpr int   SEED_MAX = 255;
@@ -40,9 +40,12 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector angle, C_BasePlayerWeap
 
         dir = (fwd + (right * wep_spread.x) + (up * wep_spread.y)).Normalize();
 
-        end = start + (dir * weaponRange);
+        end = start + (dir * weaponInfo->m_flRange());
+
 
         offsets::TraceShape(&ray, start, end, &filter, &tr);
+
+        //CDebugOverlayGameSystem::Get()->AddLineOverlay(start, tr.vecEnd, IM_COL32(255, 255, 255, 255), false, 0.01f);
 
         if (tr.pHitEntity == enemy)
             ++total_hits;
@@ -50,7 +53,7 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector angle, C_BasePlayerWeap
         if (total_hits >= needed_hits)
             return true;
 
-        if ((SEED_MAX - static_cast<unsigned long long>(i) + total_hits) < needed_hits)
+        if ((SEED_MAX - static_cast< unsigned long long >(i) + total_hits) < needed_hits)
             return false;
     }
 
@@ -66,6 +69,86 @@ bool WeaponCanFire(C_BasePlayerWeapon* weapon, CUserCmd* cmd)
     auto weaponAttackTime = weapon->m_nNextPrimaryAttackTick() * globals::GlobalVars->interval_per_tick;
     return weaponAttackTime > flServerTime;
 }
+
+float GetMaxSpeed(CCSWeaponBaseVData* weaponInfo, bool isScoped, int itemIndex)
+{
+    if(!isScoped) return weaponInfo->m_flMaxSpeed();
+
+    switch (itemIndex)
+    {
+        case 40:
+            return 230.0f;
+        case 38:
+            return 120.0f;
+        case 9:
+            return 100.0f;
+        case 11:
+            return 120.0f;
+        case 39:
+            return 150.0f;
+        case 8:
+            return 150.0f;
+        default:
+            break;
+    }
+}
+
+void AutoStop(CCSWeaponBaseVData* weaponInfo, int itemIndex)
+{
+    float forwardSpeed = 1;
+    float sideSpeed = 1;
+    auto quick_stop = [&]()
+        {
+            const auto target_vel = -localPlayerPawn->m_vecVelocity().Normalize();
+
+            Vector angles;
+            CCSGOInput::Get()->GetViewAngles(angles);
+
+            Vector fwd;
+            CMath::Get().AngleVectorss(angles, fwd);
+            const auto right = fwd.Cross(Vector(0.0f, 0.0f, 1.0f));
+
+            cmd->base->m_forwardmove = (target_vel.y - (right.y / right.x) * target_vel.x) / (fwd.y - (right.y / right.x) * fwd.x);
+            cmd->base->m_rightmove = -(target_vel.x - fwd.x * cmd->base->m_forwardmove) / right.x;
+
+            cmd->base->m_forwardmove = std::clamp <float>(cmd->base->m_forwardmove, -forwardSpeed, forwardSpeed);
+            cmd->base->m_rightmove = std::clamp <float>(cmd->base->m_rightmove, -forwardSpeed, sideSpeed);
+
+            cmd->buttons &= ~CUserCmd::IN_WALK;
+            cmd->buttons |= CUserCmd::IN_SPEED;
+
+        };
+
+    const auto speed = localPlayerPawn->m_vecVelocity().Length2D();
+
+    if (speed <= 4.0f)
+        return;
+
+    auto max_speed = 250.0f;
+
+    max_speed = GetMaxSpeed(weaponInfo, localPlayerPawn->m_bIsScoped(), itemIndex);
+
+    const auto pure_accurate_speed = max_speed * 0.32f;
+    const auto accurate_speed = max_speed * 0.315f;
+
+    if (speed < pure_accurate_speed)
+    {
+        const auto cmd_speed = sqrt(cmd->base->m_forwardmove * cmd->base->m_forwardmove + cmd->base->m_rightmove * cmd->base->m_rightmove);
+        const auto local_speed = std::max(localPlayerPawn->m_vecVelocity().Length2D(), 0.1f);
+        const auto speed_multiplier = (local_speed / cmd_speed) * (accurate_speed / local_speed);
+
+        cmd->base->m_forwardmove = std::clamp <float>(cmd->base->m_forwardmove * speed_multiplier, -forwardSpeed, forwardSpeed);
+        cmd->base->m_rightmove = std::clamp <float>(cmd->base->m_rightmove * speed_multiplier, -forwardSpeed, sideSpeed);
+
+        cmd->buttons &= ~CUserCmd::IN_WALK;
+        cmd->buttons |= CUserCmd::IN_SPEED;
+    }
+    else
+    {
+        quick_stop();
+    }
+}
+
 void aimbot::RunAimbot(CUserCmd* cmd)
 {
     if (!CEngineClient::Get()->IsInGame()) return;
@@ -162,17 +245,11 @@ void aimbot::RunAimbot(CUserCmd* cmd)
         {
             enemyPawn->GetBonePosition(bone, bone_position, bone_rotation);
 
-            Vector out;
-
-            CMath::Get().VectorAngles(bone_position - localPlayerEyePosition, out);
+            if (!AutoWall::CanHit(enemyPawn, localPlayerEyePosition, bone_position, weaponInfo, currentDamage)) continue;
 
             aimbotData.angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
 
             aimbotData.angle.Clamp();
-
-            if (!HitChance(enemyPawn, out, currentWeapon, weaponInfo, weaponInfo->m_flRange()))  continue;
-
-            if (!AutoWall::CanHit(enemyPawn, localPlayerEyePosition, bone_position, weaponInfo, currentDamage)) continue;
 
             auto fov = hypotf(aimbotData.angle.x, aimbotData.angle.y);
 
@@ -186,9 +263,17 @@ void aimbot::RunAimbot(CUserCmd* cmd)
         }
     }
 
+    Vector angle;
+
+    CMath::Get().VectorAngles(aimbotData.shotPosition - localPlayerEyePosition, angle);
+
     bones.clear();
 
     if (aimbotData.shotPosition.IsZero()) return;
+
+    AutoStop(weaponInfo, pItemView->m_iItemDefinitionIndex());
+
+    if (!HitChance(aimbotData.enemy, angle, currentWeapon, weaponInfo)) return;
 
     aimbotData.angle = CMath::Get().CalculateAngle(localPlayerEyePosition, aimbotData.shotPosition, localPlayerViewAngles);
 
@@ -213,8 +298,7 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
     if (g_Vars.m_AutoFire)
     {
-
-        if (WeaponCanFire(currentWeapon, cmd) || weaponInfo->m_nNumBullets() <= 0)
+        if (WeaponCanFire(currentWeapon, cmd) || currentWeapon->m_iClip1() <= 0)
         {
             aimbotData.canFire = false;
             return;

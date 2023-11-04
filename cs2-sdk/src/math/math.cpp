@@ -9,6 +9,7 @@
 #include <math.h>
 #include <cmath>
 #include <constants/constants.hpp>
+#include <input/ccsgoinput.hpp>
 
 #define DegToRad(x)  ((float)(x) * (float)(M_PI / 180.f))
 #define RadToDegree(x)  ((float)(x) * (float)(180.f / M_PI))
@@ -175,39 +176,55 @@ Vector CMath::CalculateAngle(Vector& lookFrom, Vector& lookTo, Vector& viewAngle
 
 void CMath::CorrectMovement(Vector old_angles, CUserCmd* cmd, float old_forwardmove, float old_sidemove)
 {
-    float delta_view;
-    float f1 = 0.f;
-    float f2 = 0.f;
+    Vector view_fwd, view_right, view_up, cmd_fwd, cmd_right, cmd_up;
+    Vector viewangles;
+    CCSGOInput::Get()->GetViewAngles(viewangles);
+    viewangles.Normalize();
 
-    if (old_angles.y < 0.f)
-    {
-        f1 = 360.0f + old_angles.y;
-    }
-    else
-    {
-        f1 = old_angles.y;
-    }
+    CMath::AngleVectors(old_angles, &view_fwd, &view_right, &view_up);
+    CMath::AngleVectors(viewangles, &cmd_fwd, &cmd_right, &cmd_up);
 
-    if (cmd->base->view->angles.y < 0.0f)
-    {
-        f2 = 360.0f + cmd->base->view->angles.y;
-    }
-    else
-    {
-        f2 = cmd->base->view->angles.y;
-    }
+    float v8 = sqrtf((view_fwd.x * view_fwd.x) + (view_fwd.y * view_fwd.y));
+    float v10 = sqrtf((view_right.x * view_right.x) + (view_right.y * view_right.y));
+    float v12 = sqrtf(view_up.z * view_up.z);
 
-    if (f2 < f1)
-    {
-        delta_view = abs(f2 - f1);
-    }
-    else
-    {
-        delta_view = 360.0f - abs(f1 - f2);
-    }
+    Vector norm_view_fwd((1.f / v8) * view_fwd.x, (1.f / v8) * view_fwd.y, 0.f);
+    Vector norm_view_right((1.f / v10) * view_right.x, (1.f / v10) * view_right.y, 0.f);
+    Vector norm_view_up(0.f, 0.f, (1.f / v12) * view_up.z);
 
-    delta_view = 360.0f - delta_view;
+    float v14 = sqrtf((cmd_fwd.x * cmd_fwd.x) + (cmd_fwd.y * cmd_fwd.y));
+    float v16 = sqrtf((cmd_right.x * cmd_right.x) + (cmd_right.y * cmd_right.y));
+    float v18 = sqrtf(cmd_up.z * cmd_up.z);
 
-    cmd->base->m_forwardmove = std::clamp(std::cos(DegToRad(delta_view)) * old_forwardmove + std::cos(DegToRad(delta_view + 90.f)) * old_sidemove, -450.f, 450.f);
-    cmd->base->m_rightmove = std::clamp(std::sin(DegToRad(delta_view)) * old_forwardmove + std::sin(DegToRad(delta_view + 90.f)) * old_sidemove, -450.f, 450.f);
+    Vector norm_cmd_fwd((1.f / v14) * cmd_fwd.x, (1.f / v14) * cmd_fwd.y, 0.f);
+    Vector norm_cmd_right((1.f / v16) * cmd_right.x, (1.f / v16) * cmd_right.y, 0.f);
+    Vector norm_cmd_up(0.f, 0.f, (1.f / v18) * cmd_up.z);
+
+    float v22 = norm_view_fwd.x * cmd->base->m_forwardmove;
+    float v26 = norm_view_fwd.y * cmd->base->m_forwardmove;
+    float v28 = norm_view_fwd.z * cmd->base->m_forwardmove;
+    float v24 = norm_view_right.x * cmd->base->m_rightmove;
+    float v23 = norm_view_right.y * cmd->base->m_rightmove;
+    float v25 = norm_view_right.z * cmd->base->m_rightmove;
+    float v30 = norm_view_up.x * cmd->base->m_upmove;
+    float v27 = norm_view_up.z * cmd->base->m_upmove;
+    float v29 = norm_view_up.y * cmd->base->m_upmove;
+
+    cmd->base->m_forwardmove = ((((norm_cmd_fwd.x * v24) + (norm_cmd_fwd.y * v23)) + (norm_cmd_fwd.z * v25))
+        + (((norm_cmd_fwd.x * v22) + (norm_cmd_fwd.y * v26)) + (norm_cmd_fwd.z * v28)))
+        + (((norm_cmd_fwd.y * v30) + (norm_cmd_fwd.x * v29)) + (norm_cmd_fwd.z * v27));
+    cmd->base->m_rightmove = ((((norm_cmd_right.x * v24) + (norm_cmd_right.y * v23)) + (norm_cmd_right.z * v25))
+        + (((norm_cmd_right.x * v22) + (norm_cmd_right.y * v26)) + (norm_cmd_right.z * v28)))
+        + (((norm_cmd_right.x * v29) + (norm_cmd_right.y * v30)) + (norm_cmd_right.z * v27));
+    cmd->base->m_upmove = ((((norm_cmd_up.x * v23) + (norm_cmd_up.y * v24)) + (norm_cmd_up.z * v25))
+        + (((norm_cmd_up.x * v26) + (norm_cmd_up.y * v22)) + (norm_cmd_up.z * v28)))
+        + (((norm_cmd_up.x * v30) + (norm_cmd_up.y * v29)) + (norm_cmd_up.z * v27));
+
+    static auto cl_forwardspeed = 1.f;
+    static auto cl_sidespeed = 1.f;
+    static auto cl_upspeed = 1.f;
+
+    cmd->base->m_forwardmove = -std::clamp(cmd->base->m_forwardmove, -cl_forwardspeed, cl_forwardspeed);
+    cmd->base->m_rightmove = -std::clamp(cmd->base->m_rightmove, -cl_sidespeed, cl_sidespeed);
+    cmd->base->m_upmove = -std::clamp(cmd->base->m_upmove, -cl_upspeed, cl_upspeed);
 }

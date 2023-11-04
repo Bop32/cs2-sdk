@@ -151,8 +151,7 @@ static void* hkModifyBulletMessage(CSGOInputMessage* input_message, CSGOInputHis
         input_message->m_target_angle = aimbotData.angle;
         //input_message->m_target_abs_origin = aimbotData.enemy->m_pGameSceneNode()->m_vecAbsOrigin();
         input_history_entry->m_target_index = input_message->m_target_index;
-        //input_history_entry->m_player_tickbase = 1;
-        result = g_BulletMessage.CallOriginal<void*>(input_message, input_history_entry, verify, a3, a4, player_pawn);
+        input_history_entry->m_player_tickbase = 1;
     }
 
     if (input_history_entry->m_shoot_position)
@@ -192,16 +191,15 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
     float old_fmove = cmd->base->m_forwardmove;
     float old_smove = cmd->base->m_rightmove;
 
-
-    if (g_Vars.m_Aimbot)
-    {
-
-        aimbot::RunAimbot(cmd);
-    }
-
     if (g_Vars.m_Bhop)
     {
         misc::BunnyHop(cmd, localPlayerPawn);
+    }
+
+
+    if (g_Vars.m_Aimbot)
+    {
+        aimbot::RunAimbot(cmd);
     }
 
     AntiAim::RunAntiAim(cmd, this_ptr);
@@ -282,4 +280,10 @@ void CGameHooks::Initialize()
     g_OverrideView.Hook(signatures::OverrideView.GetPtrAs<void*>(), SDK_HOOK(hkOverrideView));
     g_FrameStageNotify.Hook(signatures::FrameStageNotify.GetPtrAs<void*>(), SDK_HOOK(hkFrameStageNotify));
     g_BulletMessage.Hook(signatures::BulletMessage.GetPtrAs<void*>(), SDK_HOOK(hkModifyBulletMessage));
+
+    float* value = signatures::CL_Bob_Lower_Amt.GetPtrAs<float*>();
+
+    DWORD oldProtect;
+    VirtualProtect(value, sizeof(*value), PAGE_READWRITE, &oldProtect);
+    *value = 0;
 }

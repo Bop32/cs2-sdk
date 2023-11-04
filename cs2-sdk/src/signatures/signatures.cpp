@@ -187,8 +187,8 @@ namespace signatures
 
     CSigScan CL_Bob_Lower_Amt("CLBobAmtLower", CConstants::CLIENT_LIB,
 
-        {
-            {SDK_SIG("F3 0F 10 05 ? ? ? ? 45 32 F6 48 8B 47"), [](CPointer& ptr) { ptr.Absolute(4,0); }}
+        {   //F3 44 0F 10 3D ? ? ? ? 45 32 F6
+            {SDK_SIG("F3 44 0F 10 3D ? ? ? ? 45 32 F6"), [](CPointer& ptr) { ptr.Absolute(5,0); }}
         });
 
     CSigScan DrawObjectHook("DrawObjectHook", CConstants::SCENESYSTEM_LIB,

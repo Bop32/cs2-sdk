@@ -8,7 +8,8 @@
 class C_BasePlayerWeapon : public C_BaseEntity
 {
 public:
-    SCHEMA(int, m_nNextPrimaryAttackTick, "C_BasePlayerWeapon", "m_nNextPrimaryAttackTick")
+        SCHEMA(int, m_nNextPrimaryAttackTick, "C_BasePlayerWeapon", "m_nNextPrimaryAttackTick")
+        SCHEMA(int32_t, m_iClip1, "C_BasePlayerWeapon", "m_iClip1")
         PSCHEMA(C_AttributeContainer, m_AttributeManager, "C_EconEntity", "m_AttributeManager")
         SCHEMA(int32_t, m_nFallbackPaintKit, "C_EconEntity", "m_nFallbackPaintKit")
         SCHEMA(int32_t, m_nFallbackStatTrak, "C_EconEntity", "m_nFallbackStatTrak")
@@ -42,10 +43,10 @@ public:
 
         // generate needed floats.
         r1 = math::fnRandomFloat(0.f, 1.f);
-        r2 = math::fnRandomFloat(0.f, M_PI * 2);
+        r2 = math::fnRandomFloat(0.f, (float)M_PI * 2.f);
 
         r3 = math::fnRandomFloat(0.f, 1.f);
-        r4 = math::fnRandomFloat(0.f, M_PI * 2);
+        r4 = math::fnRandomFloat(0.f, ( float )M_PI * 2.f);
 
         c1 = std::cos(r2);
         c2 = std::cos(r4);
