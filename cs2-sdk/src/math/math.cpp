@@ -10,11 +10,13 @@
 #include <cmath>
 #include <constants/constants.hpp>
 #include <input/ccsgoinput.hpp>
+#include <globals/globals.hpp>
 
 #define DegToRad(x)  ((float)(x) * (float)(M_PI / 180.f))
 #define RadToDegree(x)  ((float)(x) * (float)(180.f / M_PI))
 
 
+using namespace globals;
 void CMath::UpdateViewMatrix(VMatrix* viewMatrix)
 {
     if (!viewMatrix) return;
@@ -174,57 +176,90 @@ Vector CMath::CalculateAngle(Vector& lookFrom, Vector& lookTo, Vector& viewAngle
     return angles;
 }
 
-void CMath::CorrectMovement(Vector old_angles, CUserCmd* cmd, float old_forwardmove, float old_sidemove)
+void CMath::CorrectMovement(Vector old_angles)
 {
-    Vector view_fwd, view_right, view_up, cmd_fwd, cmd_right, cmd_up;
-    Vector viewangles;
-    CCSGOInput::Get()->GetViewAngles(viewangles);
-    viewangles.Normalize();
+    if (globals::localPlayerPawn->m_MoveType() == movetype_t::MOVETYPE_NOCLIP ||
+        globals::localPlayerPawn->m_MoveType() == movetype_t::MOVETYPE_LADDER || 
+        globals::cmd->buttons & CUserCmd::IN_USE) return;
 
-    CMath::AngleVectors(old_angles, &view_fwd, &view_right, &view_up);
-    CMath::AngleVectors(viewangles, &cmd_fwd, &cmd_right, &cmd_up);
+    Vector  move, dir;
+    float   delta, len;
+    Vector   move_angle;
 
-    float v8 = sqrtf((view_fwd.x * view_fwd.x) + (view_fwd.y * view_fwd.y));
-    float v10 = sqrtf((view_right.x * view_right.x) + (view_right.y * view_right.y));
-    float v12 = sqrtf(view_up.z * view_up.z);
+    // convert movement to vector.
+    move = { cmd->base->m_forwardmove, cmd->base->m_rightmove, 0.f };
 
-    Vector norm_view_fwd((1.f / v8) * view_fwd.x, (1.f / v8) * view_fwd.y, 0.f);
-    Vector norm_view_right((1.f / v10) * view_right.x, (1.f / v10) * view_right.y, 0.f);
-    Vector norm_view_up(0.f, 0.f, (1.f / v12) * view_up.z);
+    // get move length and ensure we're using a unit vector ( vector with length of 1 ).
+    len = move.NormalizeVecToFloat();
+    if (!len)
+        return;
 
-    float v14 = sqrtf((cmd_fwd.x * cmd_fwd.x) + (cmd_fwd.y * cmd_fwd.y));
-    float v16 = sqrtf((cmd_right.x * cmd_right.x) + (cmd_right.y * cmd_right.y));
-    float v18 = sqrtf(cmd_up.z * cmd_up.z);
+    // convert move to an angle.
+    CMath:Get().VectorAngles(move, move_angle);
 
-    Vector norm_cmd_fwd((1.f / v14) * cmd_fwd.x, (1.f / v14) * cmd_fwd.y, 0.f);
-    Vector norm_cmd_right((1.f / v16) * cmd_right.x, (1.f / v16) * cmd_right.y, 0.f);
-    Vector norm_cmd_up(0.f, 0.f, (1.f / v18) * cmd_up.z);
+    // calculate yaw delta.
+    delta = (cmd->base->view->angles.y - old_angles.y);
 
-    float v22 = norm_view_fwd.x * cmd->base->m_forwardmove;
-    float v26 = norm_view_fwd.y * cmd->base->m_forwardmove;
-    float v28 = norm_view_fwd.z * cmd->base->m_forwardmove;
-    float v24 = norm_view_right.x * cmd->base->m_rightmove;
-    float v23 = norm_view_right.y * cmd->base->m_rightmove;
-    float v25 = norm_view_right.z * cmd->base->m_rightmove;
-    float v30 = norm_view_up.x * cmd->base->m_upmove;
-    float v27 = norm_view_up.z * cmd->base->m_upmove;
-    float v29 = norm_view_up.y * cmd->base->m_upmove;
+    // accumulate yaw delta.
+    move_angle.y += delta;
 
-    cmd->base->m_forwardmove = ((((norm_cmd_fwd.x * v24) + (norm_cmd_fwd.y * v23)) + (norm_cmd_fwd.z * v25))
-        + (((norm_cmd_fwd.x * v22) + (norm_cmd_fwd.y * v26)) + (norm_cmd_fwd.z * v28)))
-        + (((norm_cmd_fwd.y * v30) + (norm_cmd_fwd.x * v29)) + (norm_cmd_fwd.z * v27));
-    cmd->base->m_rightmove = ((((norm_cmd_right.x * v24) + (norm_cmd_right.y * v23)) + (norm_cmd_right.z * v25))
-        + (((norm_cmd_right.x * v22) + (norm_cmd_right.y * v26)) + (norm_cmd_right.z * v28)))
-        + (((norm_cmd_right.x * v29) + (norm_cmd_right.y * v30)) + (norm_cmd_right.z * v27));
-    cmd->base->m_upmove = ((((norm_cmd_up.x * v23) + (norm_cmd_up.y * v24)) + (norm_cmd_up.z * v25))
-        + (((norm_cmd_up.x * v26) + (norm_cmd_up.y * v22)) + (norm_cmd_up.z * v28)))
-        + (((norm_cmd_up.x * v30) + (norm_cmd_up.y * v29)) + (norm_cmd_up.z * v27));
+    // calculate our new move direction.
+    // dir = move_angle_forward * move_length
+    CMath::Get().AngleVectorss(move_angle, dir);
 
-    static auto cl_forwardspeed = 1.f;
-    static auto cl_sidespeed = 1.f;
-    static auto cl_upspeed = 1.f;
+    // scale to og movement.
+    dir *= len;
 
-    cmd->base->m_forwardmove = -std::clamp(cmd->base->m_forwardmove, -cl_forwardspeed, cl_forwardspeed);
-    cmd->base->m_rightmove = -std::clamp(cmd->base->m_rightmove, -cl_sidespeed, cl_sidespeed);
-    cmd->base->m_upmove = -std::clamp(cmd->base->m_upmove, -cl_upspeed, cl_upspeed);
+    // strip old flags.
+    cmd->buttons &= ~(CUserCmd::IN_FORWARD | CUserCmd::IN_BACK | CUserCmd::IN_MOVELEFT | CUserCmd::IN_MOVERIGHT);
+
+    // fix ladder and noclip.
+    if (localPlayerPawn->m_MoveType() == MOVETYPE_LADDER)
+    {
+        // invert directon for up and down.
+        if (cmd->base->view->angles.x >= 45.f && old_angles.x < 45.f && std::abs(delta) <= 65.f)
+            dir.x = -dir.x;
+
+        // write to movement.
+        cmd->base->m_forwardmove = dir.x;
+        cmd->base->m_rightmove = dir.y;
+
+        // set new button flags.
+        if (cmd->base->m_forwardmove > 200.f)
+            cmd->buttons |= CUserCmd::IN_FORWARD;
+
+        else if (cmd->base->m_forwardmove < -200.f)
+            cmd->buttons |= CUserCmd::IN_BACK;
+
+        if (cmd->base->m_rightmove > 200.f)
+            cmd->buttons |= CUserCmd::IN_MOVERIGHT;
+
+        else if (cmd->base->m_rightmove < -200.f)
+            cmd->buttons |= CUserCmd::IN_MOVELEFT;
+    }
+
+    // we are moving normally.
+    else
+    {
+        // we must do this for pitch angles that are out of bounds.
+        if (cmd->base->view->angles.x < -90.f || cmd->base->view->angles.x > 90.f)
+            dir.x = -dir.x;
+
+        // set move.
+        cmd->base->m_forwardmove = dir.x;
+        cmd->base->m_rightmove = dir.y;
+
+        // set new button flags.
+        if (cmd->base->m_forwardmove > 0.f)
+            cmd->buttons |= CUserCmd::IN_FORWARD;
+
+        else if (cmd->base->m_forwardmove < 0.f)
+            cmd->buttons |= CUserCmd::IN_BACK;
+
+        if (cmd->base->m_rightmove > 0.f)
+            cmd->buttons |= CUserCmd::IN_MOVERIGHT;
+
+        else if (cmd->base->m_rightmove < 0.f)
+            cmd->buttons |= CUserCmd::IN_MOVELEFT;
+    }
 }

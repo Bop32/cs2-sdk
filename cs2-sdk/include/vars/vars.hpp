@@ -48,6 +48,8 @@ struct Vars_t
     bool m_HitChance;
     int m_HitChanceValue = 100;
 
+    bool m_PreferBodyAim;
+
     bool m_VisibleChams;
     bool m_InvisibleChams;
 

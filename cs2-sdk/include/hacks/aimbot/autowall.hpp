@@ -41,7 +41,7 @@ namespace AutoWall
         bool failed { };
     };
 
-    void ScaleDamage(C_CSPlayerPawnBase* pawn, CCSWeaponBaseVData* weaponData, float& damage, int hitgroup);
+    void ScaleDamage(C_CSPlayerPawnBase* pawn, CCSWeaponBaseVData* weaponData, float& damage, int hitgroup, bool hasArmor);
     bool CanHit(C_CSPlayerPawnBase* player, Vector localPlayerPosition, Vector shootPosition, CCSWeaponBaseVData* weaponInfo, float& damage);
     bool SimulateFireBullet(CCSWeaponBaseVData* weaponData, FireBulletData& data, C_CSPlayerPawnBase* enemy);
 };

@@ -17,6 +17,7 @@ public:
 
     SCHEMA(CPlayer_WeaponServices*, m_pWeaponServices, "C_BasePlayerPawn", "m_pWeaponServices");
     SCHEMA(bool, m_bIsScoped, "C_CSPlayerPawnBase", "m_bIsScoped");
+    SCHEMA(float, m_flFlashBangTime, "C_CSPlayerPawnBase", "m_flFlashBangTime");
 
 
     uint32_t GetOwnerHandle()

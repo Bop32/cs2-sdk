@@ -52,12 +52,12 @@ static void* hkOnRemoveEntity(void* rcx, CEntityInstance* inst, CBaseHandle hand
 }
 
 static CHook g_LevelInit;
-static __int64 hkLevelInit(void* rcx)
+static __int64 hkLevelInit(void* rcx, void* rdx)
 {
     GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
     localPlayerController = CGameEntitySystem::GetLocalPlayerController();
 
-    return g_LevelInit.CallOriginal<__int64>(rcx);
+    return g_LevelInit.CallOriginal<__int64>(rcx, rdx);
 }
 
 
@@ -143,24 +143,7 @@ static CHook g_BulletMessage;
 
 static void* hkModifyBulletMessage(CSGOInputMessage* input_message, CSGOInputHistoryEntryPB* input_history_entry, const bool verify, const int64_t a3, const int64_t a4, C_CSPlayerPawnBase* player_pawn)
 {
-    auto result = g_BulletMessage.CallOriginal<void*>(input_message, input_history_entry, verify, a3, a4, player_pawn);
-    if (g_Vars.m_RapidFire)
-    {
-        input_message->m_player_tick_count = 1;
-        input_message->m_target_head_position = aimbotData.shotPosition;
-        input_message->m_target_angle = aimbotData.angle;
-        //input_message->m_target_abs_origin = aimbotData.enemy->m_pGameSceneNode()->m_vecAbsOrigin();
-        input_history_entry->m_target_index = input_message->m_target_index;
-        input_history_entry->m_player_tickbase = 1;
-    }
-
-    if (input_history_entry->m_shoot_position)
-    {
-        return g_BulletMessage.CallOriginal<void*>(input_message, input_history_entry, verify, a3, a4, player_pawn);
-    }
-
-
-    return result;
+    return g_BulletMessage.CallOriginal<void*>(input_message, input_history_entry, verify, a3, a4, player_pawn);
 }
 static CHook g_CreateMove;
 static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
@@ -188,8 +171,9 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
     }
 
     Vector old_angles = cmd->base->view->angles;
-    float old_fmove = cmd->base->m_forwardmove;
-    float old_smove = cmd->base->m_rightmove;
+    old_angles.Clamp(); 
+
+    localPlayerPawn->m_flFlashBangTime() = 0;
 
     if (g_Vars.m_Bhop)
     {
@@ -203,7 +187,7 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
     }
 
     AntiAim::RunAntiAim(cmd, this_ptr);
-    CMath::Get().CorrectMovement(old_angles, cmd, old_fmove, old_smove);
+    CMath::Get().CorrectMovement(old_angles);
 
     return false;
 }

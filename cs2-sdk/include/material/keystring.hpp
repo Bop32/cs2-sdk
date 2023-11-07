@@ -83,11 +83,11 @@ static CMaterial2* CreateMaterialVisibleInternal()
 
     material_system->SetCreateDataByMaterial(data, &material_prototype);
 
-    SetMaterialShaderType(data, "csgo_unlitgeneric.vfx");
+    SetMaterialShaderType(data, "csgo_character.vfx");
 
     SetMaterialFunctions(data, "F_BLEND_MODE", 1);
 
-    SetMaterialFunctions(data, "F_TRANSLUCENT", true);
+    //SetMaterialFunctions(data, "F_TRANSLUCENT", true);
 
     //SetMaterialFunctions(data, "F_OVERLAY", true);
 
@@ -130,7 +130,7 @@ static CMaterial2* CreateMaterialInvisibleInternal()
 
     material_system->SetCreateDataByMaterial(data, &material_prototype);
 
-    SetMaterialShaderType(data, "csgo_unlitgeneric.vfx");
+    SetMaterialShaderType(data, "csgo_character.vfx");
 
     SetMaterialFunctions(data, "F_DISABLE_Z_BUFFERING", true);
 

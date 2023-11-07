@@ -164,7 +164,7 @@ void CMenu::RenderUI()
 
     ImGui::Checkbox("Auto Shoot", &g_Vars.m_AutoFire);
     ImGui::Checkbox("Silent", &g_Vars.m_SilentAim);
-    ImGui::Checkbox("Rapid Fire", &g_Vars.m_RapidFire);
+    ImGui::Checkbox("Prefer body aim on peek", &g_Vars.m_PreferBodyAim);
     ImGui::Text("FOV");
     ImGui::SliderInt("##FOV", &g_Vars.m_AimbotFov, 1, 180);
     ImGui::EndChild();

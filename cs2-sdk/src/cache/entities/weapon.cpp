@@ -9,6 +9,7 @@
 #include <imgui/imgui.h>
 
 #include <interfaces/schemasystem.hpp>
+#include <logger/logger.hpp>
 
 void RenderGlow(C_BaseEntity* entity, bool on)
 {
@@ -36,14 +37,6 @@ bool CCachedGun::CanDrawESP()
 
 void CCachedGun::RenderESP()
 {
-    C_BaseEntity* weapon = Get<C_BaseEntity>();
-    
-    if(!weapon->IsProjectile()) return;
-
-    CSchemaClassInfo* dynamicBinding = weapon->Schema_DynamicBinding();
-
-    if(!dynamicBinding) return;
-
-    //dynamicBinding->m_n
+   return;
 }
 

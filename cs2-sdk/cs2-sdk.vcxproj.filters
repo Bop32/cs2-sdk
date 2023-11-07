@@ -75,6 +75,7 @@
     <ClCompile Include="sdk\src\interfaces\CResourceSystem.cpp" />
     <ClCompile Include="sdk\src\bonesystem\bonesystem.cpp" />
     <ClCompile Include="src\hacks\anti_aim\anti_aim.cpp" />
+    <ClCompile Include="src\cache\entities\projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch\pch.hpp" />
@@ -231,5 +232,6 @@
     <ClInclude Include="sdk\include\bonesystem\bonesystem.hpp" />
     <ClInclude Include="sdk\include\bindings\c_smokegrenadeprojectile.hpp" />
     <ClInclude Include="include\hacks\anti_aim\anti_aim.hpp" />
+    <ClInclude Include="include\cache\entities\projecitle.hpp" />
   </ItemGroup>
 </Project>

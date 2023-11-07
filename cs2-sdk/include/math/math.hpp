@@ -25,7 +25,7 @@ public:
     bool WorldToScreen(const Vector& in, ImVec2& out);
     void TransformAABB(const matrix3x4_t& transform, const Vector& minsIn, const Vector& maxsIn, Vector& minsOut, Vector& maxsOut);
     Vector CalculateAngle(Vector& lookFrom, Vector& lookTo, Vector& viewAngles);
-    void CorrectMovement(Vector old_angles, CUserCmd* cmd, float old_forwardmove, float old_sidemove);
+    void CorrectMovement(Vector old_angles);
 
 
 private:

@@ -87,6 +87,7 @@ void Config::LoadConfig()
     g_Vars.m_Thirdperson = configData[PRINTER(g_Vars.m_Thirdperson)].get<bool>();
     g_Vars.m_HitChance = configData[PRINTER(g_Vars.m_HitChance)].get<bool>();
     g_Vars.m_HitChanceValue = configData[PRINTER(g_Vars.m_HitChanceValue)].get<int>();
+    g_Vars.m_PreferBodyAim = configData[PRINTER(g_Vars.m_PreferBodyAim)].get<bool>();
 
     fileContents.close();
 }
@@ -130,6 +131,7 @@ void Config::SaveConfig()
     j[PRINTER(g_Vars.m_Thirdperson)] = g_Vars.m_Thirdperson;
     j[PRINTER(g_Vars.m_HitChance)] = g_Vars.m_HitChance;
     j[PRINTER(g_Vars.m_HitChanceValue)] = g_Vars.m_HitChanceValue;
+    j[PRINTER(g_Vars.m_PreferBodyAim)] = g_Vars.m_PreferBodyAim;
 
 
 

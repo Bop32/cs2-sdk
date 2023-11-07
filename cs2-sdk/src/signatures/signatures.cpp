@@ -198,7 +198,7 @@ namespace signatures
 
     CSigScan FindKeyHook("FindKeyHook", CConstants::PARTICLE_LIB,
         {
-           {SDK_SIG("E8 ? ? ? ? 80 7F 1A 00"), [](CPointer& ptr) { ptr.Absolute(1,0); }},
+           {SDK_SIG(" 48 89 5C 24 08 57 48 81 EC C0 00 00 00 33 C0 8B")}
         });
 
     CSigScan SetMaterialFunctionHook("SetMateiralFunctionHook", CConstants::PARTICLE_LIB,
@@ -220,6 +220,12 @@ namespace signatures
 
         {
             {SDK_SIG("E8 ? ? ? ? 80 BD ? ? ? ? ? 0F 85 ? ? ? ? F3 0F 10 85 ? ? ? ? 8B 85"),  [](CPointer& ptr) { ptr.Absolute(1,0); }}
+        });
+
+    CSigScan ClipRayToEntity("ClipRayToEntity", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("E8 ? ? ? ? F3 0F 10 55 3C 0F 2F D7"),  [](CPointer& ptr) { ptr.Absolute(1,0); }}
         });
 
     CSigScan HandleBulletPenetration("HandleBulletPenetration", CConstants::CLIENT_LIB,

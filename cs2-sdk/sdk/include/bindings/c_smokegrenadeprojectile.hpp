@@ -3,5 +3,6 @@
 #include <bindings/baseentity.hpp>
 class C_SmokeGrenadeProjectile : public C_BaseEntity
 {
-    //SCHEMA(bool, )
+public:
+    SCHEMA(bool, m_bDidSmokeEffect, "C_SmokeGrenadeProjectile", "m_bDidSmokeEffect");
 };

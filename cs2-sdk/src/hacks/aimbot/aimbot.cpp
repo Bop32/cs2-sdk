@@ -18,16 +18,21 @@
 
 using namespace trace;
 using namespace globals;
+
 bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector angle, C_BasePlayerWeapon* weapon, CCSWeaponBaseVData* weaponInfo)
 {
+    if (!g_Vars.m_HitChance) return true;
+
     constexpr float HITCHANCE_MAX = 100.f;
     constexpr int   SEED_MAX = 255;
     Vector     start { localPlayerPawn->GetEyePosition() }, end, fwd, right, up, dir, wep_spread;
     float      inaccuracy, spread;
     C_GameTrace tr;
     size_t     total_hits { }, needed_hits { ( size_t )std::ceil((g_Vars.m_HitChanceValue * SEED_MAX) / HITCHANCE_MAX) };
-    C_TraceFilter filter(0x1C300B, localPlayerPawn, 0, 3);
+    C_TraceFilter filter(0x1C300B, localPlayerPawn, 0, 4);
     C_Ray ray;
+    ray.UnkType = 0;
+    filter.V4 |= 2;
 
     CMath::Get().AngleVectors(angle, &fwd, &right, &up);
 
@@ -42,8 +47,7 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector angle, C_BasePlayerWeap
 
         end = start + (dir * weaponInfo->m_flRange());
 
-
-        offsets::TraceShape(&ray, start, end, &filter, &tr);
+        offsets::ClipRayToEntity(0, &ray, start, end, enemy, &filter, &tr);
 
         //CDebugOverlayGameSystem::Get()->AddLineOverlay(start, tr.vecEnd, IM_COL32(255, 255, 255, 255), false, 0.01f);
 
@@ -62,7 +66,7 @@ bool aimbot::HitChance(C_CSPlayerPawnBase* enemy, Vector angle, C_BasePlayerWeap
 
 static std::vector<uint32_t> bones;
 
-bool WeaponCanFire(C_BasePlayerWeapon* weapon, CUserCmd* cmd)
+bool CanWeaponFire(C_BasePlayerWeapon* weapon, CUserCmd* cmd)
 {
     float flServerTime = ( float )(localPlayerController->m_nTickBase() * globals::GlobalVars->interval_per_tick);
 
@@ -72,7 +76,7 @@ bool WeaponCanFire(C_BasePlayerWeapon* weapon, CUserCmd* cmd)
 
 float GetMaxSpeed(CCSWeaponBaseVData* weaponInfo, bool isScoped, int itemIndex)
 {
-    if(!isScoped) return weaponInfo->m_flMaxSpeed();
+    if (!isScoped) return weaponInfo->m_flMaxSpeed();
 
     switch (itemIndex)
     {
@@ -91,6 +95,7 @@ float GetMaxSpeed(CCSWeaponBaseVData* weaponInfo, bool isScoped, int itemIndex)
         default:
             break;
     }
+    return 0;
 }
 
 void AutoStop(CCSWeaponBaseVData* weaponInfo, int itemIndex)
@@ -124,11 +129,11 @@ void AutoStop(CCSWeaponBaseVData* weaponInfo, int itemIndex)
     if (speed <= 4.0f)
         return;
 
-    auto max_speed = 250.0f;
+    auto max_speed = 260.0f;
 
     max_speed = GetMaxSpeed(weaponInfo, localPlayerPawn->m_bIsScoped(), itemIndex);
 
-    const auto pure_accurate_speed = max_speed * 0.32f;
+    const auto pure_accurate_speed = max_speed * 0.24f;
     const auto accurate_speed = max_speed * 0.315f;
 
     if (speed < pure_accurate_speed)
@@ -161,6 +166,8 @@ void aimbot::RunAimbot(CUserCmd* cmd)
     aimbotData.shotPosition = {};
     aimbotData.angle = {};
     aimbotData.canFire = false;
+    aimbotData.hitScanPreference = HitScanPreference::NORMAL;
+
     Vector localPlayerEyePosition = localPlayerPawn->GetEyePosition();
     float aimbotFov = g_Vars.m_AimbotFov * 2.f;
 
@@ -247,31 +254,41 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
             if (!AutoWall::CanHit(enemyPawn, localPlayerEyePosition, bone_position, weaponInfo, currentDamage)) continue;
 
+            AutoStop(weaponInfo, pItemView->m_iItemDefinitionIndex());
+
             aimbotData.angle = CMath::Get().CalculateAngle(localPlayerEyePosition, bone_position, localPlayerViewAngles);
 
             aimbotData.angle.Clamp();
 
             auto fov = hypotf(aimbotData.angle.x, aimbotData.angle.y);
 
-            if (fov < aimbotFov && currentDamage > bestDamage)
+            if (fov < aimbotFov)
             {
-                aimbotData.enemy = enemyPawn;
-                aimbotData.shotPosition = bone_position;
-                aimbotFov = fov;
-                bestDamage = currentDamage;
+                if (aimbotData.hitScanPreference == HitScanPreference::PREFER)
+                {
+                    aimbotData.enemy = enemyPawn;
+                    aimbotData.shotPosition = bone_position;
+                    bestDamage = currentDamage;
+                    break;
+                }
+                else if (currentDamage > bestDamage)
+                {
+                    aimbotData.enemy = enemyPawn;
+                    aimbotData.shotPosition = bone_position;
+                    bestDamage = currentDamage;
+                }
             }
         }
     }
 
-    Vector angle;
-
-    CMath::Get().VectorAngles(aimbotData.shotPosition - localPlayerEyePosition, angle);
 
     bones.clear();
 
     if (aimbotData.shotPosition.IsZero()) return;
 
-    AutoStop(weaponInfo, pItemView->m_iItemDefinitionIndex());
+    Vector angle;
+
+    CMath::Get().VectorAngles(aimbotData.shotPosition - localPlayerEyePosition, angle);
 
     if (!HitChance(aimbotData.enemy, angle, currentWeapon, weaponInfo)) return;
 
@@ -298,7 +315,7 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
     if (g_Vars.m_AutoFire)
     {
-        if (WeaponCanFire(currentWeapon, cmd) || currentWeapon->m_iClip1() <= 0)
+        if (CanWeaponFire(currentWeapon, cmd) || currentWeapon->m_iClip1() <= 0)
         {
             aimbotData.canFire = false;
             return;

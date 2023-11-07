@@ -14,8 +14,11 @@ public:
     Vector operator+(const Vector& rhs) const { return Vector { x + rhs.x, y + rhs.y, z + rhs.z }; }
     Vector operator-(const Vector& rhs) const { return Vector { x - rhs.x, y - rhs.y, z - rhs.z }; }
     Vector operator*(float scalar) const { return Vector { x * scalar, y * scalar, z * scalar }; }
+    Vector operator*=(const Vector& rhs) { return Vector { x *= rhs.x, y *= rhs.y, z *= rhs.z }; }
     Vector operator+=(const Vector& rhs) { return Vector { x += rhs.x, y += rhs.y, z += rhs.z }; }
     Vector operator-=(const Vector& rhs) { return Vector { x -= rhs.x, y -= rhs.y, z -= rhs.z }; }
+    Vector operator/(const Vector& rhs) { return Vector { x / rhs.x, y / rhs.y, z / rhs.z }; }
+    Vector operator/=(const Vector& rhs) { return Vector { x /= rhs.x, y /= rhs.y, z /= rhs.z }; }
     Vector operator-() { return Vector { -x, -y, -z }; }
 
     bool IsZero()
@@ -54,6 +57,28 @@ public:
         normalized.y = this->y / magnitude;
         normalized.z = this->z / magnitude;
         return normalized;
+    }
+
+    Vector Normalized()
+    {
+        Vector res = *this;
+        float length = res.Length();
+
+        if (length)  //-V550
+            res = res / length;
+        else
+            res.x = res.y = res.z = 0.0f;
+
+        return res;
+    }
+
+    float NormalizeVecToFloat()
+    {
+        float length = Length();
+
+        (*this) /= (Length() + std::numeric_limits< float >::epsilon());
+
+        return length;
     }
 
     float Length()

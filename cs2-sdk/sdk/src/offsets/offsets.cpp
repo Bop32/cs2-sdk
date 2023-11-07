@@ -42,6 +42,15 @@ namespace offsets
         fn(start, end, filter, trace, unk, mask, unk2);
     }
 
+    void ClipRayToEntity(int mask, C_Ray* ray, Vector& start, Vector& end, C_CSPlayerPawnBase* entity, C_TraceFilter* filter, C_GameTrace* exitTrace)
+    {
+        using function_t = void* (__fastcall*)(int, C_Ray*, Vector&, Vector&, C_CSPlayerPawnBase*, C_TraceFilter*, C_GameTrace*);
+        static function_t fn = reinterpret_cast< function_t >(signatures::ClipRayToEntity.GetPtrAs<void*>());
+
+        fn(mask, ray, start, end, entity, filter, exitTrace);
+    }
+
+
     /*
     bool ISource2Client::TraceRay(const Vector_t& vecAbsStart, const Vector_t& vecAbsEnd, const CTraceFilter* pFilter, CGameTrace* pTrace)
     {

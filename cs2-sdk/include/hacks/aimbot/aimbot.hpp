@@ -42,15 +42,25 @@ enum HITBOXES : DWORD
     ANKLE_R = 27,
 };
 
+
+enum HitScanPreference
+{
+    NONE,
+    NORMAL,
+    PREFER
+};
+
 namespace aimbot
 {
     struct AimbotData
     {
-        AimbotData(C_CSPlayerPawnBase* enemy, Vector& shotPosition, Vector& angle, bool canFire) :
+        AimbotData(C_CSPlayerPawnBase* enemy, Vector& shotPosition, Vector& angle, bool canFire, HitScanPreference hitScanPreference) :
             enemy(enemy),
             shotPosition(shotPosition),
             angle(angle),
-            canFire(canFire)
+            canFire(canFire),
+            hitScanPreference(hitScanPreference)
+
         {
         }
 
@@ -60,12 +70,14 @@ namespace aimbot
             shotPosition = {};
             angle = {};
             canFire = false;
+            hitScanPreference = HitScanPreference::NONE;
         }
 
         C_CSPlayerPawnBase* enemy = nullptr;
         Vector shotPosition {};
         Vector angle {};
         bool canFire = false;
+        HitScanPreference hitScanPreference = HitScanPreference::NONE;
     };
 
     void RunAimbot(CUserCmd* cmd);

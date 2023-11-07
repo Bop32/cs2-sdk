@@ -12,6 +12,7 @@
 #include <interfaces/engineclient.hpp>
 
 #include <bindings/baseentity.hpp>
+#include <cache/entities/projecitle.hpp>
 
 #define SDK_ENABLE_CACHE_LOGGING
 
@@ -119,7 +120,7 @@ CMatchCache::CachedEntityPtr CMatchCache::CreateCachedEntityPointer(C_BaseEntity
     }
     else if (ent->IsProjectile())
     {
-        return std::make_unique<CCachedBaseEntity>();
+        return std::make_unique<CCachedProjectile>();
     }
     else if (ent->IsPlantedC4())
     {

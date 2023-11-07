@@ -33,9 +33,23 @@ bool PlayerHasArmor(C_CSPlayerPawnBase* player, int hitgroup)
     return false;
 }
 
-void AutoWall::ScaleDamage(C_CSPlayerPawnBase* player, CCSWeaponBaseVData* weaponData, float& damage, int hitgroup)
+bool PreferBodyAim(int hitgroup, bool hasArmor)
 {
-    bool hasArmor = PlayerHasArmor(player, hitgroup);
+
+    if (!hasArmor && hitgroup != HITGROUP::HITGROUP_HEAD) return true;
+
+    switch (hitgroup)
+    {
+        case HITGROUP::HITGROUP_STOMACH:
+            return true;
+        case HITGROUP::HITGROUP_CHEST:
+            return true;
+    }
+    return false;
+}
+
+void AutoWall::ScaleDamage(C_CSPlayerPawnBase* player, CCSWeaponBaseVData* weaponData, float& damage, int hitgroup, bool hasArmor)
+{
     switch (hitgroup)
     {
         case HITGROUP::HITGROUP_HEAD:
@@ -146,6 +160,10 @@ bool RebuiltTraceToExit(Vector& end, C_GameTrace enterTrace, Vector start, Vecto
     return false;
 }
 
+bool HealthPointsPlusOne(C_CSPlayerPawnBase* enemy, int damage)
+{
+    return g_Vars.m_MinimumDamage >= 100 && damage >= enemy->m_iHealth() + 1;
+}
 
 bool AutoWall::SimulateFireBullet(CCSWeaponBaseVData* weaponInfo, FireBulletData& data, C_CSPlayerPawnBase* enemy)
 {
@@ -176,9 +194,19 @@ bool AutoWall::SimulateFireBullet(CCSWeaponBaseVData* weaponInfo, FireBulletData
 
         if (trace.pHitEntity == enemy)
         {
-            ScaleDamage(enemy, weaponInfo, data.currentDamage, trace.GetHitboxId());
-            //Hp + 1
-            if (g_Vars.m_MinimumDamage >= 100 && data.currentDamage >= enemy->m_iHealth() + 1)
+            int hitBoxId = trace.GetHitboxId();
+            bool hasArmor = PlayerHasArmor(enemy, hitBoxId);
+
+            //previous damage = 101, hitbox == stomach, min damage = 70 should be true 
+            ScaleDamage(enemy, weaponInfo, data.currentDamage, hitBoxId, hasArmor);
+
+            if (g_Vars.m_PreferBodyAim && (PreferBodyAim(hitBoxId, hasArmor) && data.currentDamage >= g_Vars.m_MinimumDamage) ||
+                (hitBoxId != HITGROUP::HITGROUP_HEAD && HealthPointsPlusOne(enemy, data.currentDamage)))
+            {
+                globals::aimbotData.hitScanPreference = HitScanPreference::PREFER;
+                return true;
+            }
+            else if (HealthPointsPlusOne(enemy, data.currentDamage))
             {
                 return true;
             }

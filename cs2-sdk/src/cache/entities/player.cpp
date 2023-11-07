@@ -98,7 +98,7 @@ void CCachedPlayer::RenderESP()
     auto localPlayerController = CGameEntitySystem::GetLocalPlayerController();
 
     if (!controller->m_bPawnIsAlive() || controller->m_iTeamNum() == localPlayerController->m_iTeamNum() ||
-        controller->IsWeapon() || controller->m_pGameSceneNode()->m_bDormant()) return;
+        controller->IsWeapon() || controller->m_pGameSceneNode()->m_bDormant() || !localPlayerController) return;
 
     C_CSPlayerPawnBase* pawn = controller->m_hPawn().Get();
 

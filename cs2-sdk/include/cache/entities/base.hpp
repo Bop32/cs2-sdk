@@ -7,7 +7,7 @@
 class CCachedBaseEntity
 {
 public:
-    enum Type { GENERIC = 0, PLAYER, GUN, HEN };
+    enum Type { GENERIC = 0, PLAYER, GUN, HEN, PROJECTILE };
 
     CCachedBaseEntity() { m_BoxColor = IM_COL32(255, 255, 255, 255); }
     CCachedBaseEntity(const CCachedBaseEntity&) = delete;
