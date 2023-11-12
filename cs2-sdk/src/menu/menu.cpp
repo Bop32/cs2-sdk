@@ -13,7 +13,10 @@
 
 #include <imgui/imgui.h>
 #include <config/config.hpp>
+#include <log/log.hpp>
+#include <globals/globals.hpp>
 
+using namespace globals;
 void CMenu::Render()
 {
     if (ImGui::IsKeyPressed(ImGuiKey_Insert, false))
@@ -27,6 +30,7 @@ void CMenu::Render()
 
     RenderWatermark();
     RenderUI();
+    RenderLogs();
 }
 
 void CMenu::Shutdown()
@@ -58,14 +62,15 @@ void CMenu::Toggle(bool state)
 
 void CMenu::RenderWatermark()
 {
+    return;
+
+}
+
+void CMenu::RenderLogs()
+{
     auto drawList = CRenderer::GetBackgroundDrawList();
 
-    char framerate[128];
-    snprintf(framerate, IM_ARRAYSIZE(framerate), "cs2-sdk v2\nFPS: %d",
-        static_cast< int >(ImGui::GetIO().Framerate));
-
-    drawList->AddText({ 17, 9 }, IM_COL32(0, 0, 0, 255), framerate);
-    drawList->AddText({ 16, 8 }, IM_COL32(27, 227, 200, 255), framerate);
+    notify.NotifyLogic();
 }
 
 string DropDownPreviewTest(std::map<const char*, bool> dropDownSelectionMap)

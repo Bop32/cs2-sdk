@@ -9,7 +9,7 @@
 CModule::CModule(const char* name)
 {
     m_Name = name;
-    m_Hash = fnv1a::Hash(name);
+    m_Hash = FNV1A::Hash(name);
     m_Handle = nullptr;
 
     m_Begin = m_Size = 0;
@@ -67,10 +67,10 @@ uintptr_t CModule::GetInterface(const char* version)
 #endif
             ;
 
-        uint32_t versionHash = fnv1a::Hash(version);
+        uint32_t versionHash = FNV1A::Hash(version);
         for (; s_pInterfaceRegs; s_pInterfaceRegs = s_pInterfaceRegs->m_pNext)
         {
-            if (fnv1a::Hash(s_pInterfaceRegs->m_pName) == versionHash)
+            if (FNV1A::Hash(s_pInterfaceRegs->m_pName) == versionHash)
             {
                 rv = s_pInterfaceRegs->m_CreateFn();
                 break;

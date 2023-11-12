@@ -32,6 +32,11 @@
 #include <interfaces/CResourceSystem.hpp>
 #include <hacks/anti_aim/anti_aim.hpp>
 #include <interfaces/engineclient.hpp>
+#include <events/IGameEvent.hpp>
+#include <log/log.hpp>
+#include <events/CGameEventManager.hpp>
+#include <renderer/renderer.hpp>
+
 
 using namespace globals;
 static CHook g_MouseInputEnabled;
@@ -139,16 +144,18 @@ static void* hkDrawObject(void* animtable_scene_object, void* dx11, void* data,
     return g_DrawObject.CallOriginal<void*>(animtable_scene_object, dx11, data, unknown_bool, scene_view, scene_layer, unknown_pointer, unknown);
 }
 
+/*
 static CHook g_BulletMessage;
 
 static void* hkModifyBulletMessage(CSGOInputMessage* input_message, CSGOInputHistoryEntryPB* input_history_entry, const bool verify, const int64_t a3, const int64_t a4, C_CSPlayerPawnBase* player_pawn)
 {
     return g_BulletMessage.CallOriginal<void*>(input_message, input_history_entry, verify, a3, a4, player_pawn);
 }
+*/
 static CHook g_CreateMove;
-static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
+static bool hkCreateMove(CCSGOInput* this_ptr, void* a1, void* a2, void* a3)
 {
-    g_CreateMove.CallOriginal<bool>(this_ptr, a1, a2);
+    g_CreateMove.CallOriginal<bool>(this_ptr, a1, a2, a3);
 
     cmd = this_ptr->GetUserCmd();
 
@@ -171,7 +178,7 @@ static bool hkCreateMove(CCSGOInput* this_ptr, int a1, int a2)
     }
 
     Vector old_angles = cmd->base->view->angles;
-    old_angles.Clamp(); 
+
 
     localPlayerPawn->m_flFlashBangTime() = 0;
 
@@ -223,6 +230,35 @@ static void hkOverrideView(void* input, CViewSetup* view)
     g_OverrideView.CallOriginal<void>(input, view);
 }
 
+static CHook g_FireEvent;
+static void* FireEventClientSide(void* rcx, IGameEvent* a2)
+{
+    auto eventName = a2->GetName();
+
+    if (strcmp(eventName, "player_hurt") != 0)
+    {
+        return g_FireEvent.CallOriginal<void*>(rcx, a2);
+    }
+    CCSPlayerController* attacker = ( CCSPlayerController* )(a2->GetPlayerController(MakeStringToken("attacker")));
+
+    if(attacker != localPlayerController) return;
+
+    CCSPlayerController* hurtPlayerController = ( CCSPlayerController* )(a2->GetPlayerController(MakeStringToken("userid")));
+
+    int hitgroup = a2->GetInt(MakeStringToken("hitgroup"));
+    int damageDone = a2->GetInt(MakeStringToken("dmg_health"));
+    int remainingHealth = a2->GetInt(MakeStringToken("health"));
+
+    std::string outputLog = std::format("Hit {} in the {} for {} ({} health remaining)",
+        hurtPlayerController->m_sSanitizedPlayerName(),
+        Log::HitGroupToString(hitgroup), damageDone, remainingHealth);
+
+    auto time = localPlayerController->m_nTickBase() * GlobalVars->interval_per_tick;
+
+    notify.Add(outputLog, time);
+    return g_FireEvent.CallOriginal<void*>(rcx, a2);
+}
+
 static CHook g_IsDemoOrHLTV;
 static char hkIsDemoOrHLTV()
 {
@@ -253,7 +289,7 @@ void CGameHooks::Initialize()
 
     CMatchCache::Get().Initialize();
 
-    g_MouseInputEnabled.VHook(CCSGOInput::Get(), 11 + LINUX_OFFSET(1), SDK_HOOK(hkMouseInputEnabled));
+    g_MouseInputEnabled.VHook(CCSGOInput::Get(), 12 + LINUX_OFFSET(1), SDK_HOOK(hkMouseInputEnabled));
     g_OnAddEntity.VHook(CGameEntitySystem::Get(), 14 + LINUX_OFFSET(1), SDK_HOOK(hkOnAddEntity));
     g_OnRemoveEntity.VHook(CGameEntitySystem::Get(), 15 + LINUX_OFFSET(1), SDK_HOOK(hkOnRemoveEntity));
     g_GetMatricesForView.Hook(signatures::GetMatricesForView.GetPtrAs<void*>(), SDK_HOOK(hkGetMatricesForView));
@@ -263,11 +299,14 @@ void CGameHooks::Initialize()
     g_DrawObject.Hook(signatures::DrawObjectHook.GetPtrAs<void*>(), SDK_HOOK(hkDrawObject));
     g_OverrideView.Hook(signatures::OverrideView.GetPtrAs<void*>(), SDK_HOOK(hkOverrideView));
     g_FrameStageNotify.Hook(signatures::FrameStageNotify.GetPtrAs<void*>(), SDK_HOOK(hkFrameStageNotify));
-    g_BulletMessage.Hook(signatures::BulletMessage.GetPtrAs<void*>(), SDK_HOOK(hkModifyBulletMessage));
+    //g_BulletMessage.Hook(signatures::BulletMessage.GetPtrAs<void*>(), SDK_HOOK(hkModifyBulletMessage));
+    g_FireEvent.Hook(signatures::FireEvent.GetPtrAs<void*>(), SDK_HOOK(FireEventClientSide));
 
     float* value = signatures::CL_Bob_Lower_Amt.GetPtrAs<float*>();
 
     DWORD oldProtect;
     VirtualProtect(value, sizeof(*value), PAGE_READWRITE, &oldProtect);
     *value = 0;
+
 }
+Notify notify = {};

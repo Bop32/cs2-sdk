@@ -133,7 +133,7 @@ namespace signatures
         });
 
     CSigScan CalcWorldSpaceBones("CalcWorldSpaceBones", CConstants::CLIENT_LIB,
-        {{SDK_SIG("E8 ? ? ? ? 41 0F B7 47 10 0F B7 BB F4 ? ? ?"), [](CPointer& ptr) { ptr.Absolute(1, 0); }},
+        { {SDK_SIG("E8 ? ? ? ? 41 0F B7 47 10 0F B7 BB F4 ? ? ?"), [](CPointer& ptr) { ptr.Absolute(1, 0); }},
         });
 
     CSigScan GetEntityHandle("GetEntityHandle", CConstants::CLIENT_LIB,
@@ -279,6 +279,18 @@ namespace signatures
 
         {
             {SDK_SIG("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 60 48 8B E9 0F")}
+        });
+
+    CSigScan FireEvent("FireEvent", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 89 5C 24 20 56 57 41 54 48 83 EC 30 48 8B F2")}
+        });
+
+    CSigScan AddListener("AddListener", CConstants::CLIENT_LIB,
+
+        {
+            {SDK_SIG("48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 30 45 0F B6 F1 48 8D 99 08 01 ? ? ")}
         });
 
 };

@@ -76,6 +76,7 @@
     <ClCompile Include="sdk\src\bonesystem\bonesystem.cpp" />
     <ClCompile Include="src\hacks\anti_aim\anti_aim.cpp" />
     <ClCompile Include="src\cache\entities\projectile.cpp" />
+    <ClCompile Include="src\events\CGameEventManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch\pch.hpp" />
@@ -233,5 +234,9 @@
     <ClInclude Include="sdk\include\bindings\c_smokegrenadeprojectile.hpp" />
     <ClInclude Include="include\hacks\anti_aim\anti_aim.hpp" />
     <ClInclude Include="include\cache\entities\projecitle.hpp" />
+    <ClInclude Include="include\events\IGameEvent.hpp" />
+    <ClInclude Include="include\events\CUtlStringToken.hpp" />
+    <ClInclude Include="sdk\include\log\log.hpp" />
+    <ClInclude Include="include\events\CGameEventManager.hpp" />
   </ItemGroup>
 </Project>

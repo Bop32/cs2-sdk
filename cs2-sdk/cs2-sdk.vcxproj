@@ -134,6 +134,7 @@
     <ClCompile Include="src\cache\entities\projectile.cpp" />
     <ClCompile Include="src\cache\entities\weapon.cpp" />
     <ClCompile Include="src\config\config.cpp" />
+    <ClCompile Include="src\events\CGameEventManager.cpp" />
     <ClCompile Include="src\hacks\aimbot\aimbot.cpp" />
     <ClCompile Include="src\hacks\aimbot\autowall.cpp" />
     <ClCompile Include="src\hacks\anti_aim\anti_aim.cpp" />
@@ -256,6 +257,9 @@
     <ClInclude Include="include\cache\entities\weapon.hpp" />
     <ClInclude Include="include\config\config.hpp" />
     <ClInclude Include="include\constants\constants.hpp" />
+    <ClInclude Include="include\events\CGameEventManager.hpp" />
+    <ClInclude Include="include\events\CUtlStringToken.hpp" />
+    <ClInclude Include="include\events\IGameEvent.hpp" />
     <ClInclude Include="include\fnv\fnv1a.hpp" />
     <ClInclude Include="include\fonts\fonts.hpp" />
     <ClInclude Include="include\globals\globals.hpp" />
@@ -394,6 +398,7 @@
     <ClInclude Include="sdk\include\interfaces\inputsystem.hpp" />
     <ClInclude Include="sdk\include\interfaces\schemasystem.hpp" />
     <ClInclude Include="sdk\include\interfaces\source2client.hpp" />
+    <ClInclude Include="sdk\include\log\log.hpp" />
     <ClInclude Include="sdk\include\offets\offsets.hpp" />
     <ClInclude Include="sdk\include\sdl\sdl.hpp" />
     <ClInclude Include="sdk\include\types\handle.hpp" />

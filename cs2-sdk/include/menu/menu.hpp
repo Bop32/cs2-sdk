@@ -13,6 +13,7 @@ class CMenu {
     void Shutdown();
 
    private:
+    void RenderLogs();
     void Toggle(bool state);
 
     void RenderWatermark();

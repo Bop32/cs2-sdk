@@ -48,4 +48,6 @@ namespace signatures
     extern CSigScan GetInaccuracy;
     extern CSigScan GetSpread;
     extern CSigScan BulletMessage;
+    extern CSigScan FireEvent;
+    extern CSigScan AddListener;
 }  // namespace signatures

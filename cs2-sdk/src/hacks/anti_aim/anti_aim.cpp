@@ -12,8 +12,10 @@ void AntiAim::RunAntiAim(CUserCmd* cmd, CCSGOInput* input)
     Vector currentViewAngles;
     CCSGOInput::Get()->GetViewAngles(currentViewAngles);
     float yaw_base = currentViewAngles.y;
+    float x = math::fnRandomFloat(89.0f, 0);
 
-    Vector angles = Vector(89.f, yaw_base + 180.f, 0.f);
+
+    Vector angles = Vector(x, yaw_base + 180.f, 0.f);
 
     cmd->base->view->angles = angles;
 }

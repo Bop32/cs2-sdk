@@ -133,7 +133,7 @@ void AutoStop(CCSWeaponBaseVData* weaponInfo, int itemIndex)
 
     max_speed = GetMaxSpeed(weaponInfo, localPlayerPawn->m_bIsScoped(), itemIndex);
 
-    const auto pure_accurate_speed = max_speed * 0.24f;
+    const auto pure_accurate_speed = max_speed * 0.22f;
     const auto accurate_speed = max_speed * 0.315f;
 
     if (speed < pure_accurate_speed)

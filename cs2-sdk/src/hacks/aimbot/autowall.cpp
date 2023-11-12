@@ -48,6 +48,8 @@ bool PreferBodyAim(int hitgroup, bool hasArmor)
     return false;
 }
 
+
+
 void AutoWall::ScaleDamage(C_CSPlayerPawnBase* player, CCSWeaponBaseVData* weaponData, float& damage, int hitgroup, bool hasArmor)
 {
     switch (hitgroup)

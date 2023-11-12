@@ -5,7 +5,7 @@
 
 #include <sigscan/sigscan.hpp>
 
-#include <fnv/fnv1a.hpp>
+#include <fnv/FNV1A.hpp>
 
 void CMemory::Initialize()
 {
@@ -22,7 +22,7 @@ void CMemory::Initialize()
 
 ModulePtr_t& CMemory::GetModuleInternal(const char* libName)
 {
-    auto hash = fnv1a::Hash(libName);
+    auto hash = FNV1A::Hash(libName);
 
     auto it = m_CachedModules.find(hash);
     if (it != m_CachedModules.end())
