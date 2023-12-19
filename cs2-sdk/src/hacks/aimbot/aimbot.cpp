@@ -113,11 +113,11 @@ void AutoStop(CCSWeaponBaseVData* weaponInfo, int itemIndex)
             CMath::Get().AngleVectorss(angles, fwd);
             const auto right = fwd.Cross(Vector(0.0f, 0.0f, 1.0f));
 
-            cmd->base->m_forwardmove = (target_vel.y - (right.y / right.x) * target_vel.x) / (fwd.y - (right.y / right.x) * fwd.x);
-            cmd->base->m_rightmove = -(target_vel.x - fwd.x * cmd->base->m_forwardmove) / right.x;
+            cmd->base->flForwardMove = (target_vel.y - (right.y / right.x) * target_vel.x) / (fwd.y - (right.y / right.x) * fwd.x);
+            cmd->base->flSideMove = -(target_vel.x - fwd.x * cmd->base->flForwardMove) / right.x;
 
-            cmd->base->m_forwardmove = std::clamp <float>(cmd->base->m_forwardmove, -forwardSpeed, forwardSpeed);
-            cmd->base->m_rightmove = std::clamp <float>(cmd->base->m_rightmove, -forwardSpeed, sideSpeed);
+            cmd->base->flForwardMove = std::clamp <float>(cmd->base->flForwardMove, -forwardSpeed, forwardSpeed);
+            cmd->base->flSideMove = std::clamp <float>(cmd->base->flSideMove, -forwardSpeed, sideSpeed);
 
             cmd->buttons &= ~CUserCmd::IN_WALK;
             cmd->buttons |= CUserCmd::IN_SPEED;
@@ -138,12 +138,12 @@ void AutoStop(CCSWeaponBaseVData* weaponInfo, int itemIndex)
 
     if (speed < pure_accurate_speed)
     {
-        const auto cmd_speed = sqrt(cmd->base->m_forwardmove * cmd->base->m_forwardmove + cmd->base->m_rightmove * cmd->base->m_rightmove);
+        const auto cmd_speed = sqrt(cmd->base->flForwardMove * cmd->base->flForwardMove + cmd->base->flForwardMove * cmd->base->flForwardMove);
         const auto local_speed = std::max(localPlayerPawn->m_vecVelocity().Length2D(), 0.1f);
         const auto speed_multiplier = (local_speed / cmd_speed) * (accurate_speed / local_speed);
 
-        cmd->base->m_forwardmove = std::clamp <float>(cmd->base->m_forwardmove * speed_multiplier, -forwardSpeed, forwardSpeed);
-        cmd->base->m_rightmove = std::clamp <float>(cmd->base->m_rightmove * speed_multiplier, -forwardSpeed, sideSpeed);
+        cmd->base->flForwardMove = std::clamp <float>(cmd->base->flForwardMove * speed_multiplier, -forwardSpeed, forwardSpeed);
+        cmd->base->flSideMove = std::clamp <float>(cmd->base->flSideMove * speed_multiplier, -forwardSpeed, sideSpeed);
 
         cmd->buttons &= ~CUserCmd::IN_WALK;
         cmd->buttons |= CUserCmd::IN_SPEED;
@@ -160,7 +160,7 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
     auto entitySystem = CGameEntitySystem::Get();
 
-    Vector localPlayerViewAngles = cmd->base->view->angles;
+    Vector localPlayerViewAngles = cmd->base->pViewAngles->angles;
 
     aimbotData.enemy = nullptr;
     aimbotData.shotPosition = {};
@@ -304,11 +304,11 @@ void aimbot::RunAimbot(CUserCmd* cmd)
 
     localPlayerViewAngles += aimbotData.angle;
 
-    cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
+    //cmd->SetSubTickAngles(cmd, localPlayerViewAngles);
 
     if (!g_Vars.m_SilentAim)
     {
-        cmd->base->view->angles = localPlayerViewAngles;
+        cmd->base->pViewAngles->angles = localPlayerViewAngles;
         CCSGOInput::Get()->SetViewAngles(localPlayerViewAngles);
     }
 

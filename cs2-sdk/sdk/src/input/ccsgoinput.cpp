@@ -4,7 +4,8 @@
 
 #include <signatures/signatures.hpp>
 
-CCSGOInput* CCSGOInput::Get() {
+CCSGOInput* CCSGOInput::Get()
+{
     static auto inst = signatures::GetCSGOInput.GetPtrAs<CCSGOInput*>();
     return inst;
 }

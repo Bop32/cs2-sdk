@@ -177,7 +177,7 @@ static bool hkCreateMove(CCSGOInput* this_ptr, void* a1, void* a2, void* a3)
         globals::GlobalVars = *signatures::GlobalVars.GetPtrAs<globals::CGlobalVarsBase**>();
     }
 
-    Vector old_angles = cmd->base->view->angles;
+    Vector old_angles = cmd->base->pViewAngles->angles;
 
 
     localPlayerPawn->m_flFlashBangTime() = 0;
@@ -241,7 +241,7 @@ static void* FireEventClientSide(void* rcx, IGameEvent* a2)
     }
     CCSPlayerController* attacker = ( CCSPlayerController* )(a2->GetPlayerController(MakeStringToken("attacker")));
 
-    if(attacker != localPlayerController) return;
+    if(attacker != localPlayerController) return g_FireEvent.CallOriginal<void*>(rcx, a2);
 
     CCSPlayerController* hurtPlayerController = ( CCSPlayerController* )(a2->GetPlayerController(MakeStringToken("userid")));
 

@@ -3,114 +3,128 @@
 #include <math/types/vector.hpp>
 #include <virtual/virtual.hpp>
 
+template <typename T>
+struct RepeatedPtrField_t
+{
+	struct Rep_t
+	{
+		int nAllocatedSize;
+		T* tElements[(std::numeric_limits<int>::max() - 2 * sizeof(int)) / sizeof(void*)];
+	};
+
+	void* pArena;
+	int nCurrentSize;
+	int nTotalSize;
+	Rep_t* pRep;
+};
+
 class CBasePB
 {
-    void* vftable;
-    uint32_t has_bits;
-    uint64_t flag;
+	void* pVTable; // 0x0
+	std::uint32_t nHasBits; // 0x8
+	std::uint64_t nCachedBits; // 0xC
 };
-
 static_assert(sizeof(CBasePB) == 0x18);
-
-
-class CMsgVector : public CBasePB
-{
-public:
-    ImVec4 position;
-
-};
 
 class CMsgQAngle : public CBasePB
 {
 public:
-    Vector angles;
+	Vector angles; // 0x18
 };
 
-
-class CSGOInterpolationInfoPB : public CBasePB
-{
-    float frac;
-    int32_t src_tick;
-    int32_t dst_tick;
-};
-
-
-class CSGOInputHistoryEntryPB : public CBasePB
+class CMsgVector : public CBasePB
 {
 public:
-    CMsgQAngle* m_angle_message; //0x0018
-    CMsgVector* m_shoot_position; //0x0020
-    CMsgVector* m_target_head_position; //0x0028 I wonder guys I wonder
-    CMsgVector* m_target_abs_origin_message; //0x0030
-    CMsgQAngle* m_target_angle_message; //0x0038
-    CSGOInterpolationInfoPB* m_interpolation_messages[4]; //0x0040
-    int32_t m_frame_tick_count; //0x0060
-    float m_frame_tick_fraction; //0x0064
-    int32_t m_player_tickbase; //0x0068
-    float m_player_tickbase_fraction; //0x006C
-    int32_t m_frame_count; //0x0070 I think
-    int32_t m_target_index; //0x0074 <--- pay attention to this
-
+	Vector vector; // 0x18
 };
 
-static_assert(sizeof(CSGOInputHistoryEntryPB) == 0x78);
-
-struct CSGOInputMessage
+class CCSGOInterpolationInfo : public CBasePB
 {
-    int32_t m_frame_tick_count; //0x0000
-    float m_frame_tick_fraction; //0x0004
-    int32_t m_player_tick_count; //0x0008
-    float m_player_tick_fraction; //0x000C
-    Vector m_view_angles; //0x0010
-    Vector m_shoot_position; //0x001C
-    int32_t m_target_index; //0x0028
-    Vector m_target_head_position; //0x002C What's this???
-    Vector m_target_abs_origin; //0x0038
-    Vector m_target_angle; //0x0044
-    int32_t m_sv_show_hit_registration; //0x0050
-    int32_t m_entry_index_max; //0x0054
-    int32_t m_index_idk; //0x0058
-}; //Size: 0x005C
+public:
+	float flFraction; // 0x18
+	int nSrcTick; // 0x1C
+	int nDstTick; // 0x20
+};
 
-static_assert(sizeof(CSGOInputMessage) == 0x005C);
+// credits: @patoke [uc:3872928-post1311]
+class CCSGOInputHistoryEntryPB : public CBasePB
+{
+public:
+	CMsgQAngle* pViewCmd; // 0x18
+	CMsgVector* pShootOriginCmd; // 0x20
+	CMsgVector* pTargetHeadOriginCmd; // 0x28
+	CMsgVector* pTargetAbsOriginCmd; // 0x30
+	CMsgQAngle* pTargetViewCmd; // 0x38
+	CCSGOInterpolationInfo* cl_interp; // 0x40
+	CCSGOInterpolationInfo* sv_interp0; // 0x48
+	CCSGOInterpolationInfo* sv_interp1; // 0x50	
+	CCSGOInterpolationInfo* player_interp; // 0x58
+	int nRenderTickCount; // 0x60
+	float flRenderTickFraction; // 0x64
+	int nPlayerTickCount; // 0x68
+	float flPlayerTickFraction; // 0x6C
+	int nFrameNumber; // 0x70
+	int nTargetEntIndex; // 0x74
+};
+
+struct CSubtickMoveStep : CBasePB
+{
+	uint64_t nButton;
+	bool bPressed;
+	float flWhen;
+};
+
+struct CInButtonStatePB : CBasePB
+{
+	std::uint64_t State1;
+	std::uint64_t State2;
+	std::uint64_t State3;
+};
+
+class CBaseUserCmdPB : public CBasePB
+{
+public:
+	RepeatedPtrField_t<CSubtickMoveStep> subtickMovesField;
+	const char* szMoveCrc;
+	CInButtonStatePB* pInButtonState;
+	CMsgQAngle* pViewAngles;
+	int32_t nCommandNumber;
+	int32_t nTickCount;
+	float flForwardMove;
+	float flSideMove;
+	float flUpMove;
+	int32_t nImpulse;
+	int32_t nWeaponSelect;
+	int32_t nRandomSeed;
+	int32_t nMousedX;
+	int32_t nMousedY;
+	//bool bHasBeenPredicted;
+	uint32_t nConsumedServerAngleChanges;
+	int32_t nCmdFlags;
+	uint32_t nPawnEntityHandle;
+};
 
 class CCSGOUserCmdPB
 {
 public:
-    int32_t nTickCount;
-    char pad1[0x4];
-    uint8_t* tickPointer;
-
-    CSGOInputHistoryEntryPB* GetInputHistoryEntry(std::int32_t nTick)
-    {
-        if (nTick < this->nTickCount)
-        {
-            CSGOInputHistoryEntryPB** arrTickList = reinterpret_cast< CSGOInputHistoryEntryPB** >(reinterpret_cast< std::uintptr_t >(tickPointer) + 0x8);
-            return arrTickList[nTick];
-        }
-
-        return nullptr;
-    }
+	std::uint32_t nHasBits;
+	std::uint64_t nCachedSize;
+	RepeatedPtrField_t<CCSGOInputHistoryEntryPB> inputHistoryField;
+	CBaseUserCmdPB* pBase;
+	int32_t nWeaponDecision;
+	int32_t nWeaponDecisionWeapon;
+	int32_t nAttack3StartHhistoryIndex;
+	int32_t nAttack1StartHhistoryIndex;
+	int32_t nAttack2StartHhistoryIndex;
 };
-static_assert(sizeof(CCSGOUserCmdPB) == 0x10);
 
-class CmdQAngle
+// not protobufs
+struct CInButtonState
 {
-public:
-    char pad1[24];
-    Vector angles;
-    char pad2[1052];
-}; //Size: 0x0440
-
-struct CBaseUserCmd
-{
-    char pad1[0x40];
-    CMsgQAngle* view;
-    int m_command_number;
-    int m_tick_count;
-    float m_forwardmove;
-    float m_rightmove;
-    float m_upmove;
+	void* pVTable;
+	uint64_t nButtonState1;
+	uint64_t nButtonState2;
+	uint64_t nButtonState3;
 };
 
 class CUserCmd
@@ -150,7 +164,7 @@ public:
 
     char pad1[0x20];
     CCSGOUserCmdPB csgoUserCmd;
-    CBaseUserCmd* base;
+	CBaseUserCmdPB* base;
     int startHistoryIndexAttack1;
     int startHistoryIndexAttack2;
     int startHistoryIndexAttack3;
@@ -160,9 +174,10 @@ public:
     uint64_t buttonsScroll;
     char pad3[0x8];
 
+	/*
     void SetSubTickAngles(CUserCmd* cmd, Vector& angles)
     {
-        for (int i = 0; i < this->csgoUserCmd.nTickCount; i++)
+        for (int i = 0; i < this->csgoUserCmd.; i++)
         {
             auto* tick = this->csgoUserCmd.GetInputHistoryEntry(i);
 
@@ -172,5 +187,5 @@ public:
             }
         }
     }
+	*/
 };
-static_assert(sizeof(CUserCmd) == 0x70);

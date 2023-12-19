@@ -187,7 +187,7 @@ void CMath::CorrectMovement(Vector old_angles)
     Vector   move_angle;
 
     // convert movement to vector.
-    move = { cmd->base->m_forwardmove, cmd->base->m_rightmove, 0.f };
+    move = { cmd->base->flForwardMove, cmd->base->flSideMove, 0.f };
 
     // get move length and ensure we're using a unit vector ( vector with length of 1 ).
     len = move.NormalizeVecToFloat();
@@ -198,7 +198,7 @@ void CMath::CorrectMovement(Vector old_angles)
     CMath:Get().VectorAngles(move, move_angle);
 
     // calculate yaw delta.
-    delta = (cmd->base->view->angles.y - old_angles.y);
+    delta = (cmd->base->pViewAngles->angles.y - old_angles.y);
 
     // accumulate yaw delta.
     move_angle.y += delta;
@@ -217,24 +217,24 @@ void CMath::CorrectMovement(Vector old_angles)
     if (localPlayerPawn->m_MoveType() == MOVETYPE_LADDER)
     {
         // invert directon for up and down.
-        if (cmd->base->view->angles.x >= 45.f && old_angles.x < 45.f && std::abs(delta) <= 65.f)
+        if (cmd->base->pViewAngles->angles.x >= 45.f && old_angles.x < 45.f && std::abs(delta) <= 65.f)
             dir.x = -dir.x;
 
         // write to movement.
-        cmd->base->m_forwardmove = dir.x;
-        cmd->base->m_rightmove = dir.y;
+        cmd->base->flForwardMove = dir.x;
+        cmd->base->flSideMove = dir.y;
 
         // set new button flags.
-        if (cmd->base->m_forwardmove > 200.f)
+        if (cmd->base->flForwardMove > 200.f)
             cmd->buttons |= CUserCmd::IN_FORWARD;
 
-        else if (cmd->base->m_forwardmove < -200.f)
+        else if (cmd->base->flForwardMove < -200.f)
             cmd->buttons |= CUserCmd::IN_BACK;
 
-        if (cmd->base->m_rightmove > 200.f)
+        if (cmd->base->flSideMove > 200.f)
             cmd->buttons |= CUserCmd::IN_MOVERIGHT;
 
-        else if (cmd->base->m_rightmove < -200.f)
+        else if (cmd->base->flSideMove < -200.f)
             cmd->buttons |= CUserCmd::IN_MOVELEFT;
     }
 
@@ -242,24 +242,24 @@ void CMath::CorrectMovement(Vector old_angles)
     else
     {
         // we must do this for pitch angles that are out of bounds.
-        if (cmd->base->view->angles.x < -90.f || cmd->base->view->angles.x > 90.f)
+        if (cmd->base->pViewAngles->angles.x < -90.f || cmd->base->pViewAngles->angles.x > 90.f)
             dir.x = -dir.x;
 
         // set move.
-        cmd->base->m_forwardmove = dir.x;
-        cmd->base->m_rightmove = dir.y;
+        cmd->base->flForwardMove = dir.x;
+        cmd->base->flSideMove = dir.y;
 
         // set new button flags.
-        if (cmd->base->m_forwardmove > 0.f)
+        if (cmd->base->flForwardMove > 0.f)
             cmd->buttons |= CUserCmd::IN_FORWARD;
 
-        else if (cmd->base->m_forwardmove < 0.f)
+        else if (cmd->base->flForwardMove < 0.f)
             cmd->buttons |= CUserCmd::IN_BACK;
 
-        if (cmd->base->m_rightmove > 0.f)
+        if (cmd->base->flSideMove > 0.f)
             cmd->buttons |= CUserCmd::IN_MOVERIGHT;
 
-        else if (cmd->base->m_rightmove < 0.f)
+        else if (cmd->base->flSideMove < 0.f)
             cmd->buttons |= CUserCmd::IN_MOVELEFT;
     }
 }
